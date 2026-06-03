@@ -1967,16 +1967,10 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
             style="display:flex;align-items:center;gap:6px;background:var(--warm);border:1px solid var(--border);border-radius:var(--radius);padding:.45rem 1rem;font-size:13px;color:var(--muted);cursor:pointer;font-family:inherit">
             <i class="ti ti-history"></i> Anciens avis <i class="ti ti-chevron-down" id="old-chevron"></i>
           </button>
-          <div id="old-reviews-dropdown" hidden
-            style="position:absolute;right:0;top:calc(100% + 8px);background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-deep);width:340px;max-height:420px;overflow-y:auto;z-index:200;padding:.75rem">
+          <div id="old-reviews-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 8px);background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-deep);width:340px;max-height:420px;overflow-y:auto;z-index:200;padding:.75rem">
             <div id="old-reviews-list"></div>
           </div>
         </div>
-        <!-- Bouton laisser un avis -->
-        <button onclick="openReviewModal()"
-          style="display:flex;align-items:center;gap:6px;background:var(--ember);color:#fff;border:none;border-radius:var(--radius);padding:.45rem 1rem;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">
-          <i class="ti ti-pencil"></i> Laisser un avis
-        </button>
       </div>
     </div>
     <div class="reviews-grid" id="reviews-grid"></div>
@@ -1984,7 +1978,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 </div>
 
 <!-- ══ MODAL AVIS ══ -->
-<div id="review-modal" hidden style="position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem">
+<div id="review-modal" style="display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center;padding:1rem">
   <div onclick="closeReviewModal()" style="position:absolute;inset:0;background:rgba(15,7,0,.6);backdrop-filter:blur(4px)"></div>
   <div style="position:relative;background:var(--cream);border-radius:var(--radius-lg);padding:2rem;width:100%;max-width:480px;box-shadow:var(--shadow-deep)">
     <button onclick="closeReviewModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted)">
@@ -2024,7 +2018,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
       </div>
     </div>
 
-    <div id="rev-error" hidden style="background:#fff0ec;border:1px solid #f5c6b0;border-radius:var(--radius);padding:.6rem 1rem;font-size:13px;color:#c03a08;margin-bottom:1rem"></div>
+    <div id="rev-error" style="display:none;background:#fff0ec;border:1px solid #f5c6b0;border-radius:var(--radius);padding:.6rem 1rem;font-size:13px;color:#c03a08;margin-bottom:1rem"></div>
 
     <button onclick="submitReview()"
       style="width:100%;background:var(--ember);color:#fff;border:none;border-radius:var(--radius);padding:.8rem;font-size:15px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">
@@ -2109,17 +2103,18 @@ function renderReviews() {
 // Modal
 let selectedStars = 0;
 function openReviewModal() {
-  document.getElementById('review-modal').hidden = false;
+  const m = document.getElementById('review-modal');
+  m.style.display = 'flex';
   selectedStars = 0;
   setStars(0);
   document.getElementById('rev-name').value = '';
   document.getElementById('rev-loc').value = '';
   document.getElementById('rev-text').value = '';
   document.getElementById('rev-count').textContent = '0';
-  document.getElementById('rev-error').hidden = true;
+  document.getElementById('rev-error').style.display = 'none';
 }
 function closeReviewModal() {
-  document.getElementById('review-modal').hidden = true;
+  document.getElementById('review-modal').style.display = 'none';
 }
 function setStars(n) {
   selectedStars = n;
@@ -2137,10 +2132,10 @@ function submitReview() {
   const text = document.getElementById('rev-text').value.trim();
   const errEl = document.getElementById('rev-error');
 
-  if (!selectedStars) { errEl.textContent = 'Veuillez choisir une note.'; errEl.hidden = false; return; }
-  if (!name) { errEl.textContent = 'Veuillez indiquer votre prénom.'; errEl.hidden = false; return; }
-  if (text.length < 20) { errEl.textContent = 'Votre avis doit faire au moins 20 caractères.'; errEl.hidden = false; return; }
-  errEl.hidden = true;
+  if (!selectedStars) { errEl.textContent = 'Veuillez choisir une note.'; errEl.style.display = 'block'; return; }
+  if (!name) { errEl.textContent = 'Veuillez indiquer votre prénom.'; errEl.style.display = 'block'; return; }
+  if (text.length < 20) { errEl.textContent = 'Votre avis doit faire au moins 20 caractères.'; errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
 
   const newReview = {
     id: 'r' + Date.now(),
@@ -2163,8 +2158,8 @@ function submitReview() {
 function toggleOldReviews() {
   const dd = document.getElementById('old-reviews-dropdown');
   const ch = document.getElementById('old-chevron');
-  const open = !dd.hidden;
-  dd.hidden = open;
+  const open = dd.style.display !== 'none';
+  dd.style.display = open ? 'none' : 'block';
   ch.className = open ? 'ti ti-chevron-down' : 'ti ti-chevron-up';
 }
 
@@ -2172,7 +2167,8 @@ function toggleOldReviews() {
 document.addEventListener('click', e => {
   const wrap = document.getElementById('old-reviews-wrap');
   if (wrap && !wrap.contains(e.target)) {
-    document.getElementById('old-reviews-dropdown').hidden = true;
+    const dd = document.getElementById('old-reviews-dropdown');
+    if (dd) dd.style.display = 'none';
     const ch = document.getElementById('old-chevron');
     if (ch) ch.className = 'ti ti-chevron-down';
   }
@@ -2458,6 +2454,14 @@ renderReviews();
       <div class="cf-g"><label class="cf-lbl">Téléphone / WhatsApp</label><input class="cf-in" type="text" id="cf-p" placeholder="+223..."></div>
       <div class="cf-g"><label class="cf-lbl">Message</label><textarea class="cf-in" id="cf-m" placeholder="Votre question ou commande..."></textarea></div>
       <button class="cf-btn" onclick="sendContact()">Envoyer via WhatsApp →</button>
+    </div>
+    <!-- Bouton avis -->
+    <div style="margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border);text-align:center">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Vous avez déjà commandé chez nous ?</p>
+      <button onclick="openReviewModal()"
+        style="display:inline-flex;align-items:center;gap:8px;background:var(--warm);border:1px solid var(--border);border-radius:var(--radius);padding:.7rem 1.5rem;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;font-family:inherit;transition:border-color .2s">
+        <i class="ti ti-star" style="color:var(--gold)"></i> Laisser un avis client
+      </button>
     </div>
   </div>
 </div>
