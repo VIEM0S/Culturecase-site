@@ -166,24 +166,25 @@ body {
 
 .hero-inner {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 360px;
+  grid-template-columns: 1.15fr .85fr;
+  min-height: 280px;
   position: relative;
   z-index: 1;
 }
 
 .hero-l {
-  padding: 2.25rem 2.5rem;
+  padding: 1.5rem 2rem 1.5rem 2.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 0;
 }
 
 .hero-eyebrow {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1rem;
   animation: eyebrowIn .6s var(--transition) .1s both;
 }
 @keyframes eyebrowIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
@@ -193,11 +194,11 @@ body {
 
 .hero-h1 {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 74px;
-  line-height: .88;
+  font-size: 62px;
+  line-height: .9;
   color: #fff;
   letter-spacing: 1.5px;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1rem;
   animation: h1In .7s var(--transition) .2s both;
 }
 @keyframes h1In { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -219,7 +220,7 @@ body {
   font-size: 13px;
   line-height: 1.85;
   max-width: 320px;
-  margin-bottom: 2.2rem;
+  margin-bottom: 1.5rem;
   animation: heroTxtIn .7s var(--transition) .35s both;
 }
 @keyframes heroTxtIn { from { opacity: 0; } to { opacity: 1; } }
@@ -273,7 +274,7 @@ body {
 .btn-ghost:hover { border-color: var(--gold); color: var(--gold); background: rgba(232,160,32,.06); }
 
 /* Hero image grid */
-.hero-r { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; max-height: 360px; }
+.hero-r { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; max-height: 280px; overflow: hidden; }
 
 .hi {
   overflow: hidden;
@@ -348,12 +349,12 @@ body {
 .ti-dot { width: 3px; height: 3px; background: rgba(255,255,255,.5); border-radius: 50%; }
 
 /* ─── FEATURED SECTION ───────────────────────────────────── */
-.featured-section { padding: 2.5rem 2rem; }
+.featured-section { padding: 1.75rem 2rem; }
 .section-header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.25rem;
 }
 .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 34px; letter-spacing: 2px; color: var(--ink); line-height: 1; }
 .section-title em { color: var(--ember); font-style: normal; }
@@ -497,16 +498,17 @@ body {
 .fsrch:focus { outline: none; border-color: var(--ember); background: #fff; box-shadow: 0 0 0 3px rgba(217,78,21,.1); }
 
 /* ─── CATALOGUE BODY ─────────────────────────────────────── */
-.cat-body { padding: 1.75rem 2rem; }
+.cat-body { padding: 1.25rem 2rem; }
 .cat-count { font-size: 9.5px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.25rem; }
 .pgrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 14px;
 }
 
 #home-grid {
   grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
 }
 @media (max-width: 900px) {
   #home-grid { grid-template-columns: repeat(2, 1fr); }
@@ -852,7 +854,7 @@ body {
 .ab-l h2 { font-family: 'Bebas Neue', sans-serif; font-size: 48px; letter-spacing: 2px; color: #fff; line-height: .9; margin-bottom: .85rem; }
 .ab-l h2 em { color: var(--gold); font-style: normal; display: block; }
 .ab-l p { font-size: 13px; color: rgba(255,255,255,.65); line-height: 1.85; margin-bottom: .7rem; }
-.ab-r { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; max-height: 300px; }
+.ab-r { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; max-height: 240px; overflow: hidden; }
 .aimg { overflow: hidden; background: var(--dusk); min-height: 0; }
 .aimg img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(.78) saturate(.9); transition: filter .4s; }
 .aimg:hover img { filter: brightness(.96) saturate(1.05); }
@@ -1677,69 +1679,50 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 
 <div class="toast" id="toast-el"></div>
 
-<!-- ══ FIREBASE SDK (CDN) ══ -->
+<!-- ══ FIREBASE SDK ══ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-import { getFirestore, doc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
-const FIREBASE_CONFIG = {
+const app = initializeApp({
   apiKey:            "AIzaSyCt9zlckcPb7agpkbBsIH4DPS7w55Fn2E8",
   authDomain:        "culturecase-gs.firebaseapp.com",
   projectId:         "culturecase-gs",
   storageBucket:     "culturecase-gs.firebasestorage.app",
   messagingSenderId: "369046579849",
   appId:             "1:369046579849:web:3672d245a9f7d42e687458"
-};
+});
+const db = getFirestore(app);
 
-const app = initializeApp(FIREBASE_CONFIG);
-const db  = getFirestore(app);
-
-// ── Chunk system (identique au back-office) ──────────────────────────────────
 const chunkCache = new Map();
-let   mainCache  = null;
-let   chunkUnsubs = [];
-let   currentChunkCount = 0;
+let mainCache = null, chunkUnsubs = [], currentChunkCount = 0;
 
-function assembleAndApply() {
+function assemble() {
   if (!mainCache) return;
-  const allProducts = Array.from(
-    { length: currentChunkCount },
-    (_, i) => chunkCache.get(i) ?? []
-  ).flat();
-  const fullData = { ...mainCache, products: allProducts };
-  window.__applyFirebaseData(fullData);
+  const prods = Array.from({ length: currentChunkCount }, (_, i) => chunkCache.get(i) ?? []).flat();
+  window.__applyFirebaseData({ ...mainCache, products: prods });
 }
 
 function subscribeChunks(count) {
   chunkUnsubs.forEach(u => u());
-  chunkUnsubs = [];
-  chunkCache.clear();
-  currentChunkCount = count;
-  if (count === 0) { assembleAndApply(); return; }
+  chunkUnsubs = []; chunkCache.clear(); currentChunkCount = count;
+  if (!count) { assemble(); return; }
   for (let i = 0; i < count; i++) {
     const idx = i;
-    const unsub = onSnapshot(doc(db, "data", `products_${idx}`), snap => {
+    chunkUnsubs.push(onSnapshot(doc(db, "data", `products_${idx}`), snap => {
       chunkCache.set(idx, snap.exists() ? (snap.data().items || []) : []);
-      assembleAndApply();
-    });
-    chunkUnsubs.push(unsub);
+      assemble();
+    }));
   }
 }
 
-// Listener principal sur "main"
 onSnapshot(doc(db, "data", "main"), snap => {
   if (!snap.exists()) return;
-  const d = snap.data();
-  mainCache = d;
-  const newCount = d._chunkCount ?? 0;
-  if (newCount !== currentChunkCount) {
-    subscribeChunks(newCount);
-  } else {
-    assembleAndApply();
-  }
+  mainCache = snap.data();
+  const n = mainCache._chunkCount ?? 0;
+  if (n !== currentChunkCount) subscribeChunks(n); else assemble();
 });
-
-console.log("[CultureCase] Firebase connecté — écoute Firestore active ✅");
+console.log("[CultureCase] Firebase connecté ✅");
 </script>
 
 <script>
@@ -1834,6 +1817,7 @@ function getDesignGlobalStatus(designId){
 }
 
 // NOTE: Ces tableaux sont mutables — Firebase les met à jour en temps réel
+// Tableaux mutables — mis à jour par Firebase
 const MDS_G1=['iPhone 12','iPhone 12 Pro Max','iPhone 13','iPhone 13 Pro','iPhone 13 Pro Max'];
 const MDS_G2=['iPhone 14','iPhone 14 Plus','iPhone 14 Pro','iPhone 14 Pro Max','iPhone 15','iPhone 15 Plus','iPhone 15 Pro','iPhone 15 Pro Max','iPhone 16','iPhone 16 Plus','iPhone 16 Pro','iPhone 16 Pro Max','iPhone 17','iPhone 17 Air','iPhone 17 Pro','iPhone 17 Pro Max'];
 const ALL_MDS=[...MDS_G1,...MDS_G2];
@@ -1850,24 +1834,16 @@ const tEl=document.getElementById('ttick');
 if(tEl){const tH=tItems.map(x=>`<span class="ti"><span class="ti-dot"></span>${x}</span>`).join('');tEl.innerHTML=tH+tH;}
 initHome();
 
-// ══ CONNEXION FIREBASE TEMPS RÉEL ════════════════════════════════════════════
-// Appelée à chaque mise à jour Firestore. Reconstruit DS, STOCK_MAP,
-// ALL_MDS et MDS_G1 depuis la structure exacte du back-office.
-//
-// Structure Firestore (back-office) :
-//   data/main        → { settings: { designs[], models[], priceSettings }, sales[], ... }
-//   data/products_N  → { items: [ { id, design, model, stock, price, ... } ] }
-
+// ══ FIREBASE → UI ════════════════════════════════════════════════════════════
 window.__applyFirebaseData = function(data) {
   try {
     const settings = data.settings || {};
-
-    // ── 1. Designs (depuis settings.designs) ──────────────────────────────────
     const rawDesigns = settings.designs || [];
-    if (rawDesigns.length === 0) return; // garde données statiques si vide
+    if (!rawDesigns.length) return;
 
+    // 1. Designs — filtrer ceux sans image Cloudinary
     const newDS = rawDesigns
-      .filter(d => d.image && !d.image.startsWith('data:') && !d.image.startsWith('idb:'))
+      .filter(d => d.image && d.image.startsWith('http'))
       .map(d => ({
         id:    d.id,
         name:  (d.name || '').toUpperCase(),
@@ -1875,95 +1851,124 @@ window.__applyFirebaseData = function(data) {
         story: d.description || d.name || '',
         cat:   (d.category || 'CULTURE').toUpperCase()
       }));
+    if (!newDS.length) return;
 
-    if (newDS.length === 0) return;
-
-    // ── 2. Stock Map (depuis products — chaque ligne = 1 design × 1 modèle) ──
-    // Structure : { designId: { modelName: qty } }
+    // 2. Stock Map — products: [{design, model, stock}]
     const newStockMap = {};
-    const products = data.products || [];
-
-    for (const p of products) {
-      // p.design = nom du design (ex: "DJENNÉ")
-      // p.model  = nom du modèle (ex: "iPhone 15 Pro")
-      // p.stock  = quantité en stock
-      const designName = (p.design || '').toUpperCase();
-      const model      = p.model;
-      const qty        = typeof p.stock === 'number' ? p.stock : 0;
-
-      // Chercher l'id du design par son nom
-      const dsItem = newDS.find(d => d.name === designName);
-      if (!dsItem || !model) continue;
-
+    for (const p of (data.products || [])) {
+      const dsItem = newDS.find(d => d.name === (p.design || '').toUpperCase());
+      if (!dsItem || !p.model) continue;
       if (!newStockMap[dsItem.id]) newStockMap[dsItem.id] = {};
-      newStockMap[dsItem.id][model] = qty;
+      newStockMap[dsItem.id][p.model] = typeof p.stock === 'number' ? p.stock : 0;
     }
 
-    // ── 3. Modèles & prix ─────────────────────────────────────────────────────
-    // settings.models = liste ordonnée des modèles
-    // settings.priceSettings.modelPrices = { "iPhone 12": 3500, ... }
+    // 3. Modèles
     const modelPrices = (settings.priceSettings || {}).modelPrices || {};
     const allModels   = settings.models || [];
+    const newMdsG1    = allModels.filter(m => (modelPrices[m] || 5000) <= 3500);
+    const newAllMds   = allModels.length ? allModels : [...newMdsG1];
 
-    // G1 = modèles à 3500 FCFA, G2 = modèles à 5000 FCFA
-    const newMdsG1 = allModels.filter(m => (modelPrices[m] || 5000) <= 3500);
-    const newMdsG2 = allModels.filter(m => (modelPrices[m] || 5000) > 3500);
-    const newAllMds = allModels.length ? allModels : [...newMdsG1, ...newMdsG2];
-
-    // ── 4. Mise à jour des variables globales ─────────────────────────────────
-    DS.length = 0;
-    newDS.forEach(d => DS.push(d));
-
+    // 4. Mise à jour globales
+    DS.length = 0; newDS.forEach(d => DS.push(d));
     Object.keys(STOCK_MAP).forEach(k => delete STOCK_MAP[k]);
     Object.assign(STOCK_MAP, newStockMap);
+    MDS_G1.length = 0; newMdsG1.forEach(m => MDS_G1.push(m));
+    ALL_MDS.length = 0; newAllMds.forEach(m => ALL_MDS.push(m));
 
-    MDS_G1.length = 0;
-    newMdsG1.forEach(m => MDS_G1.push(m));
-
-    ALL_MDS.length = 0;
-    newAllMds.forEach(m => ALL_MDS.push(m));
-
-    // ── 5. Rafraîchir l'UI ────────────────────────────────────────────────────
-    const activePg = document.querySelector('.pg.on')?.id?.replace('pg-', '') || 'home';
-    if (activePg === 'home')      initHome();
-    if (activePg === 'catalogue') filt();
-    if (activePg === 'detail' && curD) {
+    // 5. Refresh UI
+    const pg = document.querySelector('.pg.on')?.id?.replace('pg-','') || 'home';
+    if (pg === 'home')      initHome();
+    if (pg === 'catalogue') filt();
+    if (pg === 'detail' && curD) {
       const sel = document.getElementById('d-mod');
       if (sel) {
-        const currentModel = sel.value;
+        const cur = sel.value;
         sel.innerHTML = ALL_MDS.map(m => {
-          const qty = getModelStock(curD.id, m);
-          let label = m;
-          if (qty === 0) label += ' — Rupture';
-          else if (qty === 1) label += ' — 1 restant';
-          else if (qty === 2) label += ' — 2 restants';
-          const disabled = qty === 0 ? 'style="color:var(--muted);opacity:.5"' : '';
-          return `<option value="${m}" ${disabled}>${label}</option>`;
+          const q = getModelStock(curD.id, m);
+          const lbl = q === 0 ? m + ' — Rupture' : q <= 2 ? `${m} — ${q} restant${q>1?'s':''}` : m;
+          return `<option value="${m}" ${q===0?'disabled':''}>${lbl}</option>`;
         }).join('');
-        if (currentModel && ALL_MDS.includes(currentModel)) sel.value = currentModel;
+        if (cur && ALL_MDS.includes(cur)) sel.value = cur;
         updatePrice();
       }
     }
-
-    // Mettre à jour le sélecteur global de modèle
     const gSel = document.getElementById('global-model');
     if (gSel) {
-      const currentVal = gSel.value;
+      const cur = gSel.value;
       gSel.innerHTML = '<option value="">-- Choisir mon iPhone --</option>' +
-        ALL_MDS.map(m => {
-          const prix = modelPrices[m] ? Number(modelPrices[m]).toLocaleString('fr-FR') + ' FCFA' : '3 500 – 5 000 FCFA';
-          return `<option value="${m}">${m} — ${prix}</option>`;
-        }).join('');
-      if (currentVal && ALL_MDS.includes(currentVal)) {
-        gSel.value = currentVal;
-        onGlobalModelChange();
-      }
+        ALL_MDS.map(m => `<option value="${m}">${m} — ${modelPrices[m]?Number(modelPrices[m]).toLocaleString('fr-FR')+' FCFA':'3 500 – 5 000 FCFA'}</option>`).join('');
+      if (cur && ALL_MDS.includes(cur)) { gSel.value = cur; onGlobalModelChange(); }
+    }
+    console.log(`[CultureCase] ✅ ${DS.length} designs · ${Object.keys(STOCK_MAP).length} stocks · ${ALL_MDS.length} modèles`);
+  } catch(e) { console.error('[CultureCase] Firebase apply error:', e); }
+};
+
+// ══ FIREBASE → UI ════════════════════════════════════════════════════════════
+window.__applyFirebaseData = function(data) {
+  try {
+    const settings = data.settings || {};
+    const rawDesigns = settings.designs || [];
+    if (!rawDesigns.length) return;
+
+    // 1. Designs (images Cloudinary uniquement)
+    const newDS = rawDesigns
+      .filter(d => d.image && d.image.startsWith('http'))
+      .map(d => ({
+        id:    d.id,
+        name:  (d.name || '').toUpperCase(),
+        img:   d.image,
+        story: d.description || d.name || '',
+        cat:   (d.category || 'CULTURE').toUpperCase()
+      }));
+    if (!newDS.length) return;
+
+    // 2. Stock Map — products: [{design, model, stock}]
+    const newStockMap = {};
+    for (const p of (data.products || [])) {
+      const dsItem = newDS.find(d => d.name === (p.design || '').toUpperCase());
+      if (!dsItem || !p.model) continue;
+      if (!newStockMap[dsItem.id]) newStockMap[dsItem.id] = {};
+      newStockMap[dsItem.id][p.model] = typeof p.stock === 'number' ? p.stock : 0;
     }
 
-    console.log(`[CultureCase] ✅ Firebase sync — ${DS.length} designs, ${products.length} entrées stock, ${ALL_MDS.length} modèles`);
-  } catch(err) {
-    console.error('[CultureCase] Erreur application données Firebase:', err);
-  }
+    // 3. Modèles & prix
+    const modelPrices = (settings.priceSettings || {}).modelPrices || {};
+    const allModels   = settings.models || [];
+    const newMdsG1    = allModels.filter(m => (modelPrices[m] || 5000) <= 3500);
+
+    // 4. Mise à jour des variables globales
+    DS.length = 0; newDS.forEach(d => DS.push(d));
+    Object.keys(STOCK_MAP).forEach(k => delete STOCK_MAP[k]);
+    Object.assign(STOCK_MAP, newStockMap);
+    MDS_G1.length = 0; newMdsG1.forEach(m => MDS_G1.push(m));
+    ALL_MDS.length = 0; allModels.forEach(m => ALL_MDS.push(m));
+
+    // 5. Rafraîchir l'UI
+    const pg = document.querySelector('.pg.on')?.id?.replace('pg-','') || 'home';
+    if (pg === 'home')      initHome();
+    if (pg === 'catalogue') filt();
+    if (pg === 'detail' && curD) {
+      const sel = document.getElementById('d-mod');
+      if (sel) {
+        const cur = sel.value;
+        sel.innerHTML = ALL_MDS.map(m => {
+          const q = getModelStock(curD.id, m);
+          const lbl = q === 0 ? m + ' — Rupture' : q <= 2 ? `${m} — ${q} restant${q>1?'s':''}` : m;
+          return `<option value="${m}" ${q===0?'disabled':''}>${lbl}</option>`;
+        }).join('');
+        if (cur && ALL_MDS.includes(cur)) sel.value = cur;
+        updatePrice();
+      }
+    }
+    const gSel = document.getElementById('global-model');
+    if (gSel) {
+      const cur = gSel.value;
+      gSel.innerHTML = '<option value="">-- Choisir mon iPhone --</option>' +
+        ALL_MDS.map(m => `<option value="${m}">${m} — ${modelPrices[m] ? Number(modelPrices[m]).toLocaleString('fr-FR') + ' FCFA' : '3 500 – 5 000 FCFA'}</option>`).join('');
+      if (cur && ALL_MDS.includes(cur)) { gSel.value = cur; onGlobalModelChange(); }
+    }
+    console.log(`[CultureCase] ✅ ${DS.length} designs · ${Object.keys(STOCK_MAP).length} stocks · ${ALL_MDS.length} modèles`);
+  } catch(e) { console.error('[CultureCase] Firebase apply error:', e); }
 };
 
 function getPrice(model){
@@ -2215,7 +2220,7 @@ function card(d){
 
 function initHome(){
   const grid = document.getElementById('home-grid');
-  if(grid) grid.innerHTML = DS.slice(0,8).map(card).join('');
+  if(grid) grid.innerHTML = DS.slice(0,8).map(card).join(''); // 8 designs = 2 rangées de 4
 }
 
 function initCat(){
