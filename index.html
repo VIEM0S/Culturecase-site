@@ -2296,12 +2296,181 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
         <span class="footer-link" style="cursor:default">💬 Réponse rapide WA</span>
       </div>
     </div>
+    <div>
+      <div class="footer-col-title">Légal</div>
+      <div class="footer-links">
+        <button class="footer-link" onclick="go('faq')">FAQ</button>
+        <button class="footer-link" onclick="go('livraison')">Livraison &amp; retours</button>
+        <button class="footer-link" onclick="go('politique')">Politique commerciale</button>
+        <button class="footer-link" onclick="go('paiement')">Modes de paiement</button>
+      </div>
+    </div>
   </div>
   <div class="footer-bottom">
     <span class="footer-copy">© <span id="footer-year"></span> CultureCase · Tous droits réservés</span>
     <span class="footer-made">Fait avec <span>♥</span> à Bamako</span>
   </div>
 </div>
+</div>
+
+<!-- ══ PAGE FAQ ══ -->
+<div class="pg" id="pg-faq">
+  <div style="max-width:760px;margin:0 auto;padding:3rem 1.5rem 5rem">
+    <button onclick="go('home')" style="background:none;border:none;color:var(--ember);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:2rem;padding:0">
+      <i class="ti ti-arrow-left"></i> Retour à l'accueil
+    </button>
+    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--ink);margin-bottom:.5rem">FAQ</h1>
+    <p style="color:var(--muted);margin-bottom:3rem">Questions fréquemment posées</p>
+
+    <div style="display:flex;flex-direction:column;gap:1rem">
+      ${[
+        ['Comment passer une commande ?', 'C\'est simple : choisissez votre design dans le catalogue, sélectionnez votre modèle d\'iPhone, puis cliquez sur "Commander sur WhatsApp". Un message pré-rédigé s\'ouvrira directement, il ne vous reste qu\'à l\'envoyer.'],
+        ['Quels modèles d\'iPhone sont compatibles ?', 'Nous couvrons les iPhone 12, 12 Pro Max, 13, 13 Pro, 13 Pro Max (3 500 FCFA) ainsi que les iPhone 14, 14 Plus, 14 Pro, 14 Pro Max, 15, 15 Plus, 15 Pro, 15 Pro Max, 16, 16 Plus, 16 Pro, 16 Pro Max, 17, 17 Air, 17 Pro et 17 Pro Max (5 000 FCFA).'],
+        ['Combien de temps pour recevoir ma commande ?', 'Livraison à domicile ou retrait en point relais disponible dans la journée ou le lendemain pour Bamako, selon les disponibilités. Vous serez contacté par WhatsApp pour confirmer les détails.'],
+        ['Est-ce que le stock affiché est à jour ?', 'Oui. Notre stock est synchronisé en temps réel avec notre système de gestion. Ce que vous voyez reflète la disponibilité actuelle.'],
+        ['Puis-je retourner un produit ?', 'Nous n\'acceptons pas les retours pour convenance personnelle. En revanche, tout produit présentant un défaut de fabrication est échangé sans frais dans les 48h suivant la réception.'],
+        ['Comment me faire rembourser ?', 'En cas de défaut confirmé, nous proposons un échange du produit. Aucun remboursement en espèces n\'est effectué — uniquement un échange contre un produit identique ou disponible.'],
+        ['Vous livrez en dehors de Bamako ?', 'Pour l\'instant, nous opérons principalement sur Bamako. Contactez-nous sur WhatsApp pour discuter d\'une livraison dans d\'autres villes du Mali.'],
+        ['Comment vous contacter ?', 'Le moyen le plus rapide est WhatsApp au +223 75 99 24 82. Nous répondons généralement dans l\'heure pendant les heures ouvrables.'],
+      ].map(([q,a])=>`
+        <div style="border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+          <details>
+            <summary style="padding:1.1rem 1.5rem;cursor:pointer;font-weight:500;font-size:15px;color:var(--ink);list-style:none;display:flex;justify-content:space-between;align-items:center">
+              ${q} <i class="ti ti-chevron-down" style="color:var(--ember);flex-shrink:0"></i>
+            </summary>
+            <div style="padding:0 1.5rem 1.25rem;color:var(--muted);line-height:1.7;font-size:14px">${a}</div>
+          </details>
+        </div>`).join('')}
+    </div>
+
+    <div style="margin-top:3rem;background:var(--sand);border-radius:var(--radius-lg);padding:1.5rem 2rem;text-align:center">
+      <p style="font-weight:500;margin-bottom:.75rem">Vous n'avez pas trouvé votre réponse ?</p>
+      <a href="https://wa.me/22375992482" style="display:inline-flex;align-items:center;gap:8px;background:var(--ember);color:#fff;padding:.7rem 1.5rem;border-radius:var(--radius);font-size:14px;font-weight:500;text-decoration:none">
+        <i class="ti ti-brand-whatsapp"></i> Nous écrire sur WhatsApp
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE LIVRAISON & RETOURS ══ -->
+<div class="pg" id="pg-livraison">
+  <div style="max-width:760px;margin:0 auto;padding:3rem 1.5rem 5rem">
+    <button onclick="go('home')" style="background:none;border:none;color:var(--ember);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:2rem;padding:0">
+      <i class="ti ti-arrow-left"></i> Retour à l'accueil
+    </button>
+    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--ink);margin-bottom:.5rem">Livraison &amp; Retours</h1>
+    <p style="color:var(--muted);margin-bottom:3rem">Tout ce que vous devez savoir sur la livraison et les échanges</p>
+
+    <div style="display:flex;flex-direction:column;gap:2rem">
+      <div style="background:var(--warm);border-left:4px solid var(--ember);border-radius:0 var(--radius-lg) var(--radius-lg) 0;padding:1.5rem 2rem">
+        <h2 style="font-size:1.1rem;font-weight:600;margin-bottom:1rem;color:var(--ink)">🛵 Livraison à domicile</h2>
+        <p style="color:var(--muted);line-height:1.7;font-size:14px">Nous livrons directement chez vous à Bamako. Une fois votre commande confirmée sur WhatsApp, notre livreur vous contacte pour convenir d'un créneau. La livraison est généralement effectuée dans la journée ou le lendemain selon votre quartier.</p>
+      </div>
+
+      <div style="background:var(--warm);border-left:4px solid var(--gold);border-radius:0 var(--radius-lg) var(--radius-lg) 0;padding:1.5rem 2rem">
+        <h2 style="font-size:1.1rem;font-weight:600;margin-bottom:1rem;color:var(--ink)">📍 Retrait en point relais</h2>
+        <p style="color:var(--muted);line-height:1.7;font-size:14px">Vous préférez venir récupérer votre coque ? C'est possible. Contactez-nous sur WhatsApp pour connaître le point de retrait disponible le plus proche de vous à Bamako.</p>
+      </div>
+
+      <div style="background:var(--warm);border-left:4px solid var(--leaf);border-radius:0 var(--radius-lg) var(--radius-lg) 0;padding:1.5rem 2rem">
+        <h2 style="font-size:1.1rem;font-weight:600;margin-bottom:1rem;color:var(--ink)">🔄 Politique de retour &amp; échange</h2>
+        <p style="color:var(--muted);line-height:1.7;font-size:14px">Nous ne pratiquons pas le retour pour convenance personnelle (changement d'avis, mauvaise couleur estimée à l'écran, etc.).</p>
+        <p style="color:var(--muted);line-height:1.7;font-size:14px;margin-top:.75rem"><strong style="color:var(--ink)">Échange accepté uniquement en cas de défaut de fabrication</strong> constaté à la réception : coque cassée, impression défectueuse, mauvais modèle livré. Signalez-nous le problème dans les 48h par WhatsApp avec une photo du produit.</p>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem 2rem">
+        <h2 style="font-size:1.1rem;font-weight:600;margin-bottom:1rem;color:var(--ink)">⚠️ Conditions importantes</h2>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem">
+          ${['Le produit doit être dans son état d\'origine (non utilisé, non rayé).',
+             'L\'échange est soumis à la disponibilité du même modèle en stock.',
+             'Les frais de livraison pour l\'échange sont pris en charge par CultureCase.',
+             'Aucun remboursement en espèces — uniquement échange produit.',
+             'Toute réclamation après 48h ne pourra pas être traitée.']
+            .map(i=>`<li style="display:flex;gap:10px;font-size:14px;color:var(--muted)"><span style="color:var(--ember);flex-shrink:0">→</span>${i}</li>`).join('')}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE POLITIQUE COMMERCIALE ══ -->
+<div class="pg" id="pg-politique">
+  <div style="max-width:760px;margin:0 auto;padding:3rem 1.5rem 5rem">
+    <button onclick="go('home')" style="background:none;border:none;color:var(--ember);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:2rem;padding:0">
+      <i class="ti ti-arrow-left"></i> Retour à l'accueil
+    </button>
+    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--ink);margin-bottom:.5rem">Politique Commerciale</h1>
+    <p style="color:var(--muted);margin-bottom:3rem">Conditions générales de vente — CultureCase, Bamako</p>
+
+    <div style="display:flex;flex-direction:column;gap:2rem;font-size:14px;color:var(--muted);line-height:1.8">
+      ${[
+        ['1. Objet', 'Les présentes conditions régissent les ventes de coques iPhone réalisées par CultureCase auprès de tout client passant commande via WhatsApp ou le site web. Toute commande implique l\'acceptation pleine et entière de ces conditions.'],
+        ['2. Produits', 'CultureCase propose des coques iPhone personnalisées à motifs culturels africains et maliens. Les visuels affichés sur le site sont aussi fidèles que possible aux produits réels. De légères variations de teinte peuvent exister selon les paramètres d\'affichage de votre écran.'],
+        ['3. Prix', 'Les prix sont indiqués en Francs CFA (FCFA) toutes taxes comprises. CultureCase se réserve le droit de modifier ses tarifs à tout moment. Les prix applicables sont ceux en vigueur au moment de la validation de la commande.'],
+        ['4. Commande', 'La commande est passée via WhatsApp après sélection du design et du modèle sur le site. Elle est considérée comme ferme et définitive après confirmation par notre équipe. Aucune commande ne peut être annulée une fois confirmée et mise en préparation.'],
+        ['5. Disponibilité', 'Nos stocks sont mis à jour en temps réel. En cas d\'indisponibilité survenant après la confirmation de votre commande, nous vous en informerons immédiatement et vous proposerons un design ou modèle alternatif.'],
+        ['6. Propriété intellectuelle', 'Tous les designs proposés par CultureCase sont créés ou licenciés exclusivement pour notre usage. Toute reproduction, copie ou exploitation commerciale des visuels sans autorisation est strictement interdite.'],
+        ['7. Données personnelles', 'Les informations collectées (nom, numéro de téléphone, quartier) sont utilisées uniquement pour le traitement et la livraison de votre commande. Elles ne sont jamais partagées avec des tiers à des fins commerciales.'],
+        ['8. Litiges', 'En cas de litige, une solution amiable sera recherchée en priorité via WhatsApp. CultureCase s\'engage à répondre à toute réclamation dans un délai de 48h ouvrables.'],
+      ].map(([titre, texte])=>`
+        <div style="border-bottom:1px solid var(--border);padding-bottom:1.5rem">
+          <h2 style="font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:.5rem">${titre}</h2>
+          <p>${texte}</p>
+        </div>`).join('')}
+
+      <p style="font-size:12px;color:var(--border2)">Dernière mise à jour : Juin 2026 · CultureCase, Bamako, Mali</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE MODES DE PAIEMENT ══ -->
+<div class="pg" id="pg-paiement">
+  <div style="max-width:760px;margin:0 auto;padding:3rem 1.5rem 5rem">
+    <button onclick="go('home')" style="background:none;border:none;color:var(--ember);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:2rem;padding:0">
+      <i class="ti ti-arrow-left"></i> Retour à l'accueil
+    </button>
+    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--ink);margin-bottom:.5rem">Modes de Paiement</h1>
+    <p style="color:var(--muted);margin-bottom:3rem">Payez comme vous voulez — simple et sécurisé</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem;margin-bottom:2.5rem">
+      <div style="background:var(--warm);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">🟠</div>
+        <div style="font-weight:600;font-size:1rem;margin-bottom:.4rem;color:var(--ink)">Orange Money</div>
+        <div style="font-size:13px;color:var(--muted)">Paiement mobile rapide et sécurisé via Orange Mali</div>
+      </div>
+      <div style="background:var(--warm);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">🔵</div>
+        <div style="font-weight:600;font-size:1rem;margin-bottom:.4rem;color:var(--ink)">Wave</div>
+        <div style="font-size:13px;color:var(--muted)">Transfert instantané via l'application Wave</div>
+      </div>
+      <div style="background:var(--warm);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">💵</div>
+        <div style="font-weight:600;font-size:1rem;margin-bottom:.4rem;color:var(--ink)">Espèces</div>
+        <div style="font-size:13px;color:var(--muted)">Paiement en cash à la livraison ou au retrait</div>
+      </div>
+    </div>
+
+    <div style="background:var(--sand);border-radius:var(--radius-lg);padding:1.5rem 2rem;margin-bottom:2rem">
+      <h2 style="font-size:1rem;font-weight:600;margin-bottom:1rem;color:var(--ink)">Comment ça marche ?</h2>
+      <div style="display:flex;flex-direction:column;gap:.75rem">
+        ${[
+          ['1', 'Vous passez commande sur WhatsApp en précisant votre design, modèle et adresse.'],
+          ['2', 'Notre équipe confirme votre commande et vous communique le montant total.'],
+          ['3', 'Vous choisissez votre mode de paiement : Orange Money, Wave ou espèces à la livraison.'],
+          ['4', 'Pour Orange Money et Wave, le paiement est effectué avant ou à la livraison selon accord.'],
+          ['5', 'Pour les espèces, le règlement se fait au moment de la remise du colis.'],
+        ].map(([n,t])=>`
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="background:var(--ember);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0">${n}</span>
+            <span style="font-size:14px;color:var(--muted);line-height:1.6">${t}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;font-size:13px;color:var(--muted)">
+      <strong style="color:var(--ink)">Note :</strong> CultureCase ne demande jamais de paiement anticipé total avant confirmation de disponibilité. Méfiez-vous de toute demande non initiée par notre équipe officielle WhatsApp.
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast-el"></div>
