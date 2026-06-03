@@ -52,12 +52,12 @@ body {
 /* ─── NAV ─────────────────────────────────────────────────── */
 .nav {
   background: var(--dusk2);
-  height: 62px;
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
-  border-bottom: 2px solid rgba(232,160,32,.25);
+  padding: 0 2.5rem;
+  border-bottom: 2px solid rgba(232,160,32,.3);
   position: sticky;
   top: 0;
   z-index: 300;
@@ -77,8 +77,8 @@ body {
 
 .logo {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px;
-  letter-spacing: 5px;
+  font-size: 28px;
+  letter-spacing: 6px;
   color: var(--gold);
   cursor: pointer;
   line-height: 1;
@@ -86,15 +86,15 @@ body {
   z-index: 1;
   transition: letter-spacing .4s var(--transition), color .2s;
 }
-.logo:hover { letter-spacing: 8px; color: #F0B030; }
+.logo:hover { letter-spacing: 9px; color: #F0B030; }
 .logo-sub {
   font-family: 'DM Sans', sans-serif;
-  font-size: 7.5px;
+  font-size: 8px;
   letter-spacing: 3.5px;
-  color: rgba(232,160,32,.4);
+  color: rgba(232,160,32,.45);
   text-transform: uppercase;
   display: block;
-  margin-top: -1px;
+  margin-top: 1px;
   font-weight: 500;
 }
 
@@ -103,12 +103,12 @@ body {
 .nb {
   background: none;
   border: none;
-  color: rgba(255,255,255,.38);
-  font-size: 11px;
+  color: rgba(255,255,255,.55);
+  font-size: 11.5px;
   font-weight: 500;
   letter-spacing: .8px;
   text-transform: uppercase;
-  padding: 7px 14px;
+  padding: 8px 16px;
   cursor: pointer;
   transition: color .2s;
   font-family: 'DM Sans', sans-serif;
@@ -461,7 +461,7 @@ body {
   background: var(--white);
   border-bottom: 1px solid var(--border);
   position: sticky;
-  top: 62px;
+  top: 72px;
   z-index: 100;
   box-shadow: 0 2px 8px rgba(15,7,0,.04);
 }
@@ -1015,7 +1015,7 @@ body {
   background: var(--white);
   border-bottom: 1px solid var(--border);
   position: sticky;
-  top: 62px;
+  top: 72px;
   z-index: 100;
   box-shadow: 0 2px 8px rgba(15,7,0,.04);
 }
@@ -1207,28 +1207,48 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 /* ─── FOOTER ─────────────────────────────────────────────── */
 .footer {
   background: var(--dusk2);
-  padding: 1.75rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid rgba(255,255,255,.05);
+  border-top: 1px solid rgba(232,160,32,.12);
+  padding: 3rem 2.5rem 1.5rem;
 }
-.footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 4px; color: var(--gold); }
-.footer-links { display: flex; gap: 1rem; }
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.footer-brand-col {}
+.footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 5px; color: var(--gold); display: block; margin-bottom: .5rem; }
+.footer-brand-desc { font-size: 12px; color: rgba(255,255,255,.32); line-height: 1.7; max-width: 240px; margin-bottom: 1.25rem; }
+.footer-col-title { font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(232,160,32,.5); font-weight: 600; margin-bottom: .9rem; }
+.footer-links { display: flex; flex-direction: column; gap: .5rem; }
 .footer-link {
-  color: rgba(255,255,255,.28);
-  font-size: 10.5px;
-  font-weight: 500;
-  letter-spacing: .5px;
+  color: rgba(255,255,255,.35);
+  font-size: 12px;
+  font-weight: 400;
   cursor: pointer;
   transition: color .2s;
   background: none;
   border: none;
   font-family: 'DM Sans', sans-serif;
-  text-transform: uppercase;
+  text-align: left;
+  padding: 0;
 }
 .footer-link:hover { color: var(--gold); }
-.footer-social { display: flex; gap: 8px; }
+.footer-social { display: flex; gap: 8px; margin-top: .25rem; }
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.25rem;
+}
+.footer-copy { font-size: 10.5px; color: rgba(255,255,255,.2); letter-spacing: .5px; }
+.footer-made { font-size: 10.5px; color: rgba(255,255,255,.2); }
+.footer-made span { color: var(--ember); }
+@media (max-width: 768px) {
+  .footer-top { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .footer-brand-col { grid-column: 1 / -1; }
+}
 .soc {
   background: rgba(255,255,255,.05);
   border: none;
@@ -1323,6 +1343,548 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 }
 
 
+
+/* ─── MODEL CTA BAR (accueil) ─────────────────────────────── */
+.model-cta-bar {
+  background: var(--ink);
+  border-top: 1px solid rgba(232,160,32,.15);
+  border-bottom: 1px solid rgba(232,160,32,.15);
+  padding: 1.1rem 2.5rem;
+}
+.model-cta-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.model-cta-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.model-cta-text i { color: var(--ember); font-size: 18px; }
+.model-cta-text > span:first-of-type {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 17px;
+  letter-spacing: 2px;
+  color: #fff;
+}
+.model-cta-sub { display: none; }
+.model-cta-sel {
+  flex: 1;
+  background: rgba(255,255,255,.06);
+  border: 1.5px solid rgba(232,160,32,.3);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.model-cta-sel:focus { outline: none; border-color: var(--ember); }
+.model-cta-sel option { background: var(--ink); color: #fff; }
+.model-cta-btn {
+  background: var(--ember);
+  color: #fff;
+  border: none;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  letter-spacing: 2px;
+  padding: 10px 22px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .2s, transform .2s;
+  flex-shrink: 0;
+}
+.model-cta-btn:hover { background: var(--ember2); transform: translateY(-1px); }
+
+/* ─── REVIEWS SECTION ─────────────────────────────────────── */
+.reviews-section {
+  padding: 2rem 2.5rem 2.5rem;
+  background: var(--warm);
+  border-top: 1px solid var(--border);
+}
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+@media (max-width: 900px) { .reviews-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 540px) { .reviews-grid { grid-template-columns: 1fr; } }
+.review-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  transition: box-shadow .25s, transform .2s;
+}
+.review-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.rev-stars { color: var(--gold); font-size: 13px; letter-spacing: 1px; }
+.rev-text {
+  font-size: 12.5px;
+  color: rgba(15,7,0,.7);
+  line-height: 1.7;
+  flex: 1;
+  font-style: italic;
+}
+.rev-author { display: flex; align-items: center; gap: 10px; }
+.rev-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--ember);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.rev-name { font-size: 12px; font-weight: 600; color: var(--ink); }
+.rev-loc  { font-size: 10px; color: var(--muted); }
+
+/* ─── PHOTO PRODUIT (page détail) ─────────────────────────── */
+.det-imgbox {
+  position: relative;
+  background: var(--warm);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+}
+.det-mockup-badge {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: rgba(15,7,0,.65);
+  color: rgba(255,255,255,.8);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+
+/* ─── COMMANDE STRUCTURÉE (page détail) ──────────────────── */
+.order-steps {
+  display: flex;
+  gap: 6px;
+  margin: 1rem 0 .5rem;
+}
+.os {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .5px;
+}
+.os-num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--ember);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.os-arrow { color: var(--border2); font-size: 12px; }
+
+/* ─── BOUTON COMMANDE ─────────────────────────────────────── */
+.wa-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: #25D366;
+  color: #fff;
+  border: none;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 17px;
+  letter-spacing: 2.5px;
+  padding: 16px 24px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background .2s, transform .2s var(--transition), box-shadow .25s;
+  box-shadow: 0 4px 20px rgba(37,211,102,.35);
+  margin: 1.25rem 0 .75rem;
+}
+.wa-btn:hover { background: #1ebe5d; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37,211,102,.4); }
+
+/* ─── ORDER CONFIRMATION NOTE ──────────────────────────────── */
+.order-note {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+.order-note strong { color: var(--ink); }
+
+@media (max-width: 640px) {
+  .model-cta-inner { flex-direction: column; align-items: stretch; }
+  .model-cta-text > span:first-of-type { font-size: 15px; }
+}
+
+
+/* ─── BOUTIQUE HEADER ────────────────────────────────────── */
+.cat-top {
+  background: var(--dusk2);
+  padding: 2rem 2.5rem 1.5rem;
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid rgba(232,160,32,.12);
+}
+.cat-top::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 120% at 80% 50%, rgba(217,78,21,.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cat-top-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.cat-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  letter-spacing: 3px;
+  color: #fff;
+  line-height: .9;
+  margin-bottom: .3rem;
+}
+.cat-title em { color: var(--gold); font-style: normal; }
+.cat-sub { font-size: 9.5px; color: rgba(255,255,255,.45); letter-spacing: 2px; text-transform: uppercase; margin-top: .5rem; }
+
+/* ─── BARRE MODÈLE INTÉGRÉE dans le header ──────────────── */
+.cat-model-pick {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.cat-model-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.35);
+  font-weight: 600;
+}
+.cat-model-sel {
+  background: rgba(255,255,255,.07);
+  border: 1.5px solid rgba(232,160,32,.35);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  min-width: 220px;
+}
+.cat-model-sel:focus { outline: none; border-color: var(--ember); background: rgba(255,255,255,.1); }
+.cat-model-sel option, .cat-model-sel optgroup { background: var(--dusk2); color: #fff; }
+.cat-model-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: var(--ember);
+  text-align: right;
+  min-height: 24px;
+}
+
+/* ─── BARRE FILTRES COLLANTE ─────────────────────────────── */
+.cat-filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: .85rem 2.5rem;
+  background: var(--white);
+  border-bottom: 1.5px solid var(--border);
+  position: sticky;
+  top: 72px;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(15,7,0,.06);
+}
+.cat-search-wrap {
+  position: relative;
+  flex: 1;
+  max-width: 300px;
+}
+.cat-search-wrap i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 14px;
+  pointer-events: none;
+}
+.fsrch {
+  border: 1.5px solid var(--border);
+  background: var(--warm);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  padding: 8px 14px 8px 34px;
+  border-radius: var(--radius);
+  width: 100%;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.fsrch:focus { outline: none; border-color: var(--ember); background: #fff; box-shadow: 0 0 0 3px rgba(217,78,21,.1); }
+
+.cat-filter-sep { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
+
+.ftag {
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all .22s var(--transition);
+  font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+}
+.ftag:hover { border-color: var(--ember); color: var(--ember); background: rgba(217,78,21,.05); }
+.ftag.on  { border-color: var(--ember); background: var(--ember); color: #fff; box-shadow: 0 2px 8px rgba(217,78,21,.25); }
+
+.cat-count-bar {
+  padding: .6rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: var(--cream);
+}
+.cat-count {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.cat-sort {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .5px;
+}
+
+/* ─── GRILLE CATALOGUE ───────────────────────────────────── */
+.cat-body { padding: 1.5rem 2.5rem 3rem; }
+.pgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+  gap: 16px;
+}
+#home-grid {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+/* ─── CARD PRODUIT — MOCKUP STYLE ───────────────────────── */
+.pcard {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .28s, box-shadow .28s var(--transition), transform .28s var(--transition);
+  position: relative;
+  box-shadow: var(--shadow-card);
+}
+.pcard:hover {
+  border-color: var(--ember);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-4px);
+}
+.pc-img {
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background: var(--sand);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Mockup frame autour de l'image */
+.pc-img::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 16px;
+  border: 2px solid rgba(15,7,0,.06);
+  pointer-events: none;
+  z-index: 2;
+}
+.pc-img img {
+  width: 78%;
+  height: 88%;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+  transition: transform .6s var(--transition), filter .4s;
+  filter: saturate(.95);
+  box-shadow: 0 8px 32px rgba(15,7,0,.22), 0 2px 8px rgba(15,7,0,.12);
+  position: relative;
+  z-index: 1;
+}
+.pcard:hover .pc-img img {
+  transform: scale(1.04);
+  filter: brightness(1.06) saturate(1.08);
+}
+/* Ombre portée sous la coque = effet réaliste */
+.pc-img::before {
+  content: '';
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 20px;
+  background: rgba(15,7,0,.18);
+  border-radius: 50%;
+  filter: blur(12px);
+  z-index: 0;
+}
+
+.pc-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15,7,0,.48);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .3s;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 3;
+}
+.pcard:hover .pc-overlay { opacity: 1; }
+.pc-ov-btn {
+  background: var(--gold);
+  border: none;
+  color: var(--ink);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  padding: 10px 22px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background .2s, transform .2s var(--transition);
+  transform: translateY(6px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+}
+.pcard:hover .pc-ov-btn { transform: translateY(0); }
+.pc-ov-btn:hover { background: #F0B030; }
+
+.pc-ribbon {
+  position: absolute;
+  top: 10px; left: 10px;
+  background: rgba(217,78,21,.9);
+  color: #fff;
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  z-index: 4;
+}
+
+.pc-body { padding: .9rem 1rem 1rem; }
+.pc-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: .25rem;
+}
+.pc-hint { font-size: 10px; color: var(--muted); margin-bottom: .6rem; }
+.pc-row { display: flex; align-items: center; justify-content: space-between; }
+.pc-price { font-size: 13px; font-weight: 700; color: var(--ember); }
+.pc-stock-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.dot-ok  { background: var(--leaf); }
+.dot-lim { background: var(--gold); }
+.dot-out { background: rgba(15,7,0,.3); }
+
+.pc-add {
+  background: var(--ink);
+  border: none;
+  color: var(--gold);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: background .22s, transform .3s var(--transition), box-shadow .22s;
+  box-shadow: 0 2px 6px rgba(15,7,0,.15);
+}
+.pc-add:hover { background: #25D366; transform: scale(1.1); box-shadow: 0 4px 12px rgba(37,211,102,.3); }
+
+/* Stock badges (toujours utilisés) */
+.stock-badge {
+  position: absolute;
+  top: 10px; right: 10px;
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  z-index: 4;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+.stock-available { background: rgba(30,92,53,.88); color: #fff; }
+.stock-limited   { background: rgba(232,160,32,.92); color: #1E0900; }
+.stock-out       { background: rgba(15,7,0,.65); color: rgba(255,255,255,.5); }
+.pcard.is-out { opacity: .65; }
+.pcard.is-out .pc-add { opacity: .35; pointer-events: none; cursor: not-allowed; }
+
+@media (max-width: 768px) {
+  .cat-top { padding: 1.5rem; }
+  .cat-top-inner { flex-direction: column; align-items: flex-start; }
+  .cat-model-pick { align-items: flex-start; width: 100%; }
+  .cat-model-sel { min-width: unset; width: 100%; }
+  .cat-filters { padding: .75rem 1rem; top: 72px; }
+  .cat-body { padding: 1rem; }
+  .pgrid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  #home-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 </style>
 </style>
 </style>
@@ -1370,6 +1932,37 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   </div>
   <div class="ticker"><div class="ticker-t" id="ttick"></div></div>
 
+  <!-- Sélecteur modèle proéminent -->
+  <div class="model-cta-bar">
+    <div class="model-cta-inner">
+      <div class="model-cta-text">
+        <i class="ti ti-device-mobile"></i>
+        <span>Quel est votre modèle ?</span>
+        <span class="model-cta-sub">Voir les designs disponibles pour votre iPhone</span>
+      </div>
+      <select class="model-cta-sel" onchange="goToCatalogueWithModel(this.value)">
+        <option value="">— Choisir mon iPhone —</option>
+        <optgroup label="iPhone 12 / 13 · 3 500 FCFA">
+          <option>iPhone 12</option><option>iPhone 12 Pro Max</option>
+          <option>iPhone 13</option><option>iPhone 13 Pro</option><option>iPhone 13 Pro Max</option>
+        </optgroup>
+        <optgroup label="iPhone 14 et plus · 5 000 FCFA">
+          <option>iPhone 14</option><option>iPhone 14 Plus</option>
+          <option>iPhone 14 Pro</option><option>iPhone 14 Pro Max</option>
+          <option>iPhone 15</option><option>iPhone 15 Plus</option>
+          <option>iPhone 15 Pro</option><option>iPhone 15 Pro Max</option>
+          <option>iPhone 16</option><option>iPhone 16 Plus</option>
+          <option>iPhone 16 Pro</option><option>iPhone 16 Pro Max</option>
+          <option>iPhone 17</option><option>iPhone 17 Air</option>
+          <option>iPhone 17 Pro</option><option>iPhone 17 Pro Max</option>
+        </optgroup>
+      </select>
+      <button class="model-cta-btn" onclick="goToCatalogueWithModel(document.querySelector('.model-cta-sel').value)">
+        Voir les designs →
+      </button>
+    </div>
+  </div>
+
   <!-- Featured -->
   <div class="featured-section">
     <div class="section-header">
@@ -1381,61 +1974,93 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
     </div>
     <div class="pgrid" id="home-grid"></div>
   </div>
+
+  <!-- Témoignages -->
+  <div class="reviews-section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Ils <em>parlent</em> de nous</div>
+        <div class="section-sub">Avis clients vérifiés</div>
+      </div>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="rev-stars">★★★★★</div>
+        <p class="rev-text">« J'ai commandé le Bogolan pour mon iPhone 15. La qualité est incroyable, le design est vraiment fidèle. Tout Bamako me demande où j'ai eu ça ! »</p>
+        <div class="rev-author"><div class="rev-avatar">AK</div><div><div class="rev-name">Aminata K.</div><div class="rev-loc">Badalabougou, Bamako</div></div></div>
+      </div>
+      <div class="review-card">
+        <div class="rev-stars">★★★★★</div>
+        <p class="rev-text">« Livraison rapide, coque bien protégée dans l'emballage. Le design N'Ko est magnifique — un vrai bijou. Je vais en commander une autre pour offrir. »</p>
+        <div class="rev-author"><div class="rev-avatar">IB</div><div><div class="rev-name">Ibrahim B.</div><div class="rev-loc">Hippodrome, Bamako</div></div></div>
+      </div>
+      <div class="review-card">
+        <div class="rev-stars">★★★★★</div>
+        <p class="rev-text">« Enfin une marque malienne qui fait des coques de qualité ! Le Ciwara est mon préféré. Porter sa culture sur son téléphone, c'est exactement ce qu'il faut. »</p>
+        <div class="rev-author"><div class="rev-avatar">FD</div><div><div class="rev-name">Fatoumata D.</div><div class="rev-loc">ACI 2000, Bamako</div></div></div>
+      </div>
+      <div class="review-card">
+        <div class="rev-stars">★★★★☆</div>
+        <p class="rev-text">« La réponse sur WhatsApp est ultra rapide, la livraison le lendemain. La coque Djenné est superbe — ma femme l'a volée directement ! Je vais devoir en racheter une. »</p>
+        <div class="rev-author"><div class="rev-avatar">MS</div><div><div class="rev-name">Moussa S.</div><div class="rev-loc">Kalaban Coura, Bamako</div></div></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- CATALOGUE -->
 <div class="pg" id="pg-catalogue">
+  <!-- HEADER BOUTIQUE -->
   <div class="cat-top">
     <div class="cat-top-inner">
-      <div class="cat-title">Tous les <em>designs</em></div>
-      <div class="cat-sub">Designs exclusifs · Patrimoine malien</div>
+      <div>
+        <div class="cat-title">Nos <em>designs</em></div>
+        <div class="cat-sub">Patrimoine malien · Impression HD · Livraison Bamako</div>
+      </div>
+      <!-- Sélecteur modèle intégré dans le header -->
+      <div class="cat-model-pick">
+        <div class="cat-model-label"><i class="ti ti-device-mobile"></i> Mon iPhone</div>
+        <select class="cat-model-sel" id="global-model" onchange="onGlobalModelChange()">
+          <option value="">— Choisir mon modèle —</option>
+          <optgroup label="iPhone 12 / 13 · 3 500 FCFA">
+            <option>iPhone 12</option><option>iPhone 12 Pro Max</option>
+            <option>iPhone 13</option><option>iPhone 13 Pro</option><option>iPhone 13 Pro Max</option>
+          </optgroup>
+          <optgroup label="iPhone 14 et plus · 5 000 FCFA">
+            <option>iPhone 14</option><option>iPhone 14 Plus</option>
+            <option>iPhone 14 Pro</option><option>iPhone 14 Pro Max</option>
+            <option>iPhone 15</option><option>iPhone 15 Plus</option>
+            <option>iPhone 15 Pro</option><option>iPhone 15 Pro Max</option>
+            <option>iPhone 16</option><option>iPhone 16 Plus</option>
+            <option>iPhone 16 Pro</option><option>iPhone 16 Pro Max</option>
+            <option>iPhone 17</option><option>iPhone 17 Air</option>
+            <option>iPhone 17 Pro</option><option>iPhone 17 Pro Max</option>
+          </optgroup>
+        </select>
+        <div class="cat-model-price" id="mb-price-hint"></div>
+      </div>
     </div>
   </div>
 
-  <!-- SÉLECTEUR MODÈLE GLOBAL -->
-  <div class="model-bar">
-    <div class="mb-label"><i class="ti ti-device-mobile" aria-hidden="true"></i> Votre modèle iPhone</div>
-    <div class="mb-sel-wrap">
-      <select class="mb-sel" id="global-model" onchange="onGlobalModelChange()">
-        <option value="">— Choisir mon modèle —</option>
-        <optgroup label="──────────────────"></optgroup>
-        <optgroup label="iPhone 12 / 13 · 3 500 FCFA">
-          <option>iPhone 12</option>
-          <option>iPhone 12 Pro Max</option>
-          <option>iPhone 13</option>
-          <option>iPhone 13 Pro</option>
-          <option>iPhone 13 Pro Max</option>
-        </optgroup>
-        <optgroup label="iPhone 14 et plus · 5 000 FCFA">
-          <option>iPhone 14</option>
-          <option>iPhone 14 Plus</option>
-          <option>iPhone 14 Pro</option>
-          <option>iPhone 14 Pro Max</option>
-          <option>iPhone 15</option>
-          <option>iPhone 15 Plus</option>
-          <option>iPhone 15 Pro</option>
-          <option>iPhone 15 Pro Max</option>
-          <option>iPhone 16</option>
-          <option>iPhone 16 Plus</option>
-          <option>iPhone 16 Pro</option>
-          <option>iPhone 16 Pro Max</option>
-          <option>iPhone 17</option>
-          <option>iPhone 17 Air</option>
-          <option>iPhone 17 Pro</option>
-          <option>iPhone 17 Pro Max</option>
-        </optgroup>
-      </select>
-      <div class="mb-price" id="mb-price-hint"></div>
-    </div>
-    <div class="mb-info" id="mb-info"></div>
-  </div>
-
+  <!-- BARRE FILTRES -->
   <div class="cat-filters">
-    <input class="fsrch" type="search" id="sinp" placeholder="Rechercher..." oninput="filt()">
-    <div id="ftags-wrap"></div>
+    <div class="cat-search-wrap">
+      <i class="ti ti-search"></i>
+      <input class="fsrch" type="search" id="sinp" placeholder="Rechercher un design..." oninput="filt()">
+    </div>
+    <div class="cat-filter-sep"></div>
+    <button class="ftag" id="dispo-btn" onclick="toggleDispo(this)">✓ Disponible seulement</button>
+    <div style="margin-left:auto;font-size:10px;color:var(--muted)" id="mb-info"></div>
   </div>
-  <div class="cat-body">
+
+  <!-- COMPTEUR -->
+  <div class="cat-count-bar">
     <div class="cat-count" id="cat-count"></div>
+    <div class="cat-sort">Triés par popularité</div>
+  </div>
+
+  <!-- GRILLE -->
+  <div class="cat-body">
     <div class="pgrid" id="cat-grid"></div>
   </div>
 </div>
@@ -1445,7 +2070,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   <div class="det">
     <button class="bk" onclick="goBack()">← Retour</button>
     <div class="det-grid">
-      <div class="det-imgbox"><img id="d-img" src="" alt=""></div>
+      <div class="det-imgbox"><img id="d-img" src="" alt=""><div class="det-mockup-badge">Aperçu du design</div></div>
       <div>
         <div class="det-ey"><div class="det-ey-line"></div><span>Design exclusif · CultureCase</span></div>
         <div class="det-title" id="d-name"></div>
@@ -1497,10 +2122,20 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
           </div>
         </div>
 
+        <!-- Étapes commande -->
+        <div class="order-steps">
+          <div class="os"><div class="os-num">1</div> Choisir modèle &amp; quantité</div>
+          <div class="os-arrow">›</div>
+          <div class="os"><div class="os-num">2</div> Remplir livraison</div>
+          <div class="os-arrow">›</div>
+          <div class="os"><div class="os-num">3</div> Envoyer WhatsApp</div>
+        </div>
+
         <button class="wa-btn" id="wa-order-btn" onclick="orderWA()">
           <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
           <span>Commander sur WhatsApp</span>
         </button>
+        <p class="order-note">Votre commande sera envoyée sur WhatsApp. Nous confirmons <strong>sous 30 min</strong> et livrons <strong>le jour même ou le lendemain</strong> à Bamako.</p>
         <div class="det-feats">
           <div class="df"><i class="ti ti-shield-check" aria-hidden="true"></i>Protection renforcée</div>
           <div class="df"><i class="ti ti-palette" aria-hidden="true"></i>Impression HD</div>
@@ -1662,17 +2297,45 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 </div>
 
 <div class="footer">
-  <div class="footer-logo">CULTURECASE</div>
-  <div class="footer-links">
-    <button class="footer-link" onclick="go('catalogue')">Catalogue</button>
-    <button class="footer-link" onclick="go('about')">Histoire</button>
-    <button class="footer-link" onclick="go('blog')">Blog</button>
-    <button class="footer-link" onclick="go('contact')">Contact</button>
+  <div class="footer-top">
+    <div class="footer-brand-col">
+      <span class="footer-logo">CULTURECASE</span>
+      <p class="footer-brand-desc">Designs exclusifs inspirés du patrimoine malien. Conçus à Bamako, portés partout.</p>
+      <div class="footer-social">
+        <a class="soc" href="https://www.instagram.com/culturecase_official" title="Instagram"><i class="ti ti-brand-instagram" aria-hidden="true"></i></a>
+        <a class="soc" href="https://www.tiktok.com/@culturecase" title="TikTok"><i class="ti ti-brand-tiktok" aria-hidden="true"></i></a>
+        <a class="soc" href="https://wa.me/22375992482" title="WhatsApp"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigation</div>
+      <div class="footer-links">
+        <button class="footer-link" onclick="go('catalogue')">Catalogue</button>
+        <button class="footer-link" onclick="go('about')">Notre histoire</button>
+        <button class="footer-link" onclick="go('blog')">Blog</button>
+        <button class="footer-link" onclick="go('contact')">Contact</button>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Commander</div>
+      <div class="footer-links">
+        <a class="footer-link" href="https://wa.me/22375992482" style="text-decoration:none">WhatsApp</a>
+        <button class="footer-link" onclick="go('contact')">Nous écrire</button>
+        <button class="footer-link" onclick="go('catalogue')">Voir les designs</button>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Informations</div>
+      <div class="footer-links">
+        <span class="footer-link" style="cursor:default">📍 Bamako, Mali</span>
+        <span class="footer-link" style="cursor:default">📦 Livraison Bamako</span>
+        <span class="footer-link" style="cursor:default">💬 Réponse rapide WA</span>
+      </div>
+    </div>
   </div>
-  <div class="footer-social">
-    <a class="soc" href="https://www.instagram.com/culturecase_official" title="Instagram"><i class="ti ti-brand-instagram" aria-hidden="true"></i></a>
-    <a class="soc" href="https://www.tiktok.com/@culturecase" title="TikTok"><i class="ti ti-brand-tiktok" aria-hidden="true"></i></a>
-    <a class="soc" href="https://wa.me/22375992482" title="WhatsApp"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i></a>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 CultureCase · Tous droits réservés</span>
+    <span class="footer-made">Fait avec <span>♥</span> à Bamako</span>
   </div>
 </div>
 </div>
@@ -1960,11 +2623,13 @@ window.__applyFirebaseData = function(data) {
         updatePrice();
       }
     }
+    // Mettre à jour tous les sélecteurs de modèle (catalogue header)
     const gSel = document.getElementById('global-model');
     if (gSel) {
       const cur = gSel.value;
-      gSel.innerHTML = '<option value="">-- Choisir mon iPhone --</option>' +
+      const opts = '<option value="">— Choisir mon modèle —</option>' +
         ALL_MDS.map(m => `<option value="${m}">${m} — ${modelPrices[m] ? Number(modelPrices[m]).toLocaleString('fr-FR') + ' FCFA' : '3 500 – 5 000 FCFA'}</option>`).join('');
+      gSel.innerHTML = opts;
       if (cur && ALL_MDS.includes(cur)) { gSel.value = cur; onGlobalModelChange(); }
     }
     console.log(`[CultureCase] ✅ ${DS.length} designs · ${Object.keys(STOCK_MAP).length} stocks · ${ALL_MDS.length} modèles`);
@@ -2195,27 +2860,59 @@ function go(p){
 function card(d){
   const gmEl = document.getElementById('global-model');
   const gm = gmEl ? gmEl.value : '';
+
+  // Badge dispo si modèle sélectionné
   let availBadge = '';
+  let stockDot = '<span class="pc-stock-dot dot-ok"></span>';
+  let stockHint = 'Disponible';
   if(gm){
     const qty = getModelStock(d.id, gm);
-    if(qty > 0) availBadge = `<div class="stock-badge stock-available">Dispo</div>`;
-    else if(qty === 0) availBadge = `<div class="stock-badge stock-out">Rupture</div>`;
+    if(qty > 0 && qty <= 3){
+      availBadge = `<div class="stock-badge stock-limited">Derniers</div>`;
+      stockDot = '<span class="pc-stock-dot dot-lim"></span>';
+      stockHint = `${qty} restant${qty>1?'s':''} pour ${gm}`;
+    } else if(qty > 3){
+      availBadge = `<div class="stock-badge stock-available">Dispo</div>`;
+      stockHint = `En stock pour ${gm}`;
+    } else {
+      availBadge = `<div class="stock-badge stock-out">Rupture</div>`;
+      stockDot = '<span class="pc-stock-dot dot-out"></span>';
+      stockHint = `Rupture pour ${gm}`;
+    }
   }
-  return`<div class="pcard" onclick="openDet('${d.id}')">
+
+  const price = gm ? (MDS_G1.includes(gm) ? '3 500 FCFA' : '5 000 FCFA') : '3 500 – 5 000 FCFA';
+  const isOut = gm && getModelStock(d.id, gm) === 0;
+
+  return `<div class="pcard${isOut?' is-out':''}" onclick="openDet('${d.id}')">
     <div class="pc-img">
-      <img src="${d.img}" alt="${d.name}" loading="lazy" onerror="this.parentNode.style.background='#e2ceaa'">
-      <div class="pc-overlay"><button class="pc-ov-btn" onclick="event.stopPropagation();openDet('${d.id}')">Voir le design</button></div>
-      <div class="pc-ribbon">${d.cat}</div>
+      <img src="${d.img}" alt="${d.name}" loading="lazy" onerror="this.parentNode.style.background='var(--sand)'">
+      <div class="pc-overlay">
+        <button class="pc-ov-btn" onclick="event.stopPropagation();openDet('${d.id}')">Voir le design</button>
+      </div>
       ${availBadge}
     </div>
     <div class="pc-body">
       <div class="pc-name">${d.name}</div>
+      <div class="pc-hint">${stockDot}${stockHint}</div>
       <div class="pc-row">
-        <div class="pc-price">${gm?(MDS_G1.includes(gm)?'3 500 FCFA':'5 000 FCFA'):'3 500 – 5 000 FCFA'}</div>
-        <button class="pc-add" onclick="event.stopPropagation();orderQuick('${d.id}')" aria-label="Commander"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i></button>
+        <div class="pc-price">${price}</div>
+        <button class="pc-add" onclick="event.stopPropagation();orderQuick('${d.id}')" aria-label="Commander via WhatsApp" title="Commander via WhatsApp">
+          <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
+        </button>
       </div>
     </div>
   </div>`;
+}
+
+function goToCatalogueWithModel(model){
+  go('catalogue');
+  if(model){
+    setTimeout(()=>{
+      const sel = document.getElementById('global-model');
+      if(sel){ sel.value = model; onGlobalModelChange(); }
+    }, 100);
+  }
 }
 
 function initHome(){
@@ -2224,20 +2921,12 @@ function initHome(){
 }
 
 function initCat(){
-  const ft=document.getElementById('ftags-wrap');
-  if(!ft.children.length){
-    const cats=['Tous','TEXTILE','MONUMENT','CIWARA','VALEUR','PEUPLE','MASQUE','CULTURE','NATURE'];
-    cats.forEach((tag,i)=>{
-      const b=document.createElement('button');b.className='ftag'+(i===0?' on':'');b.textContent=tag;
-      b.onclick=()=>{activeTag=tag==='Tous'?'all':tag;stockFilter='all';document.querySelectorAll('#ftags-wrap .ftag').forEach(x=>x.classList.remove('on'));b.classList.add('on');filt();};
-      ft.appendChild(b);
-    });
-    // séparateur + filtre stock
-    const sep=document.createElement('span');sep.style.cssText='width:1px;background:var(--border);height:20px;align-self:center';ft.appendChild(sep);
-    const bs=document.createElement('button');bs.className='ftag';bs.textContent='✓ Disponible seulement';
-    bs.onclick=()=>{stockFilter=stockFilter==='available'?'all':'available';bs.classList.toggle('on');filt();};
-    ft.appendChild(bs);
-  }
+  filt();
+}
+
+function toggleDispo(btn){
+  stockFilter = stockFilter === 'available' ? 'all' : 'available';
+  btn.classList.toggle('on');
   filt();
 }
 
@@ -2245,16 +2934,15 @@ function onGlobalModelChange(){
   const sel = document.getElementById('global-model');
   const m = sel.value;
   sel.classList.toggle('chosen', !!m);
-  // afficher le prix et le nb de designs dispos
   const hint = document.getElementById('mb-price-hint');
   const info = document.getElementById('mb-info');
   if(m){
     hint.textContent = MDS_G1.includes(m) ? '3 500 FCFA' : '5 000 FCFA';
     const dispo = DS.filter(d=>getModelStock(d.id,m)>0).length;
-    info.innerHTML = `<strong>${dispo} design${dispo>1?'s':''} disponible${dispo>1?'s':''}</strong> pour ce modèle`;
+    info.innerHTML = `<strong>${dispo} design${dispo>1?'s':''}</strong> disponibles pour ${m}`;
   } else {
-    hint.textContent = '';
-    info.textContent = '';
+    if(hint) hint.textContent = '';
+    if(info) info.textContent = '';
   }
   filt();
 }
@@ -2263,7 +2951,6 @@ function filt(){
   const q=(document.getElementById('sinp')?.value||'').toLowerCase();
   const gm=(document.getElementById('global-model')?.value)||'';
   let res=DS.filter(d=>{
-    if(activeTag!=='all'&&d.cat!==activeTag)return false;
     if(stockFilter==='available'&&gm&&getModelStock(d.id,gm)===0)return false;
     if(q&&!d.name.toLowerCase().includes(q))return false;
     return true;
