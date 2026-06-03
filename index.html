@@ -2298,7 +2298,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2025 CultureCase · Tous droits réservés</span>
+    <span class="footer-copy">© <span id="footer-year"></span> CultureCase · Tous droits réservés</span>
     <span class="footer-made">Fait avec <span>♥</span> à Bamako</span>
   </div>
 </div>
@@ -2343,12 +2343,54 @@ function subscribeChunks(count) {
   }
 }
 
+// ── Indicateur de statut Firebase dans le DOM ─────────────────────────────
+function setFbStatus(state) {
+  let el = document.getElementById('fb-status');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'fb-status';
+    Object.assign(el.style, {
+      position:'fixed', bottom:'14px', left:'14px', zIndex:'9999',
+      fontSize:'11px', fontWeight:'500', padding:'4px 10px',
+      borderRadius:'20px', display:'flex', alignItems:'center', gap:'6px',
+      backdropFilter:'blur(8px)', transition:'opacity .4s', opacity:'0',
+      fontFamily:'DM Sans, sans-serif', pointerEvents:'none'
+    });
+    document.body.appendChild(el);
+  }
+  const styles = {
+    live:    { bg:'rgba(30,92,53,.85)',  color:'#b6f5ce', dot:'#4ade80', txt:'Données en direct' },
+    loading: { bg:'rgba(26,8,0,.8)',     color:'#E8A020', dot:'#E8A020', txt:'Connexion…' },
+    offline: { bg:'rgba(150,40,10,.85)', color:'#ffd0b0', dot:'#ff7043', txt:'Hors ligne — données locales' }
+  };
+  const s = styles[state] || styles.offline;
+  el.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${s.dot};display:inline-block;${state==='loading'?'animation:fbPulse 1.2s infinite':''}"></span>${s.txt}`;
+  Object.assign(el.style, { background:s.bg, color:s.color, opacity:'1' });
+  if (state === 'live') setTimeout(() => { el.style.opacity = '0'; }, 4000);
+}
+
+// Ajouter l'animation CSS pour le point clignotant
+const fbStyle = document.createElement('style');
+fbStyle.textContent = '@keyframes fbPulse{0%,100%{opacity:1}50%{opacity:.3}}';
+document.head.appendChild(fbStyle);
+
+setFbStatus('loading');
+
 onSnapshot(doc(db, "data", "main"), snap => {
   if (!snap.exists()) return;
   mainCache = snap.data();
   const n = mainCache._chunkCount ?? 0;
   if (n !== currentChunkCount) subscribeChunks(n); else assemble();
+  setFbStatus('live');
+}, err => {
+  console.error('[CultureCase] Firebase error:', err);
+  setFbStatus('offline');
 });
+
+// Détection offline/online navigateur
+window.addEventListener('offline', () => setFbStatus('offline'));
+window.addEventListener('online',  () => setFbStatus('loading'));
+
 console.log("[CultureCase] Firebase connecté ✅");
 </script>
 
@@ -2444,10 +2486,10 @@ function getDesignGlobalStatus(designId){
 }
 
 // NOTE: Ces tableaux sont mutables — Firebase les met à jour en temps réel
-// Tableaux mutables — mis à jour par Firebase
+// MDS_G1 = modèles ≤ 3 500 FCFA | MDS_G2 = modèles > 3 500 FCFA
 const MDS_G1=['iPhone 12','iPhone 12 Pro Max','iPhone 13','iPhone 13 Pro','iPhone 13 Pro Max'];
 const MDS_G2=['iPhone 14','iPhone 14 Plus','iPhone 14 Pro','iPhone 14 Pro Max','iPhone 15','iPhone 15 Plus','iPhone 15 Pro','iPhone 15 Pro Max','iPhone 16','iPhone 16 Plus','iPhone 16 Pro','iPhone 16 Pro Max','iPhone 17','iPhone 17 Air','iPhone 17 Pro','iPhone 17 Pro Max'];
-const ALL_MDS=[...MDS_G1,...MDS_G2];
+const ALL_MDS=[...MDS_G1,...MDS_G2]; // Firebase remplace le contenu via .length=0 + push
 
 let curD=null,dQty=1,prevPg='catalogue',activeTag='all',stockFilter='all';
 
@@ -2459,76 +2501,10 @@ const tItems=['BOGOLAN','DJENNÉ','N\'KO','TOUAREG','AFRICA','CIWARA','MUNYU','W
 // Le script est après le DOM — on initialise directement
 const tEl=document.getElementById('ttick');
 if(tEl){const tH=tItems.map(x=>`<span class="ti"><span class="ti-dot"></span>${x}</span>`).join('');tEl.innerHTML=tH+tH;}
+// Année dynamique dans le footer
+const fyEl=document.getElementById('footer-year');
+if(fyEl) fyEl.textContent=new Date().getFullYear();
 initHome();
-
-// ══ FIREBASE → UI ════════════════════════════════════════════════════════════
-window.__applyFirebaseData = function(data) {
-  try {
-    const settings = data.settings || {};
-    const rawDesigns = settings.designs || [];
-    if (!rawDesigns.length) return;
-
-    // 1. Designs — filtrer ceux sans image Cloudinary
-    const newDS = rawDesigns
-      .filter(d => d.image && d.image.startsWith('http'))
-      .map(d => ({
-        id:    d.id,
-        name:  (d.name || '').toUpperCase(),
-        img:   d.image,
-        story: d.description || d.name || '',
-        cat:   (d.category || 'CULTURE').toUpperCase()
-      }));
-    if (!newDS.length) return;
-
-    // 2. Stock Map — products: [{design, model, stock}]
-    const newStockMap = {};
-    for (const p of (data.products || [])) {
-      const dsItem = newDS.find(d => d.name === (p.design || '').toUpperCase());
-      if (!dsItem || !p.model) continue;
-      if (!newStockMap[dsItem.id]) newStockMap[dsItem.id] = {};
-      newStockMap[dsItem.id][p.model] = typeof p.stock === 'number' ? p.stock : 0;
-    }
-
-    // 3. Modèles
-    const modelPrices = (settings.priceSettings || {}).modelPrices || {};
-    const allModels   = settings.models || [];
-    const newMdsG1    = allModels.filter(m => (modelPrices[m] || 5000) <= 3500);
-    const newAllMds   = allModels.length ? allModels : [...newMdsG1];
-
-    // 4. Mise à jour globales
-    DS.length = 0; newDS.forEach(d => DS.push(d));
-    Object.keys(STOCK_MAP).forEach(k => delete STOCK_MAP[k]);
-    Object.assign(STOCK_MAP, newStockMap);
-    MDS_G1.length = 0; newMdsG1.forEach(m => MDS_G1.push(m));
-    ALL_MDS.length = 0; newAllMds.forEach(m => ALL_MDS.push(m));
-
-    // 5. Refresh UI
-    const pg = document.querySelector('.pg.on')?.id?.replace('pg-','') || 'home';
-    if (pg === 'home')      initHome();
-    if (pg === 'catalogue') filt();
-    if (pg === 'detail' && curD) {
-      const sel = document.getElementById('d-mod');
-      if (sel) {
-        const cur = sel.value;
-        sel.innerHTML = ALL_MDS.map(m => {
-          const q = getModelStock(curD.id, m);
-          const lbl = q === 0 ? m + ' — Rupture' : q <= 2 ? `${m} — ${q} restant${q>1?'s':''}` : m;
-          return `<option value="${m}" ${q===0?'disabled':''}>${lbl}</option>`;
-        }).join('');
-        if (cur && ALL_MDS.includes(cur)) sel.value = cur;
-        updatePrice();
-      }
-    }
-    const gSel = document.getElementById('global-model');
-    if (gSel) {
-      const cur = gSel.value;
-      gSel.innerHTML = '<option value="">-- Choisir mon iPhone --</option>' +
-        ALL_MDS.map(m => `<option value="${m}">${m} — ${modelPrices[m]?Number(modelPrices[m]).toLocaleString('fr-FR')+' FCFA':'3 500 – 5 000 FCFA'}</option>`).join('');
-      if (cur && ALL_MDS.includes(cur)) { gSel.value = cur; onGlobalModelChange(); }
-    }
-    console.log(`[CultureCase] ✅ ${DS.length} designs · ${Object.keys(STOCK_MAP).length} stocks · ${ALL_MDS.length} modèles`);
-  } catch(e) { console.error('[CultureCase] Firebase apply error:', e); }
-};
 
 // ══ FIREBASE → UI ════════════════════════════════════════════════════════════
 window.__applyFirebaseData = function(data) {
@@ -2550,24 +2526,30 @@ window.__applyFirebaseData = function(data) {
     if (!newDS.length) return;
 
     // 2. Stock Map — products: [{design, model, stock}]
+    // Matching par ID d'abord (fiable), fallback sur nom normalisé
+    const normalize = s => (s || '').toUpperCase().trim()
+      .replace(/['']/g, "'").replace(/\s+/g, ' ');
     const newStockMap = {};
     for (const p of (data.products || [])) {
-      const dsItem = newDS.find(d => d.name === (p.design || '').toUpperCase());
+      const dsItem = newDS.find(d => d.id === p.designId) ||
+                     newDS.find(d => normalize(d.name) === normalize(p.design));
       if (!dsItem || !p.model) continue;
       if (!newStockMap[dsItem.id]) newStockMap[dsItem.id] = {};
       newStockMap[dsItem.id][p.model] = typeof p.stock === 'number' ? p.stock : 0;
     }
 
-    // 3. Modèles & prix
+    // 3. Modèles & prix — MDS_G1 (≤3500 FCFA) et MDS_G2 (>3500 FCFA) depuis Firebase
     const modelPrices = (settings.priceSettings || {}).modelPrices || {};
     const allModels   = settings.models || [];
     const newMdsG1    = allModels.filter(m => (modelPrices[m] || 5000) <= 3500);
+    const newMdsG2    = allModels.filter(m => (modelPrices[m] || 5000) >  3500);
 
-    // 4. Mise à jour des variables globales
+    // 4. Mise à jour des variables globales (y compris MDS_G2)
     DS.length = 0; newDS.forEach(d => DS.push(d));
     Object.keys(STOCK_MAP).forEach(k => delete STOCK_MAP[k]);
     Object.assign(STOCK_MAP, newStockMap);
     MDS_G1.length = 0; newMdsG1.forEach(m => MDS_G1.push(m));
+    MDS_G2.length = 0; newMdsG2.forEach(m => MDS_G2.push(m));
     ALL_MDS.length = 0; allModels.forEach(m => ALL_MDS.push(m));
 
     // 5. Rafraîchir l'UI
