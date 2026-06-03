@@ -1933,35 +1933,6 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   <div class="ticker"><div class="ticker-t" id="ttick"></div></div>
 
   <!-- Sélecteur modèle proéminent -->
-  <div class="model-cta-bar">
-    <div class="model-cta-inner">
-      <div class="model-cta-text">
-        <i class="ti ti-device-mobile"></i>
-        <span>Quel est votre modèle ?</span>
-        <span class="model-cta-sub">Voir les designs disponibles pour votre iPhone</span>
-      </div>
-      <select class="model-cta-sel" onchange="goToCatalogueWithModel(this.value)">
-        <option value="">— Choisir mon iPhone —</option>
-        <optgroup label="iPhone 12 / 13 · 3 500 FCFA">
-          <option>iPhone 12</option><option>iPhone 12 Pro Max</option>
-          <option>iPhone 13</option><option>iPhone 13 Pro</option><option>iPhone 13 Pro Max</option>
-        </optgroup>
-        <optgroup label="iPhone 14 et plus · 5 000 FCFA">
-          <option>iPhone 14</option><option>iPhone 14 Plus</option>
-          <option>iPhone 14 Pro</option><option>iPhone 14 Pro Max</option>
-          <option>iPhone 15</option><option>iPhone 15 Plus</option>
-          <option>iPhone 15 Pro</option><option>iPhone 15 Pro Max</option>
-          <option>iPhone 16</option><option>iPhone 16 Plus</option>
-          <option>iPhone 16 Pro</option><option>iPhone 16 Pro Max</option>
-          <option>iPhone 17</option><option>iPhone 17 Air</option>
-          <option>iPhone 17 Pro</option><option>iPhone 17 Pro Max</option>
-        </optgroup>
-      </select>
-      <button class="model-cta-btn" onclick="goToCatalogueWithModel(document.querySelector('.model-cta-sel').value)">
-        Voir les designs →
-      </button>
-    </div>
-  </div>
 
   <!-- Featured -->
   <div class="featured-section">
@@ -2242,14 +2213,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
       <p>Histoires, explications et récits autour de la culture malienne. Pour comprendre ce que vous portez — et en être encore plus fiers.</p>
     </div>
   </div>
-  <div class="blog-cats">
-    <button class="ftag on" onclick="filterBlog('all',this)">Tous</button>
-    <button class="ftag" onclick="filterBlog('TEXTILE',this)">Textile</button>
-    <button class="ftag" onclick="filterBlog('MONUMENT',this)">Monuments</button>
-    <button class="ftag" onclick="filterBlog('CULTURE',this)">Culture</button>
-    <button class="ftag" onclick="filterBlog('PEUPLE',this)">Peuples</button>
-    <button class="ftag" onclick="filterBlog('SPIRITUEL',this)">Spirituel</button>
-  </div>
+
   <div class="blog-body">
     <div class="blog-grid" id="blog-grid"></div>
   </div>
