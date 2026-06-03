@@ -1844,53 +1844,64 @@ if(tEl){const tH=tItems.map(x=>`<span class="ti"><span class="ti-dot"></span>${x
 initHome();
 
 // ══ CONNEXION FIREBASE TEMPS RÉEL ════════════════════════════════════════════
-// Cette fonction est appelée par le module Firebase chaque fois que Firestore
-// émet une mise à jour. Elle reconstruit DS, STOCK_MAP, ALL_MDS et MDS_G1
-// à partir des données du back-office, puis rafraîchit l'UI.
+// Appelée à chaque mise à jour Firestore. Reconstruit DS, STOCK_MAP,
+// ALL_MDS et MDS_G1 depuis la structure exacte du back-office.
+//
+// Structure Firestore (back-office) :
+//   data/main        → { settings: { designs[], models[], priceSettings }, sales[], ... }
+//   data/products_N  → { items: [ { id, design, model, stock, price, ... } ] }
 
 window.__applyFirebaseData = function(data) {
   try {
     const settings = data.settings || {};
 
-    // ── 1. Designs ────────────────────────────────────────────────────────────
+    // ── 1. Designs (depuis settings.designs) ──────────────────────────────────
     const rawDesigns = settings.designs || [];
     if (rawDesigns.length === 0) return; // garde données statiques si vide
 
-    // Mapping catégories back → catégories front
-    const CAT_MAP = {
-      'MONUMENT': 'MONUMENT', 'CIWARA': 'CIWARA', 'VALEUR': 'VALEUR',
-      'PEUPLE': 'PEUPLE',    'MASQUE': 'MASQUE',  'CULTURE': 'CULTURE',
-      'NATURE': 'NATURE',    'TEXTILE': 'TEXTILE'
-    };
+    const newDS = rawDesigns
+      .filter(d => d.image && !d.image.startsWith('data:') && !d.image.startsWith('idb:'))
+      .map(d => ({
+        id:    d.id,
+        name:  (d.name || '').toUpperCase(),
+        img:   d.image,
+        story: d.description || d.name || '',
+        cat:   (d.category || 'CULTURE').toUpperCase()
+      }));
 
-    const newDS = rawDesigns.map(d => ({
-      id:    d.id || ('D' + d.name),
-      name:  (d.name || '').toUpperCase(),
-      img:   d.image || '',
-      story: d.description || d.name || '',
-      cat:   CAT_MAP[d.category] || d.category || 'CULTURE'
-    })).filter(d => d.img); // ignorer designs sans image
+    if (newDS.length === 0) return;
 
-    // ── 2. Stock Map ──────────────────────────────────────────────────────────
+    // ── 2. Stock Map (depuis products — chaque ligne = 1 design × 1 modèle) ──
+    // Structure : { designId: { modelName: qty } }
     const newStockMap = {};
     const products = data.products || [];
+
     for (const p of products) {
-      const designId = p.design; // nom du design dans le back
-      const model    = p.model;
-      const qty      = typeof p.stock === 'number' ? p.stock : 0;
-      // Trouver l'id du design correspondant
-      const dsItem = newDS.find(d => d.name === (designId||'').toUpperCase());
-      if (!dsItem) continue;
+      // p.design = nom du design (ex: "DJENNÉ")
+      // p.model  = nom du modèle (ex: "iPhone 15 Pro")
+      // p.stock  = quantité en stock
+      const designName = (p.design || '').toUpperCase();
+      const model      = p.model;
+      const qty        = typeof p.stock === 'number' ? p.stock : 0;
+
+      // Chercher l'id du design par son nom
+      const dsItem = newDS.find(d => d.name === designName);
+      if (!dsItem || !model) continue;
+
       if (!newStockMap[dsItem.id]) newStockMap[dsItem.id] = {};
       newStockMap[dsItem.id][model] = qty;
     }
 
     // ── 3. Modèles & prix ─────────────────────────────────────────────────────
+    // settings.models = liste ordonnée des modèles
+    // settings.priceSettings.modelPrices = { "iPhone 12": 3500, ... }
     const modelPrices = (settings.priceSettings || {}).modelPrices || {};
-    const allModels   = (settings.models || []);
-    const newMdsG1    = allModels.filter(m => (modelPrices[m] || 5000) <= 3500);
-    const newMdsG2    = allModels.filter(m => (modelPrices[m] || 5000) > 3500);
-    const newAllMds   = [...newMdsG1, ...newMdsG2.length ? newMdsG2 : allModels.filter(m => !newMdsG1.includes(m))];
+    const allModels   = settings.models || [];
+
+    // G1 = modèles à 3500 FCFA, G2 = modèles à 5000 FCFA
+    const newMdsG1 = allModels.filter(m => (modelPrices[m] || 5000) <= 3500);
+    const newMdsG2 = allModels.filter(m => (modelPrices[m] || 5000) > 3500);
+    const newAllMds = allModels.length ? allModels : [...newMdsG1, ...newMdsG2];
 
     // ── 4. Mise à jour des variables globales ─────────────────────────────────
     DS.length = 0;
@@ -1903,14 +1914,13 @@ window.__applyFirebaseData = function(data) {
     newMdsG1.forEach(m => MDS_G1.push(m));
 
     ALL_MDS.length = 0;
-    (newAllMds.length ? newAllMds : allModels).forEach(m => ALL_MDS.push(m));
+    newAllMds.forEach(m => ALL_MDS.push(m));
 
     // ── 5. Rafraîchir l'UI ────────────────────────────────────────────────────
     const activePg = document.querySelector('.pg.on')?.id?.replace('pg-', '') || 'home';
     if (activePg === 'home')      initHome();
     if (activePg === 'catalogue') filt();
     if (activePg === 'detail' && curD) {
-      // Mettre à jour le sélecteur de modèles avec le nouveau stock
       const sel = document.getElementById('d-mod');
       if (sel) {
         const currentModel = sel.value;
@@ -1927,19 +1937,23 @@ window.__applyFirebaseData = function(data) {
         updatePrice();
       }
     }
-    // Mettre à jour le sélecteur global de modèle sur catalogue
+
+    // Mettre à jour le sélecteur global de modèle
     const gSel = document.getElementById('global-model');
     if (gSel) {
       const currentVal = gSel.value;
       gSel.innerHTML = '<option value="">-- Choisir mon iPhone --</option>' +
-        ALL_MDS.map(m => `<option value="${m}">${m} — ${modelPrices[m] ? Number(modelPrices[m]).toLocaleString('fr-FR') + ' FCFA' : '3 500 – 5 000 FCFA'}</option>`).join('');
+        ALL_MDS.map(m => {
+          const prix = modelPrices[m] ? Number(modelPrices[m]).toLocaleString('fr-FR') + ' FCFA' : '3 500 – 5 000 FCFA';
+          return `<option value="${m}">${m} — ${prix}</option>`;
+        }).join('');
       if (currentVal && ALL_MDS.includes(currentVal)) {
         gSel.value = currentVal;
         onGlobalModelChange();
       }
     }
 
-    console.log(`[CultureCase] ✅ Données Firestore appliquées — ${DS.length} designs, ${Object.keys(STOCK_MAP).length} stocks`);
+    console.log(`[CultureCase] ✅ Firebase sync — ${DS.length} designs, ${products.length} entrées stock, ${ALL_MDS.length} modèles`);
   } catch(err) {
     console.error('[CultureCase] Erreur application données Firebase:', err);
   }
