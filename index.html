@@ -167,13 +167,13 @@ body {
 .hero-inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: 440px;
+  min-height: 360px;
   position: relative;
   z-index: 1;
 }
 
 .hero-l {
-  padding: 3.5rem 2.5rem;
+  padding: 2.25rem 2.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -273,22 +273,23 @@ body {
 .btn-ghost:hover { border-color: var(--gold); color: var(--gold); background: rgba(232,160,32,.06); }
 
 /* Hero image grid */
-.hero-r { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; }
+.hero-r { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; max-height: 360px; }
 
 .hi {
   overflow: hidden;
   background: var(--dusk);
   cursor: pointer;
   position: relative;
+  min-height: 0;
 }
 .hi img {
   width: 100%; height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform .7s var(--transition), filter .4s;
+  transition: filter .4s;
   filter: brightness(.75) saturate(.9);
 }
-.hi:hover img { transform: scale(1.09); filter: brightness(.95) saturate(1.1); }
+.hi:hover img { filter: brightness(.95) saturate(1.1); }
 .hi:first-child { grid-row: span 2; }
 
 .hi-lbl {
@@ -511,7 +512,13 @@ body {
   gap: 16px;
 }
 
-/* ─── PRODUCT CARD ───────────────────────────────────────── */
+#home-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+@media (max-width: 900px) {
+  #home-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 .pcard {
   background: var(--white);
   border: 1.5px solid var(--border);
@@ -541,7 +548,7 @@ body {
   transition: transform .6s var(--transition), filter .4s;
   filter: saturate(.95);
 }
-.pcard:hover .pc-img img { transform: scale(1.09); filter: saturate(1.05); }
+.pcard:hover .pc-img img { filter: brightness(1.06) saturate(1.05); }
 
 .pc-overlay {
   position: absolute;
@@ -848,7 +855,7 @@ body {
   pointer-events: none;
 }
 
-.ab-l { padding: 3.5rem 2.5rem; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1; }
+.ab-l { padding: 2.25rem 2.5rem; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1; }
 .ab-l h2 { font-family: 'Bebas Neue', sans-serif; font-size: 54px; letter-spacing: 2px; color: #fff; line-height: .9; margin-bottom: 1rem; }
 .ab-l h2 em { color: var(--gold); font-style: normal; display: block; }
 .ab-l p { font-size: 13px; color: rgba(255,255,255,.42); line-height: 1.85; margin-bottom: .7rem; }
@@ -943,7 +950,7 @@ body {
 
 /* ─── MANIFESTE ──────────────────────────────────────────── */
 .manifeste {
-  padding: 3.5rem 2.5rem;
+  padding: 2.5rem 2.5rem;
   background: var(--dusk2);
   position: relative;
   overflow: hidden;
@@ -982,7 +989,7 @@ body {
 /* ─── BLOG ───────────────────────────────────────────────── */
 .blog-hero {
   background: var(--dusk2);
-  padding: 3rem 2.5rem;
+  padding: 2rem 2.5rem;
   position: relative;
   overflow: hidden;
 }
