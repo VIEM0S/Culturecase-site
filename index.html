@@ -1962,7 +1962,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
       </div>
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <!-- Menu déroulant anciens avis -->
-        <div style="position:relative" id="old-reviews-wrap" hidden>
+        <div style="position:relative;display:none" id="old-reviews-wrap">
           <button onclick="toggleOldReviews()" id="old-reviews-btn"
             style="display:flex;align-items:center;gap:6px;background:var(--warm);border:1px solid var(--border);border-radius:var(--radius);padding:.45rem 1rem;font-size:13px;color:var(--muted);cursor:pointer;font-family:inherit">
             <i class="ti ti-history"></i> Anciens avis <i class="ti ti-chevron-down" id="old-chevron"></i>
@@ -2093,9 +2093,9 @@ function renderReviews() {
   const wrap = document.getElementById('old-reviews-wrap');
   const list = document.getElementById('old-reviews-list');
   if (old.length > 0) {
-    wrap.hidden = false;
-    list.innerHTML = old.map(r => `
-      <div style="padding:.75rem;border-bottom:1px solid var(--border);last-child{border:none}">
+    if (wrap) wrap.style.display = 'block';
+    if (list) list.innerHTML = old.map(r => `
+      <div style="padding:.75rem;border-bottom:1px solid var(--border)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
           <span style="font-weight:500;font-size:13px;color:var(--ink)">${r.name}</span>
           <span style="color:var(--gold);font-size:12px">${starsHtml(r.stars)}</span>
@@ -2104,7 +2104,7 @@ function renderReviews() {
         ${r.loc ? `<div style="font-size:11px;color:var(--border2);margin-top:.3rem">${r.loc}</div>` : ''}
       </div>`).join('');
   } else {
-    wrap.hidden = true;
+    if (wrap) wrap.style.display = 'none';
   }
 }
 
