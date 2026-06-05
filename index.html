@@ -1401,6 +1401,8 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   .det-grid { grid-template-columns: 1fr; }
   .det { padding: 1.25rem 1rem; overflow-x: hidden; width: 100%; }
   .det-form-grid, .del-grid { grid-template-columns: 1fr !important; }
+  /* Fix zoom iOS Safari — font-size minimum 16px sur les champs */
+  input, select, textarea { font-size: 16px !important; }
   .det-imgbox { max-width: 320px; margin: 0 auto; }
   .d-title { font-size: 32px; }
 
