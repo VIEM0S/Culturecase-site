@@ -1895,8 +1895,6 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 }
 
 </style>
-</style>
-</style>
 
 
 <div>
@@ -1909,6 +1907,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
     <button class="nb" id="nm-about" onclick="go('about')">Histoire</button>
     <button class="nb" id="nm-blog" onclick="go('blog')">Blog</button>
     <button class="nb" id="nm-contact" onclick="go('contact')">Contact</button>
+  </div>
   </div>
 </nav>
 
@@ -2451,6 +2450,7 @@ const app = initializeApp({
   appId:             "1:369046579849:web:3672d245a9f7d42e687458"
 });
 const db = getFirestore(app);
+  window.__db = db;
 
 const chunkCache = new Map();
 let mainCache = null, chunkUnsubs = [], currentChunkCount = 0;
@@ -2638,6 +2638,9 @@ if(fyEl) fyEl.textContent=new Date().getFullYear();
 initHome();
 
 // ══ FIREBASE → UI ════════════════════════════════════════════════════════════
+// Exposer les APIs Firestore pour le blog
+window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot };
+
 window.__applyFirebaseData = function(data) {
   try {
     const settings = data.settings || {};
@@ -2710,6 +2713,7 @@ window.__applyFirebaseData = function(data) {
       if (cur && ALL_MDS.includes(cur)) { gSel.value = cur; onGlobalModelChange(); }
     }
     console.log(`[CultureCase] ✅ ${DS.length} designs · ${Object.keys(STOCK_MAP).length} stocks · ${ALL_MDS.length} modèles`);
+    listenBlog(); // démarrer l'écoute blog
   } catch(e) { console.error('[CultureCase] Firebase apply error:', e); }
 };
 
@@ -2755,113 +2759,49 @@ function toast(msg){
   setTimeout(()=>el.classList.remove('show'),2800);
 }
 
-// ══ BLOG DATA ══
-const BLOG=[
-  {
-    id:'B1',
-    title:'Le Bogolan : quand la boue devient art',
-    tag:'TEXTILE',
-    date:'Mai 2025',
-    read:'5 min de lecture',
-    img:'https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767675/zutdygs9wnxbheeilcl9.jpg',
-    excerpt:'Le bogolan, ou mud cloth, est bien plus qu\'un tissu. C\'est une écriture, un langage visuel qui traverse les siècles. Plongée au cœur de l\'art textile le plus emblématique du Mali.',
-    featured:true,
-    content:`<p>Le bogolan — du bambara <em>bogo</em> (terre, boue) et <em>lan</em> (par le moyen de) — est un tissu de coton teint à la boue fermentée selon des techniques transmises de génération en génération. Son nom signifie littéralement "qui vient de la terre", et c'est peut-être la définition la plus belle qu'on puisse donner à un tissu.</p>
-    <h3>Une technique millénaire</h3>
-    <p>La fabrication du bogolan commence sur un métier à tisser à bandes étroites, typiquement utilisé par les hommes dans les villages du Mali, notamment autour de Ségou. Ces bandes sont ensuite assemblées pour former de grands panneaux. C'est là qu'intervient le travail des femmes — c'est elles, traditionnellement, qui appliquent les motifs.</p>
-    <p>Le tissu est d'abord trempé dans un bain de feuilles de n'gallama, qui lui donne une teinte jaune. Ensuite, des dessins sont tracés à la boue fermentée — récoltée dans les mares et les rivières, fermentée pendant des mois pour développer ses tanins. Là où la boue touche le tissu, la couleur devient noire. Les parties non traitées gardent leur teinte ocre.</p>
-    <blockquote>«Chaque motif du bogolan a un nom, une signification. Ce ne sont pas des décorations — ce sont des messages.»</blockquote>
-    <h3>Un langage visuel</h3>
-    <p>Ce qui fascine dans le bogolan, c'est que ses motifs ne sont pas aléatoires. Chaque géométrie a une signification : certains évoquent des proverbes, d'autres des événements historiques, des batailles ou des rites d'initiation. Les chasseurs dogon portaient des chemises en bogolan pour se protéger spirituellement. Les femmes en accouchement étaient enveloppées dans ses tissus pour capter sa force protectrice.</p>
-    <p>C'est cette profondeur symbolique que CultureCase cherche à capturer dans son design BOGOLAN. Pas une simple reproduction de motifs — une invitation à comprendre ce que ces lignes signifient vraiment.</p>
-    <h3>Le bogolan aujourd'hui</h3>
-    <p>Aujourd'hui, le bogolan a conquis le monde. Des créateurs de mode internationaux s'en inspirent, des musées l'exposent. Mais la vraie magie est à Bamako, dans les marchés, dans les ateliers de Ségou, là où des artisanes continuent de plonger leurs mains dans la boue pour créer des chefs-d'œuvre qui dureront des générations.</p>
-    <p>Porter le design BOGOLAN de CultureCase, c'est porter un peu de cette histoire. Une histoire qui commence dans la terre rouge du Mali.</p>`
-  },
-  {
-    id:'B2',
-    title:"Le N'Ko : l'Afrique qui s'écrit elle-même",
-    tag:'CULTURE',
-    date:'Avril 2025',
-    read:'4 min de lecture',
-    img:'https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767905/wketzekxsrqlupeqrdi2.jpg',
-    excerpt:"En 1949, un homme seul invente un alphabet pour des millions de personnes. Solomana Kanté et le N'Ko : l'histoire extraordinaire d'une écriture née au Mali.",
-    featured:false,
-    content:`<p>Le 19 avril 1949, à Kankan (Guinée), Solomana Kanté pose son stylo et regarde ce qu'il vient de créer. Dix-neuf lettres. Un alphabet complet, capable de transcrire toutes les langues mandingues — le bambara, le dioula, le mandinka, le soussou. Il l'appelle N'Ko, qui signifie "je dis" dans toutes ces langues.</p>
-    <h3>L'homme qui répondait à une insulte</h3>
-    <p>L'histoire commence par une provocation. Kanté lit dans un livre qu'il n'existe pas d'écriture africaine, que les Africains n'ont pas su développer de système graphique propre. Humilié par cette affirmation, il consacre sa vie à la réfuter.</p>
-    <p>Autodidacte, il étudie les systèmes d'écriture du monde entier. Il analyse l'arabe, le latin, l'éthiopien. Et il conclut qu'aucun ne convient parfaitement aux langues mandingues — leurs tons, leurs sonorités particulières ne peuvent pas être capturés par ces alphabets étrangers. Alors il crée le sien.</p>
-    <blockquote>«Un peuple sans écriture est comme un aveugle qui marche dans la nuit. Le N'Ko est notre lumière.» — Solomana Kanté</blockquote>
-    <h3>Une écriture de droite à gauche</h3>
-    <p>Le N'Ko s'écrit de droite à gauche, comme l'arabe. Ses lettres sont liées entre elles, formant des mots fluides et élégants. Kanté développe non seulement l'alphabet mais toute une grammaire, une orthographe, et commence à traduire des textes fondamentaux — le Coran, des traités de médecine, des livres d'histoire africaine.</p>
-    <p>Aujourd'hui, le N'Ko est enseigné dans des centaines d'écoles à travers l'Afrique de l'Ouest. Des millions de personnes l'utilisent pour lire, écrire, communiquer. C'est l'un des rares exemples modernes d'un système d'écriture créé ex nihilo par un seul homme et adopté massivement.</p>
-    <h3>Pourquoi N'Ko chez CultureCase</h3>
-    <p>Le design N'Ko de CultureCase n'est pas seulement graphique — c'est politique. Porter ces caractères sur son téléphone, c'est affirmer que nos langues ont une écriture, que notre culture a une forme graphique propre, que nous ne dépendons de personne pour nous exprimer.</p>
-    <p>Solomana Kanté est né en Guinée mais a rayonné sur tout le monde mandingue — dont le Mali est le cœur. En portant le N'Ko, vous honorez un génie africain et un acte d'indépendance culturelle extraordinaire.</p>`
-  },
-  {
-    id:'B3',
-    title:'Le Ciwara : l\'antilope qui a tout appris aux hommes',
-    tag:'SPIRITUEL',
-    date:'Mars 2025',
-    read:'4 min de lecture',
-    img:'https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767813/ujlarvjopqep37hwm2n2.jpg',
-    excerpt:'Mi-homme, mi-antilope, le Ciwara est l\'une des figures les plus puissantes de la cosmogonie bambara. L\'histoire du génie qui enseigna l\'agriculture à l\'humanité.',
-    featured:false,
-    content:`<p>Dans la cosmogonie bambara, avant que les hommes sachent cultiver la terre, le monde était dur. Les humains ne savaient pas semer, ne savaient pas récolter. C'est alors qu'apparut le Ciwara — un être extraordinaire, mi-homme mi-antilope, enfant du Dieu suprême Pemba et de la Terre.</p>
-    <h3>Le génie de l'agriculture</h3>
-    <p>Le Ciwara était un cultivateur prodigieux. Selon la tradition bambara, il travailla sans relâche pendant sept ans, labourant la terre avec ses cornes, enseignant aux hommes les secrets du mil, du sorgho, de la terre fertile. Il était infatigable, précis, parfait. Mais les hommes devinrent paresseux, gaspillèrent les récoltes, oublièrent de rendre grâce.</p>
-    <p>Déçu, le Ciwara s'enterra dans la terre — certains disent qu'il se transforma en elle. C'est pour ne pas oublier son enseignement que les Bambara créèrent les heaumes-cimiers Ciwara : des sculptures portées sur la tête lors des cérémonies agricoles, pour rappeler que la terre est sacrée et que l'effort est une vertu divine.</p>
-    <blockquote>«Le Ciwara ne mourait pas — il devenait la terre elle-même. Chaque champ cultivé est son corps.»</blockquote>
-    <h3>Un chef-d'œuvre de l'art africain</h3>
-    <p>Les heaumes Ciwara sont parmi les sculptures africaines les plus connues dans le monde. Ils viennent toujours par paires — un mâle et une femelle — représentant la complémentarité entre l'homme et la femme, entre le ciel et la terre. Les formes varient selon les villages : certains Ciwara sont élancés et géométriques, d'autres plus ronds et figuratifs.</p>
-    <p>Ces sculptures ne sont pas des objets décoratifs. Lors des cérémonies Ciwara, les jeunes cultivateurs les portent attachées à leur tête et dansent au rythme des tambours pour invoquer la fertilité des champs. C'est une danse de travail, de prière et de gratitude à la fois.</p>
-    <h3>Le Ciwara de CultureCase</h3>
-    <p>Les designs Ciwara de CultureCase — Kô Musso, Ciwara Maron, Ciwara & Bogolan — cherchent à capturer cette force symbolique. La silhouette de l'antilope, ses cornes qui s'élèvent vers le ciel, incarne une énergie de croissance, d'effort et de connexion avec la terre.</p>
-    <p>Porter le Ciwara, c'est porter la mémoire de ceux qui ont labouré la terre rouge du Mali pour que leurs enfants puissent vivre.</p>`
-  },
-  {
-    id:'B4',
-    title:'Djenné : la cathédrale de terre la plus grande du monde',
-    tag:'MONUMENT',
-    date:'Février 2025',
-    read:'5 min de lecture',
-    img:'https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767538/ynvij5rszvqmamfs9hgm.jpg',
-    excerpt:'La Grande Mosquée de Djenné est le plus grand bâtiment en pisé du monde et un chef-d\'œuvre de l\'architecture soudano-sahélienne. L\'histoire d\'un monument qui se reconstruit chaque année.',
-    featured:false,
-    content:`<p>Sur une île au milieu du delta intérieur du Niger, à 570 km de Bamako, se dresse l'une des constructions les plus étonnantes de l'humanité. La Grande Mosquée de Djenné — classée au patrimoine mondial de l'UNESCO depuis 1988 — est le plus grand édifice en terre crue du monde. Et elle est au Mali.</p>
-    <h3>Une architecture née de la terre</h3>
-    <p>L'architecture soudano-sahélienne qu'incarne Djenné est une réponse parfaite à son environnement. Dans une région où la pierre manque mais où la terre argileuse est abondante, les bâtisseurs maliens ont développé une technique extraordinaire : le banco, un mélange de terre, de paille et d'eau, façonné en briques séchées au soleil, puis recouvert d'un enduit de même nature.</p>
-    <p>Ces constructions respirent. En journée, la terre absorbe la chaleur. La nuit, elle la restitue. Dans un Sahel brûlant, c'est du génie climatique ancestral. Les toits-terrasses, les murs épais, les tours-minarets — tout est pensé pour vivre avec le désert, pas contre lui.</p>
-    <blockquote>«Djenné prouve que l'Afrique a inventé l'architecture durable bien avant que le monde en parle.»</blockquote>
-    <h3>La mosquée qui se reconstruit chaque année</h3>
-    <p>Ce qui rend la Grande Mosquée de Djenné unique, c'est qu'elle vit. Chaque année, après la saison des pluies qui érode l'enduit de banco, toute la ville se mobilise pour la restaurer. C'est le "crépissage" — une fête collective, un acte de communauté. Des milliers d'habitants grimpent sur les murs, portent la boue fraîche, chantent et travaillent ensemble.</p>
-    <p>Les poteaux en bois de palmier qui sortent des murs — appelés torons — servent d'échafaudages permanents pour ces restaurations annuelles. C'est une architecture pensée pour être entretenue, réparée, aimée. Une mosquée vivante.</p>
-    <h3>L'histoire de la cité des savants</h3>
-    <p>Djenné ne se résume pas à sa mosquée. C'est l'une des plus anciennes cités subsahariennes — habitée depuis le IIIème siècle avant notre ère. Au Moyen Âge, elle était un centre intellectuel et commercial majeur, carrefour des routes trans-sahariennes. Des milliers de manuscrits y ont été écrits et conservés.</p>
-    <p>Les designs DJENNÉ et DJENNÉ ROUGE de CultureCase rendent hommage à cette cité extraordinaire. Chaque fois que vous regardez votre téléphone, vous avez sous les yeux un monument classé à l'UNESCO — né sur la terre rouge du Mali.</p>`
-  },
-  {
-    id:'B5',
-    title:'Les Touaregs : peuple libre du désert',
-    tag:'PEUPLE',
-    date:'Janvier 2025',
-    read:'4 min de lecture',
-    img:'https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767591/y4lfqumr2zpnu1ayydxh.jpg',
-    excerpt:'Gardiens du Sahara, nomades indomptables, maîtres de l\'indigo. Les Touaregs du Mali portent une culture aussi vaste et profonde que le désert qu\'ils habitent.',
-    featured:false,
-    content:`<p>Ils s'appellent eux-mêmes "Kel Tamasheq" — ceux qui parlent le tamasheq. Le monde les appelle Touaregs. Ce peuple berbère nomade occupe le Sahara depuis des millénaires, de l'Algérie au Niger, du Mali à la Libye. Et dans le nord du Mali — à Kidal, Gao, Tombouctou — leur présence est indissociable de l'identité du pays.</p>
-    <h3>Les hommes bleus</h3>
-    <p>Le surnom est venu tout seul. Les Touaregs portent des vêtements en tissu teint à l'indigo — un bleu profond, dense, qui marque la peau. Sous le soleil du désert, les hommes portent le chèche, un long voile qui recouvre la tête et le visage, ne laissant voir que les yeux. Ce tissu bleu indigo teint progressivement leur peau, leur donnant cette teinte caractéristique.</p>
-    <p>C'est là l'origine du design HOMME BLEU de CultureCase — cet homme mystérieux dont on ne voit que les yeux, enveloppé dans son voile d'indigo, figure du désert libre et indomptable.</p>
-    <blockquote>«Le désert n'appartient à personne. C'est pour ça que les Touaregs s'y sentent chez eux.»</blockquote>
-    <h3>Une culture de la beauté</h3>
-    <p>Contrairement à beaucoup de sociétés, chez les Touaregs c'est l'homme qui se pare et s'embellit. Bijoux en argent ciselé, épées à poignée de cuir tressé, selles de chameau brodées — l'artisanat touareg est d'une raffinesse extraordinaire. Les femmes, elles, ont un statut remarquable : lettrées, elles transmettent l'écriture tifinagh, le système graphique ancestral des Berbères, que seules elles maîtrisaient traditionnellement.</p>
-    <h3>Le Mali et les Touaregs</h3>
-    <p>L'histoire des Touaregs au Mali est complexe, faite de tensions et de réconciliations. Mais leur contribution à la culture malienne est immense — la musique touarègue, le "blues du désert", a donné naissance à des groupes comme Tinariwen qui ont conquis le monde entier. Le Mali sans ses Touaregs ne serait pas le Mali.</p>
-    <p>Porter le design TOUAREG ou HOMME BLEU, c'est rendre hommage à ce peuple libre qui, depuis des millénaires, rappelle que la liberté existe — même au milieu du plus grand désert du monde.</p>`
+// ══ BLOG — Firestore (géré depuis culturecase-gs) ══════════════════════════
+let BLOG = []; // rempli en temps réel par listenBlog()
+
+function listenBlog() {
+  if (!window.__db || !window.__firestoreAPI) {
+    // Réessayer dans 1s si Firebase pas encore prêt
+    setTimeout(listenBlog, 1000);
+    return;
   }
-];
+  const { collection, query, where, orderBy, onSnapshot } = window.__firestoreAPI;
+  try {
+    const q = query(
+      collection(window.__db, 'blog_posts'),
+      where('published', '==', true),
+      orderBy('createdAt', 'desc')
+    );
+    onSnapshot(q, (snap) => {
+      BLOG = snap.docs.map(doc => {
+        const d = doc.data();
+        const ts = d.createdAt;
+        const dateStr = ts && ts.seconds
+          ? new Date(ts.seconds * 1000).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+          : '';
+        return {
+          id:      doc.id,
+          title:   d.title   || '',
+          tag:     (d.tags && d.tags[0]) ? d.tags[0].toUpperCase() : 'CULTURE',
+          date:    dateStr,
+          read:    d.readTime || '3 min de lecture',
+          img:     d.cover   || '',
+          excerpt: d.excerpt || '',
+          content: d.content || '',
+        };
+      });
+      // Rafraîchir si la page blog est active
+      if (document.querySelector('.pg.on')?.id === 'pg-blog') renderBlog();
+    }, (err) => {
+      console.warn('[CultureCase Blog] Erreur Firestore:', err);
+    });
+  } catch(e) {
+    console.warn('[CultureCase Blog] listenBlog error:', e);
+  }
+}
 
 let activeBlogTag='all';
 
