@@ -2455,6 +2455,86 @@ const db = getFirestore(app);
 const chunkCache = new Map();
 let mainCache = null, chunkUnsubs = [], currentChunkCount = 0;
 
+// ══ FIREBASE → UI ════════════════════════════════════════════════════════════
+// Exposer les APIs Firestore pour le blog
+window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot };
+
+window.__applyFirebaseData = function(data) {
+  try {
+    const settings = data.settings || {};
+    const rawDesigns = settings.designs || [];
+    if (!rawDesigns.length) return;
+
+    // 1. Designs (images Cloudinary uniquement)
+    const newDS = rawDesigns
+      .filter(d => d.image && d.image.startsWith('http'))
+      .map(d => ({
+        id:    d.id,
+        name:  (d.name || '').toUpperCase(),
+        img:   d.image,
+        story: d.description || d.name || '',
+        cat:   (d.category || 'CULTURE').toUpperCase()
+      }));
+    if (!newDS.length) return;
+
+    // 2. Stock Map — products: [{design, model, stock}]
+    // Matching par ID d'abord (fiable), fallback sur nom normalisé
+    const normalize = s => (s || '').toUpperCase().trim()
+      .replace(/['']/g, "'").replace(/\s+/g, ' ');
+    const newStockMap = {};
+    for (const p of (data.products || [])) {
+      const dsItem = newDS.find(d => d.id === p.designId) ||
+                     newDS.find(d => normalize(d.name) === normalize(p.design));
+      if (!dsItem || !p.model) continue;
+      if (!newStockMap[dsItem.id]) newStockMap[dsItem.id] = {};
+      newStockMap[dsItem.id][p.model] = typeof p.stock === 'number' ? p.stock : 0;
+    }
+
+    // 3. Modèles & prix — MDS_G1 (≤3500 FCFA) et MDS_G2 (>3500 FCFA) depuis Firebase
+    const modelPrices = (settings.priceSettings || {}).modelPrices || {};
+    const allModels   = settings.models || [];
+    const newMdsG1    = allModels.filter(m => (modelPrices[m] || 5000) <= 3500);
+    const newMdsG2    = allModels.filter(m => (modelPrices[m] || 5000) >  3500);
+
+    // 4. Mise à jour des variables globales (y compris MDS_G2)
+    DS.length = 0; newDS.forEach(d => DS.push(d));
+    Object.keys(STOCK_MAP).forEach(k => delete STOCK_MAP[k]);
+    Object.assign(STOCK_MAP, newStockMap);
+    MDS_G1.length = 0; newMdsG1.forEach(m => MDS_G1.push(m));
+    MDS_G2.length = 0; newMdsG2.forEach(m => MDS_G2.push(m));
+    ALL_MDS.length = 0; allModels.forEach(m => ALL_MDS.push(m));
+
+    // 5. Rafraîchir l'UI
+    const pg = document.querySelector('.pg.on')?.id?.replace('pg-','') || 'home';
+    if (pg === 'home')      initHome();
+    if (pg === 'catalogue') filt();
+    if (pg === 'detail' && curD) {
+      const sel = document.getElementById('d-mod');
+      if (sel) {
+        const cur = sel.value;
+        sel.innerHTML = ALL_MDS.map(m => {
+          const q = getModelStock(curD.id, m);
+          const lbl = q === 0 ? m + ' — Rupture' : q <= 2 ? `${m} — ${q} restant${q>1?'s':''}` : m;
+          return `<option value="${m}" ${q===0?'disabled':''}>${lbl}</option>`;
+        }).join('');
+        if (cur && ALL_MDS.includes(cur)) sel.value = cur;
+        updatePrice();
+      }
+    }
+    // Mettre à jour tous les sélecteurs de modèle (catalogue header)
+    const gSel = document.getElementById('global-model');
+    if (gSel) {
+      const cur = gSel.value;
+      const opts = '<option value="">— Choisir mon modèle —</option>' +
+        ALL_MDS.map(m => `<option value="${m}">${m} — ${modelPrices[m] ? Number(modelPrices[m]).toLocaleString('fr-FR') + ' FCFA' : '3 500 – 5 000 FCFA'}</option>`).join('');
+      gSel.innerHTML = opts;
+      if (cur && ALL_MDS.includes(cur)) { gSel.value = cur; onGlobalModelChange(); }
+    }
+    console.log(`[CultureCase] ✅ ${DS.length} designs · ${Object.keys(STOCK_MAP).length} stocks · ${ALL_MDS.length} modèles`);
+    listenBlog(); // démarrer l'écoute blog
+  } catch(e) { console.error('[CultureCase] Firebase apply error:', e); }
+};
+
 function assemble() {
   if (!mainCache) return;
   const prods = Array.from({ length: currentChunkCount }, (_, i) => chunkCache.get(i) ?? []).flat();
@@ -2637,85 +2717,7 @@ const fyEl=document.getElementById('footer-year');
 if(fyEl) fyEl.textContent=new Date().getFullYear();
 initHome();
 
-// ══ FIREBASE → UI ════════════════════════════════════════════════════════════
-// Exposer les APIs Firestore pour le blog
-window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot };
 
-window.__applyFirebaseData = function(data) {
-  try {
-    const settings = data.settings || {};
-    const rawDesigns = settings.designs || [];
-    if (!rawDesigns.length) return;
-
-    // 1. Designs (images Cloudinary uniquement)
-    const newDS = rawDesigns
-      .filter(d => d.image && d.image.startsWith('http'))
-      .map(d => ({
-        id:    d.id,
-        name:  (d.name || '').toUpperCase(),
-        img:   d.image,
-        story: d.description || d.name || '',
-        cat:   (d.category || 'CULTURE').toUpperCase()
-      }));
-    if (!newDS.length) return;
-
-    // 2. Stock Map — products: [{design, model, stock}]
-    // Matching par ID d'abord (fiable), fallback sur nom normalisé
-    const normalize = s => (s || '').toUpperCase().trim()
-      .replace(/['']/g, "'").replace(/\s+/g, ' ');
-    const newStockMap = {};
-    for (const p of (data.products || [])) {
-      const dsItem = newDS.find(d => d.id === p.designId) ||
-                     newDS.find(d => normalize(d.name) === normalize(p.design));
-      if (!dsItem || !p.model) continue;
-      if (!newStockMap[dsItem.id]) newStockMap[dsItem.id] = {};
-      newStockMap[dsItem.id][p.model] = typeof p.stock === 'number' ? p.stock : 0;
-    }
-
-    // 3. Modèles & prix — MDS_G1 (≤3500 FCFA) et MDS_G2 (>3500 FCFA) depuis Firebase
-    const modelPrices = (settings.priceSettings || {}).modelPrices || {};
-    const allModels   = settings.models || [];
-    const newMdsG1    = allModels.filter(m => (modelPrices[m] || 5000) <= 3500);
-    const newMdsG2    = allModels.filter(m => (modelPrices[m] || 5000) >  3500);
-
-    // 4. Mise à jour des variables globales (y compris MDS_G2)
-    DS.length = 0; newDS.forEach(d => DS.push(d));
-    Object.keys(STOCK_MAP).forEach(k => delete STOCK_MAP[k]);
-    Object.assign(STOCK_MAP, newStockMap);
-    MDS_G1.length = 0; newMdsG1.forEach(m => MDS_G1.push(m));
-    MDS_G2.length = 0; newMdsG2.forEach(m => MDS_G2.push(m));
-    ALL_MDS.length = 0; allModels.forEach(m => ALL_MDS.push(m));
-
-    // 5. Rafraîchir l'UI
-    const pg = document.querySelector('.pg.on')?.id?.replace('pg-','') || 'home';
-    if (pg === 'home')      initHome();
-    if (pg === 'catalogue') filt();
-    if (pg === 'detail' && curD) {
-      const sel = document.getElementById('d-mod');
-      if (sel) {
-        const cur = sel.value;
-        sel.innerHTML = ALL_MDS.map(m => {
-          const q = getModelStock(curD.id, m);
-          const lbl = q === 0 ? m + ' — Rupture' : q <= 2 ? `${m} — ${q} restant${q>1?'s':''}` : m;
-          return `<option value="${m}" ${q===0?'disabled':''}>${lbl}</option>`;
-        }).join('');
-        if (cur && ALL_MDS.includes(cur)) sel.value = cur;
-        updatePrice();
-      }
-    }
-    // Mettre à jour tous les sélecteurs de modèle (catalogue header)
-    const gSel = document.getElementById('global-model');
-    if (gSel) {
-      const cur = gSel.value;
-      const opts = '<option value="">— Choisir mon modèle —</option>' +
-        ALL_MDS.map(m => `<option value="${m}">${m} — ${modelPrices[m] ? Number(modelPrices[m]).toLocaleString('fr-FR') + ' FCFA' : '3 500 – 5 000 FCFA'}</option>`).join('');
-      gSel.innerHTML = opts;
-      if (cur && ALL_MDS.includes(cur)) { gSel.value = cur; onGlobalModelChange(); }
-    }
-    console.log(`[CultureCase] ✅ ${DS.length} designs · ${Object.keys(STOCK_MAP).length} stocks · ${ALL_MDS.length} modèles`);
-    listenBlog(); // démarrer l'écoute blog
-  } catch(e) { console.error('[CultureCase] Firebase apply error:', e); }
-};
 
 function getPrice(model){
   return MDS_G1.includes(model)?fp(3500):fp(5000);
