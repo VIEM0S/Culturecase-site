@@ -1275,22 +1275,174 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 }
 .soc:hover { background: var(--ember); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(217,78,21,.3); }
 
-/* ─── RESPONSIVE ─────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — iPhone & iPad
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── iPad (768px–1024px) ────────────────────────────────── */
+@media (max-width: 1024px) and (min-width: 641px) {
+  .nav { padding: 0 1.5rem; }
+  .hero-inner { grid-template-columns: 1.2fr .8fr; min-height: 240px; }
+  .hero-h1 { font-size: 52px; }
+  .hero-l { padding: 1.25rem 1.5rem 1.25rem 1.5rem; }
+  .featured-section { padding: 1.5rem; }
+  #home-grid { grid-template-columns: repeat(3, 1fr); }
+  .pgrid { grid-template-columns: repeat(3, 1fr); }
+  .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+  .ab-hero { gap: 2rem; }
+  .ct-wrap { padding: 2rem; gap: 2rem; }
+  .det-grid { gap: 1.5rem; }
+  .blog-grid { grid-template-columns: repeat(2, 1fr); }
+  .bd-rel-grid { grid-template-columns: repeat(2, 1fr); }
+  .cat-body { padding: 1.25rem 1.5rem 2rem; }
+  .cat-filters { padding: .75rem 1.5rem; }
+}
+
+/* ─── iPhone (≤640px) ─────────────────────────────────────── */
 @media (max-width: 640px) {
-  .hero-inner, .ab-hero, .ct-wrap, .det-grid { grid-template-columns: 1fr; }
-  .hero-r, .ab-r { display: none; }
-  .hero-h1 { font-size: 50px; }
+
+  /* Navigation — hamburger menu */
+  .nav { padding: 0 1rem; height: 60px; }
+  .nav-r > div { display: none; }
+  .nav-r { position: relative; }
+
+  /* Hamburger button */
+  .nav-hamburger {
+    display: flex !important;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 400;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: rgba(255,255,255,.7);
+    border-radius: 2px;
+    transition: all .3s var(--transition);
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Menu mobile overlay */
+  .nav-mobile-menu {
+    display: none;
+    position: fixed;
+    top: 60px; left: 0; right: 0;
+    background: var(--dusk2);
+    border-bottom: 1px solid rgba(232,160,32,.2);
+    z-index: 350;
+    padding: 1rem 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  .nav-mobile-menu.open { display: block; animation: pgFadeUp .25s var(--transition) both; }
+  .nav-mobile-menu .nb {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 14px 1.5rem;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+  .nav-mobile-menu .nb:last-child { border-bottom: none; }
+  .nav-mobile-menu .nb.on { color: var(--gold); }
+  .nav-mobile-menu .nb::after { display: none; }
+
+  /* Hero */
+  .hero-inner { grid-template-columns: 1fr; min-height: auto; }
+  .hero-r { display: none; }
+  .hero-l { padding: 1.75rem 1.25rem 1.5rem; }
+  .hero-h1 { font-size: 48px; }
+  .hero-p { font-size: 12.5px; max-width: 100%; }
+  .hero-btns { flex-direction: column; gap: 10px; }
+  .hero-btns .btn-primary,
+  .hero-btns .btn-ghost { width: 100%; justify-content: center; }
   .hero-stats { flex-wrap: wrap; }
-  .pgrid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-  .ab-vals { grid-template-columns: 1fr; }
+  .hst { flex: 0 0 50%; border-bottom: 1px solid rgba(255,255,255,.05); }
+  .hst:nth-child(even) { border-right: none; }
+
+  /* Featured */
+  .featured-section { padding: 1.25rem 1rem; }
+  #home-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .section-title { font-size: 26px; }
+
+  /* Reviews */
+  .reviews-section { padding: 1.5rem 1rem 2rem; }
+  .reviews-grid { grid-template-columns: 1fr; gap: 10px; }
+
+  /* Catalogue */
+  .cat-top { padding: 1.25rem 1rem 0; }
+  .cat-top-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .cat-title { font-size: 36px; }
+  .cat-model-pick { align-items: flex-start; width: 100%; }
+  .cat-model-sel { min-width: unset; width: 100%; }
+  .cat-filters { padding: .6rem .75rem; top: 60px; gap: 6px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .cat-filters::-webkit-scrollbar { display: none; }
+  .cat-count-bar { padding: .5rem 1rem; }
+  .cat-body { padding: 1rem; }
+  .pgrid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .pc-body { padding: .7rem .75rem .75rem; }
+  .pc-name { font-size: 14px; }
+
+  /* Page détail */
+  .det-grid { grid-template-columns: 1fr; }
+  .det { padding: 1.25rem 1rem; }
+  .det-imgbox { max-width: 320px; margin: 0 auto; }
+  .d-title { font-size: 32px; }
+
+  /* Blog */
+  .blog-hero { padding: 1.5rem 1rem; }
+  .blog-hero h2 { font-size: 32px; }
+  .blog-body { padding: 1rem; }
+  .blog-grid { grid-template-columns: 1fr; gap: 14px; }
   .blog-featured { grid-template-columns: 1fr; }
-  .bf-img { aspect-ratio: 16/9; }
-  .mf-grid { grid-template-columns: 1fr; }
+  .bf-img { aspect-ratio: 16/9; max-height: 200px; }
+  .blog-cats { padding: .5rem 1rem; gap: 6px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .blog-cats::-webkit-scrollbar { display: none; }
+  .blog-det { padding: 1.25rem 1rem; }
+  .bd-rel-grid { grid-template-columns: 1fr; gap: 10px; }
+  .bd-related { padding: 1.25rem 1rem; }
+
+  /* Histoire */
+  .ab-hero { grid-template-columns: 1fr; }
+  .ab-r { display: none; }
+  .ab-vals { grid-template-columns: 1fr 1fr; }
   .tl-items::before { left: 16px; }
-  .bd-rel-grid { grid-template-columns: 1fr; }
-  .det { padding: 1.5rem; }
-  .nav { padding: 0 1rem; }
-  .cat-body { padding: 1.25rem 1rem; }
+  .tl-item { gap: 1rem; padding-left: 0; }
+
+  /* Contact */
+  .ct-wrap { grid-template-columns: 1fr; padding: 1.25rem 1rem; gap: 1.5rem; }
+  .ct-l h2 { font-size: 32px; }
+  .ct-form { padding: 1.25rem 1rem; }
+
+  /* Footer */
+  .footer { padding: 2rem 1rem 1.25rem; }
+  .footer-top { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .footer-brand-col { grid-column: 1 / -1; }
+  .footer-bottom { flex-direction: column; gap: .75rem; text-align: center; }
+
+  /* Model CTA bar */
+  .model-cta-inner { flex-direction: column; align-items: stretch; gap: .75rem; padding: .75rem 1rem; }
+  .model-cta-bar { padding: 0; }
+
+  /* Général */
+  .mf-grid { grid-template-columns: 1fr; }
+  .order-steps { flex-wrap: wrap; gap: 4px; }
+}
+
+/* ─── iPhone SE / très petits écrans (≤375px) ─────────────── */
+@media (max-width: 375px) {
+  .hero-h1 { font-size: 40px; }
+  .pgrid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  #home-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .pc-name { font-size: 12px; }
+  .hst { flex: 0 0 50%; }
 }
 
 /* ─── CORRECTIONS v2.1 ──────────────────────────────────── */
@@ -1903,14 +2055,26 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   <div class="logo" onclick="go('home')">CULTURECASE<span class="logo-sub">Bamako · Mali</span></div>
   <div class="nav-r">
     <div>
-    <button class="nb on" id="nm-home" onclick="go('home')">Accueil</button>
-    <button class="nb" id="nm-catalogue" onclick="go('catalogue')">Catalogue</button>
-    <button class="nb" id="nm-about" onclick="go('about')">Histoire</button>
-    <button class="nb" id="nm-blog" onclick="go('blog')">Blog</button>
-    <button class="nb" id="nm-contact" onclick="go('contact')">Contact</button>
-  </div>
+      <button class="nb on" id="nm-home" onclick="go('home')">Accueil</button>
+      <button class="nb" id="nm-catalogue" onclick="go('catalogue')">Catalogue</button>
+      <button class="nb" id="nm-about" onclick="go('about')">Histoire</button>
+      <button class="nb" id="nm-blog" onclick="go('blog')">Blog</button>
+      <button class="nb" id="nm-contact" onclick="go('contact')">Contact</button>
+    </div>
+    <!-- Hamburger mobile -->
+    <button class="nav-hamburger" id="nav-ham" onclick="toggleMobileMenu()" aria-label="Menu" style="display:none">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+<!-- Menu mobile -->
+<div class="nav-mobile-menu" id="nav-mobile">
+  <button class="nb on" id="nm-home-m" onclick="go('home');toggleMobileMenu()">Accueil</button>
+  <button class="nb" id="nm-catalogue-m" onclick="go('catalogue');toggleMobileMenu()">Catalogue</button>
+  <button class="nb" id="nm-about-m" onclick="go('about');toggleMobileMenu()">Histoire</button>
+  <button class="nb" id="nm-blog-m" onclick="go('blog');toggleMobileMenu()">Blog</button>
+  <button class="nb" id="nm-contact-m" onclick="go('contact');toggleMobileMenu()">Contact</button>
+</div>
 
 <!-- HOME -->
 <div class="pg on" id="pg-home">
@@ -2864,11 +3028,37 @@ function openBlog(id){
   go('blogdet');
 }
 
+function toggleMobileMenu(){
+  const ham = document.getElementById('nav-ham');
+  const menu = document.getElementById('nav-mobile');
+  ham.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+
+// Fermer le menu si clic en dehors
+document.addEventListener('click', function(e){
+  const ham = document.getElementById('nav-ham');
+  const menu = document.getElementById('nav-mobile');
+  if(ham && menu && !ham.contains(e.target) && !menu.contains(e.target)){
+    ham.classList.remove('open');
+    menu.classList.remove('open');
+  }
+});
+
+// Afficher hamburger sur mobile
+function checkMobile(){
+  const ham = document.getElementById('nav-ham');
+  if(ham) ham.style.display = window.innerWidth <= 640 ? 'flex' : 'none';
+}
+window.addEventListener('resize', checkMobile);
+checkMobile();
+
 function go(p){
   document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
   document.getElementById('pg-'+p).classList.add('on');
   document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));
   const nb=document.getElementById('nm-'+p);if(nb)nb.classList.add('on');
+  const nbm=document.getElementById('nm-'+p+'-m');if(nbm)nbm.classList.add('on');
   window.scrollTo(0,0);
   if(p==='catalogue')initCat();
   if(p==='home')initHome();
