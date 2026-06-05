@@ -9,10 +9,14 @@
 </head>
 <body>
 <style>
+html { overflow-x: hidden; max-width: 100%; }
+
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap');
 
 /* ─── RESET & TOKENS ─────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+img, video, svg, iframe { max-width: 100%; }
+.pg { overflow-x: hidden; }
 
 :root {
   --ink:    #0F0700;
@@ -47,6 +51,7 @@ body {
   background: var(--cream);
   color: var(--ink);
   overflow-x: hidden;
+  max-width: 100vw;
   font-size: 14px;
   line-height: 1.6;
 }
@@ -874,6 +879,8 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border-top: 3px solid var(--gold);
+  width: 100%;
+  overflow: hidden;
 }
 .av {
   background: var(--dusk);
@@ -1392,7 +1399,8 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 
   /* Page détail */
   .det-grid { grid-template-columns: 1fr; }
-  .det { padding: 1.25rem 1rem; }
+  .det { padding: 1.25rem 1rem; overflow-x: hidden; width: 100%; }
+  .det-form-grid, .del-grid { grid-template-columns: 1fr !important; }
   .det-imgbox { max-width: 320px; margin: 0 auto; }
   .d-title { font-size: 32px; }
 
@@ -1412,7 +1420,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   /* Histoire */
   .ab-hero { grid-template-columns: 1fr; }
   .ab-r { display: none; }
-  .ab-vals { grid-template-columns: 1fr 1fr; }
+  .ab-vals { grid-template-columns: 1fr; }
   .tl-items::before { left: 16px; }
   .tl-item { gap: 1rem; padding-left: 0; }
 
