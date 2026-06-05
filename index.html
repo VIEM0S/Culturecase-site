@@ -2072,11 +2072,51 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
       <button class="nb" id="nm-contact" onclick="go('contact')">Contact</button>
     </div>
     <!-- Hamburger mobile -->
+    <!-- Bouton panier -->
+    <button class="cart-btn" onclick="openCart()" aria-label="Panier">
+      <i class="ti ti-shopping-cart" aria-hidden="true"></i>
+      <span id="cart-count-label">Panier</span>
+      <span class="cart-badge" id="cart-badge">0</span>
+    </button>
+    <!-- Hamburger mobile -->
     <button class="nav-hamburger" id="nav-ham" onclick="toggleMobileMenu()" aria-label="Menu" style="display:none">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
+
+<!-- ── PANIER DRAWER ─────────────────────────────────────── -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-head">
+    <h3>🛒 MON PANIER</h3>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <!-- rempli par JS -->
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-infos">
+      <label>PRÉNOM & NOM</label>
+      <input type="text" id="cart-nom" placeholder="Mohamed Coulibaly" autocomplete="name">
+      <label>TÉLÉPHONE</label>
+      <input type="tel" id="cart-tel" placeholder="+223 XX XX XX XX" autocomplete="tel">
+      <label>QUARTIER / ZONE DE LIVRAISON</label>
+      <input type="text" id="cart-quartier" placeholder="Badalabougou, Hippodrome...">
+    </div>
+    <div class="cart-total-row">
+      <span class="cart-total-label">TOTAL</span>
+      <span class="cart-total-amount" id="cart-total">0 FCFA</span>
+    </div>
+    <button class="cart-wa-btn" onclick="cartOrderWA()">
+      <i class="ti ti-brand-whatsapp"></i>
+      COMMANDER SUR WHATSAPP
+    </button>
+  </div>
+</div>
+
+<!-- Toast panier -->
+<div class="cart-toast" id="cart-toast"></div>
 <!-- Menu mobile -->
 <div class="nav-mobile-menu" id="nav-mobile">
   <button class="nb on" id="nm-home-m" onclick="go('home');toggleMobileMenu()">Accueil</button>
@@ -3251,6 +3291,206 @@ function orderQuick(id){
   if(tel) msg+=`\n📞 Téléphone : ${tel}`;
   msg+=`\n\nMerci !`;
   window.open('https://wa.me/22375992482?text='+encodeURIComponent(msg),'_blank');
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SYSTÈME DE PANIER
+// ══════════════════════════════════════════════════════════════════════════════
+
+var CART = []; // [{ designId, name, img, model, qty, price }]
+
+function fp(n){ return n.toLocaleString('fr-FR') + ' FCFA'; }
+
+function getCartPrice(model){
+  // Même logique que le reste du site
+  return (typeof MDS_G1 !== 'undefined' && MDS_G1.includes(model)) ? 3500 : 5000;
+}
+
+function cartTotal(){
+  return CART.reduce((s, item) => s + item.price * item.qty, 0);
+}
+
+function updateCartBadge(){
+  const total = CART.reduce((s, i) => s + i.qty, 0);
+  const badge = document.getElementById('cart-badge');
+  const label = document.getElementById('cart-count-label');
+  if(!badge) return;
+  if(total > 0){
+    badge.textContent = total;
+    badge.classList.add('visible');
+    if(label) label.textContent = total + ' article' + (total > 1 ? 's' : '');
+  } else {
+    badge.classList.remove('visible');
+    if(label) label.textContent = 'Panier';
+  }
+  document.getElementById('cart-total') && (document.getElementById('cart-total').textContent = fp(cartTotal()));
+}
+
+function showCartToast(msg){
+  const t = document.getElementById('cart-toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function addToCart(designId, modelOverride){
+  const d = DS.find(x => x.id === designId);
+  if(!d) return;
+  // Choisir le modèle : override > modèle global > premier dispo
+  const gm = (document.getElementById('global-model')?.value) || '';
+  const model = modelOverride || gm || ALL_MDS.find(m => getModelStock(designId, m) > 0) || ALL_MDS[0];
+  const price = getCartPrice(model);
+
+  // Vérifier si déjà dans le panier (même design + même modèle)
+  const existing = CART.find(i => i.designId === designId && i.model === model);
+  if(existing){
+    existing.qty++;
+  } else {
+    CART.push({ designId, name: d.name, img: d.img, model, qty: 1, price });
+  }
+
+  updateCartBadge();
+  renderCartItems();
+  showCartToast('✓ ' + d.name + ' ajouté au panier');
+
+  // Animation bouton
+  const btn = document.getElementById('add-btn-' + designId);
+  if(btn){
+    btn.classList.add('added');
+    btn.innerHTML = '<i class="ti ti-check"></i> Ajouté !';
+    setTimeout(() => {
+      btn.classList.remove('added');
+      btn.innerHTML = '<i class="ti ti-shopping-cart-plus"></i> Ajouter au panier';
+    }, 1500);
+  }
+}
+
+function removeFromCart(idx){
+  CART.splice(idx, 1);
+  updateCartBadge();
+  renderCartItems();
+}
+
+function updateCartQty(idx, delta){
+  CART[idx].qty = Math.max(1, CART[idx].qty + delta);
+  updateCartBadge();
+  renderCartItems();
+}
+
+function renderCartItems(){
+  const container = document.getElementById('cart-items');
+  const footer = document.getElementById('cart-footer');
+  if(!container) return;
+
+  if(CART.length === 0){
+    container.innerHTML = `
+      <div class="cart-empty">
+        <div class="cart-empty-icon">🛒</div>
+        <p>Ton panier est vide.<br>Ajoute des designs pour commander.</p>
+        <button onclick="closeCart();go('catalogue')" style="margin-top:8px;padding:10px 20px;background:var(--ember);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">
+          Voir le catalogue
+        </button>
+      </div>`;
+    if(footer) footer.style.display = 'none';
+    return;
+  }
+
+  // Pré-remplir les champs avec localStorage
+  try {
+    const sn = localStorage.getItem('cc_nom') || '';
+    const st = localStorage.getItem('cc_tel') || '';
+    const sq = localStorage.getItem('cc_quartier') || '';
+    setTimeout(() => {
+      if(sn && document.getElementById('cart-nom') && !document.getElementById('cart-nom').value) document.getElementById('cart-nom').value = sn;
+      if(st && document.getElementById('cart-tel') && !document.getElementById('cart-tel').value) document.getElementById('cart-tel').value = st;
+      if(sq && document.getElementById('cart-quartier') && !document.getElementById('cart-quartier').value) document.getElementById('cart-quartier').value = sq;
+    }, 50);
+  } catch(e){}
+
+  container.innerHTML = CART.map((item, idx) => `
+    <div class="cart-item">
+      <div class="cart-item-img">
+        ${item.img ? `<img src="${item.img}" alt="${item.name}" loading="lazy">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px">📱</div>`}
+      </div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-model">${item.model}</div>
+        <div class="cart-item-row">
+          <div class="cart-item-price">${fp(item.price * item.qty)}</div>
+          <div class="cart-item-qty">
+            <button onclick="updateCartQty(${idx}, -1)">−</button>
+            <span>${item.qty}</span>
+            <button onclick="updateCartQty(${idx}, +1)">+</button>
+          </div>
+        </div>
+      </div>
+      <button class="cart-item-del" onclick="removeFromCart(${idx})" title="Supprimer">✕</button>
+    </div>
+  `).join('');
+
+  if(footer){
+    footer.style.display = 'block';
+    document.getElementById('cart-total').textContent = fp(cartTotal());
+  }
+}
+
+function openCart(){
+  renderCartItems();
+  document.getElementById('cart-overlay').classList.add('open');
+  document.getElementById('cart-drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCart(){
+  document.getElementById('cart-overlay').classList.remove('open');
+  document.getElementById('cart-drawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function cartOrderWA(){
+  if(CART.length === 0) return;
+  const nom = (document.getElementById('cart-nom').value || '').trim();
+  const tel = (document.getElementById('cart-tel').value || '').trim();
+  const quartier = (document.getElementById('cart-quartier').value || '').trim();
+
+  // Mémoriser infos client
+  try {
+    if(nom) localStorage.setItem('cc_nom', nom);
+    if(tel) localStorage.setItem('cc_tel', tel);
+    if(quartier) localStorage.setItem('cc_quartier', quartier);
+  } catch(e){}
+
+  let msg = 'Bonjour CultureCase 👋\n\n🛒 *MA COMMANDE :*\n';
+  msg += '─────────────────\n';
+  CART.forEach((item, i) => {
+    msg += `\n${i+1}. 🎨 *${item.name}*\n   📱 Modèle : ${item.model}\n   🔢 Quantité : ${item.qty}\n   💰 ${fp(item.price * item.qty)}\n`;
+  });
+  msg += '─────────────────\n';
+  msg += `💰 *TOTAL : ${fp(cartTotal())}*`;
+  if(nom) msg += `\n\n👤 Nom : ${nom}`;
+  if(tel) msg += `\n📞 Téléphone : ${tel}`;
+  if(quartier) msg += `\n📍 Quartier : ${quartier}`;
+  msg += '\n\nMerci ! 🙏';
+
+  window.open('https://wa.me/22375992482?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// Ajouter depuis la page détail au panier
+function addToCartFromDet(){
+  if(!curD) return;
+  const model = document.getElementById('d-mod').value;
+  const price = getCartPrice(model);
+  const existing = CART.find(i => i.designId === curD.id && i.model === model);
+  if(existing){
+    existing.qty += dQty;
+  } else {
+    CART.push({ designId: curD.id, name: curD.name, img: curD.img, model, qty: dQty, price });
+  }
+  updateCartBadge();
+  renderCartItems();
+  showCartToast('✓ ' + curD.name + ' ajouté au panier');
 }
 
 function sendContact(){
