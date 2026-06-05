@@ -2439,7 +2439,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 <!-- ══ FIREBASE SDK ══ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot, collection, query, where, orderBy } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey:            "AIzaSyCt9zlckcPb7agpkbBsIH4DPS7w55Fn2E8",
