@@ -2861,7 +2861,6 @@ window.__applyFirebaseData = function(data) {
       gSel.innerHTML = opts;
       if (cur && ALL_MDS.includes(cur)) { gSel.value = cur; onGlobalModelChange(); }
     }
-.length} stocks · ${ALL_MDS.length} modèles`);
 
     // 6. Blog depuis settings.blog (sauvegardé par BlogPage.jsx du back-office)
     const fbBlog = settings.blog || [];
@@ -3204,7 +3203,7 @@ function toggleMobileMenu(){
 
 // ── Sticky mobile order bar ───────────────────────────────────────────────
 function syncMobileBar() {
-  updateCartBadge();
+  if(typeof CART !== 'undefined') updateCartBadge();
   if (window.innerWidth > 640) return;
   const bar = document.getElementById('mobile-order-bar');
   const pg = document.querySelector('.pg.on')?.id;
