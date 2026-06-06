@@ -193,7 +193,7 @@ body {
 .hero-inner {
   display: grid;
   grid-template-columns: 1.15fr .85fr;
-  min-height: 280px;
+  min-height: 220px;
   position: relative;
   z-index: 1;
 }
@@ -218,38 +218,57 @@ body {
 .ey-line { width: 24px; height: 1.5px; background: var(--ember); border-radius: 2px; }
 .ey-txt  { font-size: 9px; font-weight: 600; letter-spacing: 3.5px; text-transform: uppercase; color: var(--gold); }
 
+@keyframes h1In { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes heroTxtIn { from { opacity: 0; } to { opacity: 1; } }
+.hero-h1 .acc { color: var(--ember); display: block; }
+
+/* Hero — titre + texte côte à côte */
+.hero-title-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.hero-title-aside {
+  flex: 1;
+  padding-bottom: .2rem;
+}
+.hero-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  color: rgba(232,160,32,.8);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 4px;
+  margin-bottom: .6rem;
+}
 .hero-h1 {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 62px;
   line-height: .9;
   color: #fff;
   letter-spacing: 1.5px;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   animation: h1In .7s var(--transition) .2s both;
+  flex-shrink: 0;
 }
-@keyframes h1In { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-.hero-h1 .acc  { color: var(--ember); display: block; }
-.hero-h1 .acc2 {
-  font-family: 'Cormorant Garamond', serif;
-  color: rgba(232,160,32,.7);
-  font-size: .32em;
-  letter-spacing: 6px;
-  display: block;
-  margin-top: .5em;
-  font-style: italic;
-  font-weight: 400;
-}
-
 .hero-p {
   color: rgba(255,255,255,.42);
-  font-size: 13px;
-  line-height: 1.85;
-  max-width: 320px;
-  margin-bottom: 1.5rem;
+  font-size: 12.5px;
+  line-height: 1.8;
+  max-width: 100%;
+  margin-bottom: 0;
   animation: heroTxtIn .7s var(--transition) .35s both;
 }
-@keyframes heroTxtIn { from { opacity: 0; } to { opacity: 1; } }
+@media (max-width: 640px) {
+  .hero-title-row { flex-direction: column; align-items: flex-start; gap: .5rem; }
+  .hero-tagline { font-size: 18px; }
+  .hero-h1 { font-size: 48px; }
+}
+@media (max-width: 375px) {
+  .hero-h1 { font-size: 40px; }
+}
+
 
 .hero-btns {
   display: flex;
@@ -1357,6 +1376,10 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
     z-index: 350;
     padding: 1rem 0;
     box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    pointer-events: none;
+  }
+  .nav-mobile-menu.open {
+    pointer-events: all;
   }
   .nav-mobile-menu.open { display: block; animation: pgFadeUp .25s var(--transition) both; }
   .nav-mobile-menu .nb {
@@ -2137,7 +2160,6 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 </style>
 
 
-<div>
 <nav class="nav">
   <div class="logo" onclick="go('home')">CULTURECASE<span class="logo-sub">Bamako · Mali</span></div>
   <div class="nav-r">
@@ -2210,8 +2232,13 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
     <div class="hero-inner">
       <div class="hero-l">
         <div class="hero-eyebrow"><div class="ey-line"></div><span class="ey-txt">Design exclusif · Fait à Bamako</span></div>
-        <h1 class="hero-h1">L'âme<br>du <span class="acc">Mali</span><span class="acc2">dans ta main</span></h1>
-        <p class="hero-p">Des designs exclusifs inspirés du bogolan, du N'Ko, des monuments et des valeurs du Mali. Conçus à Bamako, portés partout.</p>
+        <div class="hero-title-row">
+          <h1 class="hero-h1">L'âme<br>du <span class="acc">Mali</span></h1>
+          <div class="hero-title-aside">
+            <p class="hero-tagline">dans ta main</p>
+            <p class="hero-p">Des designs exclusifs inspirés du bogolan, du N'Ko, des monuments et des valeurs du Mali. Conçus à Bamako, portés partout.</p>
+          </div>
+        </div>
         <div class="hero-btns">
           <button class="btn-primary" onclick="go('catalogue')"><i class="ti ti-arrow-right" aria-hidden="true"></i> Voir les designs</button>
           <button class="btn-ghost" onclick="go('about')">Notre histoire →</button>
@@ -3202,6 +3229,7 @@ function toggleMobileMenu(){
 }
 
 // ── Sticky mobile order bar ───────────────────────────────────────────────
+var CART = []; // [{ designId, name, img, model, qty, price }]
 function syncMobileBar() {
   if(typeof CART !== 'undefined') updateCartBadge();
   if (window.innerWidth > 640) return;
@@ -3443,7 +3471,6 @@ function orderQuick(id){
 // SYSTÈME DE PANIER
 // ══════════════════════════════════════════════════════════════════════════════
 
-var CART = []; // [{ designId, name, img, model, qty, price }]
 
 function fp(n){ return n.toLocaleString('fr-FR') + ' FCFA'; }
 
@@ -3518,11 +3545,16 @@ function addToCart(designId, modelOverride){
   if(sel) {
     sel.innerHTML = ALL_MDS.map(m => {
       const stock = getModelStock(designId, m);
-      const label = stock === 0 ? m + ' — Rupture' : stock <= 2 ? m + ' — ' + stock + ' restant' + (stock > 1 ? 's' : '') : m;
-      return `<option value="${m}" ${stock === 0 ? 'disabled' : ''}>${label}</option>`;
-    }).join('');
-    // Pré-sélectionner le premier dispo
-    const firstDispo = ALL_MDS.find(m => getModelStock(designId, m) > 0);
+      if(stock === 0) return ''; // masquer complètement les ruptures
+      const label = stock <= 2 ? m + ' — ' + stock + ' restant' + (stock > 1 ? 's' : '') : m;
+      return `<option value="${m}">${label}</option>`;
+    }).filter(Boolean).join('');
+    if(!sel.innerHTML) sel.innerHTML = '<option value="">Aucun modèle disponible</option>';
+    // Pré-sélectionner le dernier modèle utilisé si dispo
+    const lastModel = localStorage.getItem('cc_last_model');
+    const firstDispo = (lastModel && getModelStock(designId, lastModel) > 0)
+      ? lastModel
+      : ALL_MDS.find(m => getModelStock(designId, m) > 0);
     if(firstDispo) sel.value = firstDispo;
   }
 
@@ -3548,7 +3580,8 @@ function confirmModelPick() {
   if(!_pickDesignId) return;
   const sel = document.getElementById('model-pick-sel');
   const model = sel ? sel.value : '';
-  if(!model) return;
+  if(!model || model === '') { showCartToast('⚠️ Choisis un modèle'); return; }
+  try { localStorage.setItem('cc_last_model', model); } catch(e){}
   closeModelPick();
   setTimeout(() => _doAddToCart(_pickDesignId, model), 320);
 }
