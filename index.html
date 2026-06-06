@@ -2739,6 +2739,18 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   </div>
 </div>
 
+<!-- ══ POPUP CHOIX MODÈLE (ajout rapide panier) ══ -->
+<div id="model-pick-overlay" onclick="closeModelPick()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:850;backdrop-filter:blur(3px)"></div>
+<div id="model-pick-popup" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:860;background:var(--cream);border-radius:20px 20px 0 0;padding:1.5rem;box-shadow:0 -8px 40px rgba(0,0,0,.25);transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)">
+  <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 1.25rem"></div>
+  <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:.4rem">CHOISIR LE MODÈLE</div>
+  <div id="model-pick-name" style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--ink);margin-bottom:1rem"></div>
+  <select id="model-pick-sel" style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--warm);font-family:inherit;font-size:14px;color:var(--ink);margin-bottom:1rem;appearance:none;-webkit-appearance:none;cursor:pointer"></select>
+  <button onclick="confirmModelPick()" style="width:100%;padding:.85rem;background:var(--ember);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">
+    <i class="ti ti-shopping-cart-plus"></i> Ajouter au panier
+  </button>
+</div>
+
 <div class="toast" id="toast-el"></div>
 
 <!-- ══ FIREBASE SDK ══ -->
@@ -3437,15 +3449,70 @@ function showCartToast(msg){
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
+let _pickDesignId = null; // design en attente de choix de modèle
+
 function addToCart(designId, modelOverride){
   const d = DS.find(x => x.id === designId);
   if(!d) return;
-  // Choisir le modèle : override > modèle global > premier dispo
+
   const gm = (document.getElementById('global-model')?.value) || '';
-  const model = modelOverride || gm || ALL_MDS.find(m => getModelStock(designId, m) > 0) || ALL_MDS[0];
+
+  // Si modèle déjà connu → ajout direct fluide
+  if(modelOverride || gm) {
+    const model = modelOverride || gm;
+    _doAddToCart(designId, model);
+    return;
+  }
+
+  // Sinon → ouvrir la popup légère de choix de modèle
+  _pickDesignId = designId;
+  const nameEl = document.getElementById('model-pick-name');
+  if(nameEl) nameEl.textContent = d.name;
+
+  const sel = document.getElementById('model-pick-sel');
+  if(sel) {
+    sel.innerHTML = ALL_MDS.map(m => {
+      const stock = getModelStock(designId, m);
+      const label = stock === 0 ? m + ' — Rupture' : stock <= 2 ? m + ' — ' + stock + ' restant' + (stock > 1 ? 's' : '') : m;
+      return `<option value="${m}" ${stock === 0 ? 'disabled' : ''}>${label}</option>`;
+    }).join('');
+    // Pré-sélectionner le premier dispo
+    const firstDispo = ALL_MDS.find(m => getModelStock(designId, m) > 0);
+    if(firstDispo) sel.value = firstDispo;
+  }
+
+  // Afficher la popup
+  const overlay = document.getElementById('model-pick-overlay');
+  const popup   = document.getElementById('model-pick-popup');
+  if(overlay) overlay.style.display = 'block';
+  if(popup)   { popup.style.display = 'block'; setTimeout(() => popup.style.transform = 'translateY(0)', 10); }
+}
+
+function closeModelPick() {
+  const overlay = document.getElementById('model-pick-overlay');
+  const popup   = document.getElementById('model-pick-popup');
+  if(popup)   popup.style.transform = 'translateY(100%)';
+  setTimeout(() => {
+    if(overlay) overlay.style.display = 'none';
+    if(popup)   popup.style.display = 'none';
+  }, 300);
+  _pickDesignId = null;
+}
+
+function confirmModelPick() {
+  if(!_pickDesignId) return;
+  const sel = document.getElementById('model-pick-sel');
+  const model = sel ? sel.value : '';
+  if(!model) return;
+  closeModelPick();
+  setTimeout(() => _doAddToCart(_pickDesignId, model), 320);
+}
+
+function _doAddToCart(designId, model) {
+  const d = DS.find(x => x.id === designId);
+  if(!d || !model) return;
   const price = getCartPrice(model);
 
-  // Vérifier si déjà dans le panier (même design + même modèle)
   const existing = CART.find(i => i.designId === designId && i.model === model);
   if(existing){
     existing.qty++;
@@ -3455,9 +3522,9 @@ function addToCart(designId, modelOverride){
 
   updateCartBadge();
   renderCartItems();
-  showCartToast('✓ ' + d.name + ' ajouté au panier');
+  showCartToast('✓ ' + d.name + ' · ' + model + ' ajouté');
 
-  // Animation bouton
+  // Animation bouton carte
   const btn = document.getElementById('add-btn-' + designId);
   if(btn){
     btn.classList.add('added');
