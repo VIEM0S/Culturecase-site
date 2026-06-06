@@ -815,38 +815,35 @@ body {
 
 /* Bouton panier secondaire */
 .det-cart-btn {
-  width: 100%;
-  padding: 10px 16px;
-  background: transparent;
-  border: 1.5px solid var(--ember);
-  color: var(--ember);
+  flex-shrink: 0;
+  width: 48px;
+  height: auto;
+  padding: 0;
+  background: var(--sand);
+  border: 1.5px solid var(--border);
+  color: var(--muted);
   border-radius: var(--radius);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  transition: background .2s, color .2s, transform .15s;
+  transition: background .2s, color .2s, border-color .2s;
   font-family: inherit;
-  margin-top: 8px;
 }
 .det-cart-btn:hover:not([disabled]) {
   background: var(--ember);
   color: #fff;
-  transform: translateY(-1px);
+  border-color: var(--ember);
 }
 .det-cart-btn:disabled {
   opacity: .35;
   cursor: not-allowed;
 }
-.det-cart-btn i { font-size: 14px; }
+.det-cart-btn i { font-size: 18px; }
 
-.det-feats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 1.5rem; }
-.df { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); }
-.df i { font-size: 15px; color: var(--leaf); }
+.det-feats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin-top: 1.25rem; }
+.df { display: flex; align-items: flex-start; gap: 6px; font-size: 11px; color: var(--muted); line-height: 1.4; }
+.df i { font-size: 14px; color: var(--leaf); flex-shrink: 0; margin-top: 1px; }
 
 /* Prix recap */
 .prix-recap {
@@ -890,8 +887,8 @@ body {
   margin-bottom: 1rem;
   box-shadow: var(--shadow-card);
 }
-.lf-title { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: .75rem; display: flex; align-items: center; gap: 6px; }
-.lf-title i { font-size: 13px; color: var(--ember); }
+.lf-title { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: .75rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; line-height: 1.5; }
+.lf-title i { font-size: 13px; color: var(--ember); flex-shrink: 0; }
 .lf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .lf-g { display: flex; flex-direction: column; gap: 3px; }
 .lf-g.full { grid-column: 1 / -1; }
@@ -1683,6 +1680,11 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 }
 @media (max-width: 900px) { .reviews-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 540px) { .reviews-grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px) {
+  .det-feats { grid-template-columns: 1fr; }
+  .lf-grid { grid-template-columns: 1fr; }
+  .lf-title span { letter-spacing: .5px; }
+}
 .review-card {
   background: var(--white);
   border: 1.5px solid var(--border);
@@ -1805,7 +1807,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 /* ─── BOUTIQUE HEADER ────────────────────────────────────── */
 .cat-top {
   background: var(--dusk2);
-  padding: 2rem 2.5rem 1.5rem;
+  padding: 1.25rem 2.5rem 1.25rem;
   overflow: hidden;
   position: relative;
   border-bottom: 1px solid rgba(232,160,32,.12);
@@ -1821,35 +1823,35 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   position: relative;
   z-index: 1;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: wrap;
+  gap: 1.5rem;
+  flex-wrap: nowrap;
 }
 .cat-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 52px;
+  font-size: 40px;
   letter-spacing: 3px;
   color: #fff;
-  line-height: .9;
-  margin-bottom: .3rem;
+  line-height: .92;
+  margin-bottom: .2rem;
 }
 .cat-title em { color: var(--gold); font-style: normal; }
-.cat-sub { font-size: 9.5px; color: rgba(255,255,255,.45); letter-spacing: 2px; text-transform: uppercase; margin-top: .5rem; }
+.cat-sub { font-size: 9px; color: rgba(255,255,255,.5); letter-spacing: 2px; text-transform: uppercase; margin-top: .3rem; }
 
 /* ─── BARRE MODÈLE INTÉGRÉE dans le header ──────────────── */
 .cat-model-pick {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 .cat-model-label {
   font-size: 9px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(255,255,255,.35);
+  color: rgba(255,255,255,.5);
   font-weight: 600;
 }
 .cat-model-sel {
@@ -1859,11 +1861,12 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   font-weight: 500;
-  padding: 10px 16px;
+  padding: 8px 14px;
   border-radius: var(--radius);
   cursor: pointer;
   transition: border-color .2s, background .2s;
-  min-width: 220px;
+  min-width: 200px;
+  max-width: 280px;
 }
 .cat-model-sel:focus { outline: none; border-color: var(--ember); background: rgba(255,255,255,.1); }
 .cat-model-sel option, .cat-model-sel optgroup { background: var(--dusk2); color: #fff; }
@@ -2566,10 +2569,8 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
             <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
             <span>Commander</span>
           </button>
-          <button class="det-cart-btn" id="det-cart-btn" onclick="addToCartFromDet()"
-            title="Ajouter au panier"
-            style="flex-shrink:0;width:48px;padding:0;margin-top:0;justify-content:center">
-            <i class="ti ti-shopping-cart-plus" style="font-size:18px"></i>
+          <button class="det-cart-btn" id="det-cart-btn" onclick="addToCartFromDet()" title="Ajouter au panier">
+            <i class="ti ti-shopping-cart-plus"></i>
           </button>
         </div>
 
@@ -2923,6 +2924,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
 import { getFirestore, doc, onSnapshot, collection, query, where, orderBy } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
 const app = initializeApp({
   apiKey:            "AIzaSyCt9zlckcPb7agpkbBsIH4DPS7w55Fn2E8",
@@ -2932,11 +2934,12 @@ const app = initializeApp({
   messagingSenderId: "369046579849",
   appId:             "1:369046579849:web:3672d245a9f7d42e687458"
 });
-const db = getFirestore(app);
+const db   = getFirestore(app);
+const auth = getAuth(app);
   window.__db = db;
 
 const chunkCache = new Map();
-let mainCache = null, chunkUnsubs = [], currentChunkCount = 0;
+let mainCache = null, chunkUnsubs = [], currentChunkCount = 0, listenersStarted = false;
 
 // ══ FIREBASE → UI ════════════════════════════════════════════════════════════
 // Exposer les APIs Firestore pour le blog
@@ -3078,29 +3081,41 @@ document.head.appendChild(fbStyle);
 
 setFbStatus('loading');
 
-onSnapshot(doc(db, "data", "main"), snap => {
-  if (!snap.exists()) return;
-  mainCache = snap.data();
-  const n = mainCache._chunkCount ?? 0;
-  if (n !== currentChunkCount) subscribeChunks(n); else assemble();
-  setFbStatus('live');
-}, err => {
-  console.error('[CultureCase] Firebase error:', err);
-  setFbStatus('offline');
-});
+function startListeners() {
+  if (listenersStarted) return;
+  listenersStarted = true;
 
-// Détection offline/online navigateur
-window.addEventListener('offline', () => setFbStatus('offline'));
-window.addEventListener('online',  () => setFbStatus('loading'));
+  onSnapshot(doc(db, "data", "main"), snap => {
+    if (!snap.exists()) return;
+    mainCache = snap.data();
+    const n = mainCache._chunkCount ?? 0;
+    if (n !== currentChunkCount) subscribeChunks(n); else assemble();
+    setFbStatus('live');
+  }, err => {
+    console.error('[CultureCase] Firebase error:', err.code, err.message);
+    setFbStatus('offline');
+  });
 
-// Démarrer les écoutes blog et avis dès que Firebase est prêt
-window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot };
-if(typeof listenBlog === 'function')     listenBlog();
-if(typeof listenReviews === 'function')  listenReviews();
-// Fallback si les fonctions ne sont pas encore définies
-window.addEventListener('load', () => {
-  if(typeof listenBlog === 'function' && !window.__blogListening)     { listenBlog();    window.__blogListening = true; }
-  if(typeof listenReviews === 'function' && !window.__revListening)   { listenReviews(); window.__revListening = true; }
+  window.addEventListener('offline', () => setFbStatus('offline'));
+  window.addEventListener('online',  () => setFbStatus('loading'));
+
+  window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot };
+  if (typeof listenBlog    === 'function') listenBlog();
+  if (typeof listenReviews === 'function') listenReviews();
+  window.addEventListener('load', () => {
+    if (typeof listenBlog    === 'function' && !window.__blogListening)  { listenBlog();    window.__blogListening = true; }
+    if (typeof listenReviews === 'function' && !window.__revListening)   { listenReviews(); window.__revListening  = true; }
+  });
+}
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    startListeners();
+  } else {
+    signInAnonymously(auth)
+      .then(() => console.log('[CultureCase] Auth anonyme OK'))
+      .catch(err => { console.error('[CultureCase] Auth erreur:', err); setFbStatus('offline'); });
+  }
 });
 </script>
 
