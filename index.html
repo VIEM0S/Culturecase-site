@@ -2347,14 +2347,17 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
       <input class="fsrch" type="search" id="sinp" placeholder="Rechercher un design..." oninput="filt()">
     </div>
     <div class="cat-filter-sep"></div>
-    <button class="ftag" id="dispo-btn" onclick="toggleDispo(this)">✓ Disponible seulement</button>
+    <button class="ftag on" id="sort-pop" onclick="setSort('popular',this)">🔥 Populaires</button>
+    <button class="ftag" id="sort-new" onclick="setSort('new',this)">✨ Nouveautés</button>
+    <div class="cat-filter-sep"></div>
+    <button class="ftag" id="dispo-btn" onclick="toggleDispo(this)">✓ Disponible</button>
     <div style="margin-left:auto;font-size:10px;color:var(--muted)" id="mb-info"></div>
   </div>
 
   <!-- COMPTEUR -->
   <div class="cat-count-bar">
     <div class="cat-count" id="cat-count"></div>
-    <div class="cat-sort">Triés par popularité</div>
+    <div class="cat-sort" id="cat-sort-label">🔥 Les plus populaires</div>
   </div>
 
   <!-- GRILLE -->
@@ -3357,6 +3360,28 @@ function initCat(){
   filt();
 }
 
+var activeSort = 'popular'; // 'popular' | 'new'
+
+function setSort(sort, btn) {
+  activeSort = sort;
+  document.querySelectorAll('#sort-pop, #sort-new').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const label = document.getElementById('cat-sort-label');
+  if(label) label.textContent = sort === 'popular' ? '🔥 Les plus populaires' : '✨ Nouveautés en premier';
+  filt();
+}
+
+var activeSort = 'popular';
+
+function setSort(sort, btn) {
+  activeSort = sort;
+  document.querySelectorAll('#sort-pop, #sort-new').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const label = document.getElementById('cat-sort-label');
+  if(label) label.textContent = sort === 'popular' ? '🔥 Les plus populaires' : '✨ Nouveautés en premier';
+  filt();
+}
+
 function toggleDispo(btn){
   stockFilter = stockFilter === 'available' ? 'all' : 'available';
   btn.classList.toggle('on');
@@ -3388,7 +3413,26 @@ function filt(){
     if(q&&!d.name.toLowerCase().includes(q))return false;
     return true;
   });
-  // compteur
+
+  // Tri selon activeSort
+  if(activeSort === 'popular') {
+    // Trier par stock total décroissant (proxy de popularité)
+    // Les designs avec plus de stock vendu = plus populaires
+    // On utilise l'index DS comme ordre éditorial par défaut (déjà trié par popularité)
+    res.sort((a, b) => {
+      const stockA = ALL_MDS.reduce((s,m) => s + getModelStock(a.id,m), 0);
+      const stockB = ALL_MDS.reduce((s,m) => s + getModelStock(b.id,m), 0);
+      // D'abord ceux qui ont du stock, puis par ordre DS (éditorial)
+      const aHas = stockA > 0 ? 1 : 0;
+      const bHas = stockB > 0 ? 1 : 0;
+      return bHas - aHas;
+    });
+  } else if(activeSort === 'new') {
+    // Inverser l'ordre DS — les derniers ajoutés (ID élevé) en premier
+    res = [...res].reverse();
+  }
+
+  // Compteur
   let countTxt = `${res.length} design${res.length>1?'s':''}`;
   if(gm){
     const dispo=res.filter(d=>getModelStock(d.id,gm)>0).length;
@@ -3410,13 +3454,13 @@ function openDet(id){
   const sel=document.getElementById('d-mod');
   sel.innerHTML=ALL_MDS.map(m=>{
     const qty=getModelStock(curD.id,m);
+    if(qty===0) return '';
     let label=m;
-    if(qty===0) label+=' — Rupture';
-    else if(qty===1) label+=' — 1 restant';
-    else if(qty===2) label+=' — 2 restants';
-    const disabled=qty===0?'style="color:var(--muted);opacity:.5"':'';
-    return `<option value="${m}" ${disabled}>${label}</option>`;
-  }).join('');
+    if(qty===1) label+=' — 1 restant';
+    else if(qty<=3) label+=' — '+qty+' restants';
+    return `<option value="${m}">${label}</option>`;
+  }).filter(Boolean).join('');
+  if(!sel.innerHTML) sel.innerHTML='<option value="">Aucun modèle disponible</option>';
   // pré-sélectionner le modèle global si choisi, sinon le premier dispo
   const gm = (document.getElementById('global-model')?.value)||'';
   const firstAvail = gm || ALL_MDS.find(m=>getModelStock(curD.id,m)>0) || ALL_MDS[0];
