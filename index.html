@@ -2402,10 +2402,21 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
           <div class="os"><div class="os-num">3</div> Envoyer WhatsApp</div>
         </div>
 
-        <button class="wa-btn" id="wa-order-btn" onclick="orderWA()">
-          <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
-          <span>Commander sur WhatsApp</span>
-        </button>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;margin-bottom:0">
+          <button class="wa-btn" id="wa-order-btn" onclick="orderWA()">
+            <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
+            <span>Commander</span>
+          </button>
+          <button
+            id="det-cart-btn"
+            onclick="addToCartFromDet()"
+            title="Ajouter au panier"
+            style="padding:0 18px;background:transparent;border:2px solid var(--ember);color:var(--ember);border-radius:var(--radius);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s;flex-shrink:0"
+            onmouseover="if(!this.disabled){this.style.background='var(--ember)';this.style.color='#fff'}"
+            onmouseout="if(!this.disabled){this.style.background='transparent';this.style.color='var(--ember)'}">
+            <i class="ti ti-shopping-cart-plus"></i>
+          </button>
+        </div>
         <p class="order-note">Votre commande sera envoyée sur WhatsApp. Nous confirmons <strong>sous 30 min</strong> et livrons <strong>le jour même ou le lendemain</strong> à Bamako.</p>
         <div class="det-feats">
           <div class="df"><i class="ti ti-shield-check" aria-hidden="true"></i>Protection renforcée</div>
@@ -3052,32 +3063,50 @@ function getPrice(model){
 function updatePrice(){
   if(!curD) return;
   const model=document.getElementById('d-mod').value;
-  const qty=getModelStock(curD.id,model);
-  const price=(MDS_G1.includes(model)?3500:5000);
-  document.getElementById('d-price-display').textContent=fp(price)+' × '+dQty+' = '+fp(price*dQty);
   const sb=document.getElementById('d-stock-badge');
   const waBtn=document.getElementById('wa-order-btn');
   const waSpan=waBtn.querySelector('span');
+  const cartBtn=document.getElementById('det-cart-btn');
+
+  // Aucun modèle disponible
+  if(!model){
+    sb.className='det-stock out';
+    sb.innerHTML='<i class="ti ti-alert-circle"></i> Aucun modèle disponible';
+    waBtn.disabled=true; waBtn.style.opacity='.35'; waBtn.style.cursor='not-allowed';
+    waSpan.textContent='Aucun modèle disponible';
+    if(cartBtn){ cartBtn.disabled=true; cartBtn.style.opacity='.35'; cartBtn.style.cursor='not-allowed'; }
+    document.getElementById('d-price-display').textContent='—';
+    return;
+  }
+
+  const qty=getModelStock(curD.id,model);
+  const price=(MDS_G1.includes(model)?3500:5000);
+
+  // Ajuster dQty si dépasse le stock
+  if(dQty>qty){ dQty=Math.max(1,qty); document.getElementById('d-qty').textContent=dQty; }
+  const plusBtn=document.querySelectorAll('.qb')[1];
+  if(plusBtn) plusBtn.style.opacity=dQty>=qty?'.3':'1';
+
+  document.getElementById('d-price-display').textContent=fp(price)+' × '+dQty+' = '+fp(price*dQty);
+
   if(qty===0){
     sb.className='det-stock out';
     sb.innerHTML='<i class="ti ti-clock"></i> Rupture pour ce modèle';
-    waBtn.disabled=true;waBtn.style.opacity='.4';waBtn.style.cursor='not-allowed';
+    waBtn.disabled=true; waBtn.style.opacity='.35'; waBtn.style.cursor='not-allowed';
     waSpan.textContent='Indisponible pour ce modèle';
-  } else if(qty>0&&qty<=2){
+    if(cartBtn){ cartBtn.disabled=true; cartBtn.style.opacity='.35'; cartBtn.style.cursor='not-allowed'; }
+  } else if(qty<=2){
     sb.className='det-stock limited';
     sb.innerHTML=`<i class="ti ti-alert-triangle"></i> Plus que ${qty} en stock — commandez vite`;
-    waBtn.disabled=false;waBtn.style.opacity='1';waBtn.style.cursor='pointer';
+    waBtn.disabled=false; waBtn.style.opacity='1'; waBtn.style.cursor='pointer';
     waSpan.textContent='Commander sur WhatsApp';
-  } else if(qty>2){
-    sb.className='det-stock available';
-    sb.innerHTML='<i class="ti ti-circle-check"></i> En stock';
-    waBtn.disabled=false;waBtn.style.opacity='1';waBtn.style.cursor='pointer';
-    waSpan.textContent='Commander sur WhatsApp';
+    if(cartBtn){ cartBtn.disabled=false; cartBtn.style.opacity='1'; cartBtn.style.cursor='pointer'; }
   } else {
     sb.className='det-stock available';
-    sb.innerHTML='<i class="ti ti-circle-check"></i> Disponible';
-    waBtn.disabled=false;waBtn.style.opacity='1';waBtn.style.cursor='pointer';
+    sb.innerHTML='<i class="ti ti-circle-check"></i> En stock';
+    waBtn.disabled=false; waBtn.style.opacity='1'; waBtn.style.cursor='pointer';
     waSpan.textContent='Commander sur WhatsApp';
+    if(cartBtn){ cartBtn.disabled=false; cartBtn.style.opacity='1'; cartBtn.style.cursor='pointer'; }
   }
   syncMobileBar();
 }
@@ -3559,7 +3588,10 @@ function removeFromCart(idx){
 }
 
 function updateCartQty(idx, delta){
-  CART[idx].qty = Math.max(1, CART[idx].qty + delta);
+  const item = CART[idx];
+  if(!item) return;
+  const maxQty = getModelStock(item.designId, item.model);
+  item.qty = Math.min(maxQty, Math.max(1, item.qty + delta));
   updateCartBadge();
   renderCartItems();
 }
@@ -3668,6 +3700,8 @@ function cartOrderWA(){
 function addToCartFromDet(){
   if(!curD) return;
   const model = document.getElementById('d-mod').value;
+  if(!model){ showCartToast('⚠️ Choisis un modèle iPhone d\'abord'); return; }
+  if(getModelStock(curD.id, model) === 0){ showCartToast('❌ Ce modèle est épuisé'); return; }
   const price = getCartPrice(model);
   const existing = CART.find(i => i.designId === curD.id && i.model === model);
   if(existing){
