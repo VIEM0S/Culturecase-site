@@ -794,24 +794,55 @@ body {
   border: none;
   color: #fff;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 18px;
+  font-size: 14px;
   letter-spacing: 2px;
-  padding: 16px;
+  padding: 12px 16px;
   border-radius: var(--radius);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   transition: background .25s, transform .2s var(--transition), box-shadow .25s;
-  box-shadow: 0 4px 16px rgba(37,211,102,.3);
+  box-shadow: 0 3px 12px rgba(37,211,102,.25);
 }
 .wa-btn:hover:not([disabled]) {
   background: #1aad54;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(37,211,102,.35);
+  box-shadow: 0 6px 20px rgba(37,211,102,.3);
 }
 .wa-btn:active { transform: translateY(0); }
+
+/* Bouton panier secondaire */
+.det-cart-btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1.5px solid var(--ember);
+  color: var(--ember);
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: background .2s, color .2s, transform .15s;
+  font-family: inherit;
+  margin-top: 8px;
+}
+.det-cart-btn:hover:not([disabled]) {
+  background: var(--ember);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.det-cart-btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+.det-cart-btn i { font-size: 14px; }
 
 .det-feats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 1.5rem; }
 .df { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); }
@@ -2211,7 +2242,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
     </div>
     <button class="cart-wa-btn" onclick="cartOrderWA()">
       <i class="ti ti-brand-whatsapp"></i>
-      COMMANDER SUR WHATSAPP
+      COMMANDER
     </button>
   </div>
 </div>
@@ -2432,22 +2463,18 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
           <div class="os"><div class="os-num">3</div> Envoyer WhatsApp</div>
         </div>
 
-        <!-- CTA principal : Commander via WhatsApp -->
-        <button class="wa-btn" id="wa-order-btn" onclick="orderWA()" style="width:100%;margin-bottom:10px">
-          <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
-          <span>Commander sur WhatsApp</span>
-        </button>
-
-        <!-- CTA secondaire : Ajouter au panier (plusieurs articles) -->
-        <button
-          id="det-cart-btn"
-          onclick="addToCartFromDet()"
-          style="width:100%;padding:11px;background:transparent;border:1.5px solid var(--ember);color:var(--ember);border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s,color .2s;letter-spacing:.5px;font-family:inherit"
-          onmouseover="if(!this.disabled){this.style.background='var(--ember)';this.style.color='#fff'}"
-          onmouseout="if(!this.disabled){this.style.background='transparent';this.style.color='var(--ember)'}">
-          <i class="ti ti-shopping-cart-plus"></i>
-          Ajouter au panier (commander plusieurs)
-        </button>
+        <!-- CTAs côte à côte -->
+        <div style="display:flex;gap:8px;align-items:stretch">
+          <button class="wa-btn" id="wa-order-btn" onclick="orderWA()" style="flex:1;min-width:0;font-size:13px;padding:12px 10px;letter-spacing:1.5px">
+            <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
+            <span>Commander</span>
+          </button>
+          <button class="det-cart-btn" id="det-cart-btn" onclick="addToCartFromDet()"
+            title="Ajouter au panier"
+            style="flex-shrink:0;width:48px;padding:0;margin-top:0;justify-content:center">
+            <i class="ti ti-shopping-cart-plus" style="font-size:18px"></i>
+          </button>
+        </div>
 
         <p class="order-note" style="margin-top:10px">Confirmation <strong>sous 30 min</strong> · Livraison <strong>le jour même ou le lendemain</strong> à Bamako.</p>
         <div class="det-feats">
@@ -3103,7 +3130,7 @@ function updatePrice(){
     sb.innerHTML='<i class="ti ti-alert-circle"></i> Aucun modèle disponible';
     waBtn.disabled=true; waBtn.style.opacity='.35'; waBtn.style.cursor='not-allowed';
     waSpan.textContent='Aucun modèle disponible';
-    if(cartBtn){ cartBtn.disabled=true; cartBtn.style.opacity='.35'; cartBtn.style.cursor='not-allowed'; }
+    if(cartBtn){ cartBtn.disabled=true; cartBtn.style.opacity='.35'; }
     document.getElementById('d-price-display').textContent='—';
     return;
   }
@@ -3123,19 +3150,19 @@ function updatePrice(){
     sb.innerHTML='<i class="ti ti-clock"></i> Rupture pour ce modèle';
     waBtn.disabled=true; waBtn.style.opacity='.35'; waBtn.style.cursor='not-allowed';
     waSpan.textContent='Indisponible pour ce modèle';
-    if(cartBtn){ cartBtn.disabled=true; cartBtn.style.opacity='.35'; cartBtn.style.cursor='not-allowed'; }
+    if(cartBtn){ cartBtn.disabled=true; cartBtn.style.opacity='.35'; }
   } else if(qty<=2){
     sb.className='det-stock limited';
     sb.innerHTML=`<i class="ti ti-alert-triangle"></i> Plus que ${qty} en stock — commandez vite`;
     waBtn.disabled=false; waBtn.style.opacity='1'; waBtn.style.cursor='pointer';
     waSpan.textContent='Commander sur WhatsApp';
-    if(cartBtn){ cartBtn.disabled=false; cartBtn.style.opacity='1'; cartBtn.style.cursor='pointer'; }
+    if(cartBtn){ cartBtn.disabled=false; cartBtn.style.opacity='1'; }
   } else {
     sb.className='det-stock available';
     sb.innerHTML='<i class="ti ti-circle-check"></i> En stock';
     waBtn.disabled=false; waBtn.style.opacity='1'; waBtn.style.cursor='pointer';
     waSpan.textContent='Commander sur WhatsApp';
-    if(cartBtn){ cartBtn.disabled=false; cartBtn.style.opacity='1'; cartBtn.style.cursor='pointer'; }
+    if(cartBtn){ cartBtn.disabled=false; cartBtn.style.opacity='1'; }
   }
   syncMobileBar();
 }
@@ -3329,14 +3356,6 @@ function card(d){
           <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
         </button>
       </div>
-      ${!isOut ? `<button
-        style="width:100%;margin-top:7px;padding:8px 0;background:transparent;border:1px solid var(--ember);color:var(--ember);border-radius:7px;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .2s,color .2s;font-family:inherit"
-        id="add-btn-${d.id}"
-        onmouseover="this.style.background='var(--ember)';this.style.color='#fff'"
-        onmouseout="this.style.background='transparent';this.style.color='var(--ember)'"
-        onclick="event.stopPropagation();addToCart('${d.id}')">
-        <i class="ti ti-shopping-cart-plus"></i> Ajouter au panier
-      </button>` : ''}
     </div>
   </div>`;
 }
