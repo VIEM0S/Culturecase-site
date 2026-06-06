@@ -3455,13 +3455,27 @@ function addToCart(designId, modelOverride){
   const d = DS.find(x => x.id === designId);
   if(!d) return;
 
+  // Bloquer si rupture totale sur tous les modèles
+  const hasAnyStock = ALL_MDS.some(m => getModelStock(designId, m) > 0);
+  if(!hasAnyStock){
+    showCartToast('❌ ' + d.name + ' est épuisé');
+    return;
+  }
+
   const gm = (document.getElementById('global-model')?.value) || '';
 
-  // Si modèle déjà connu → ajout direct fluide
+  // Si modèle déjà connu ET en stock → ajout direct fluide
   if(modelOverride || gm) {
     const model = modelOverride || gm;
-    _doAddToCart(designId, model);
-    return;
+    // Vérifier le stock pour ce modèle précis
+    if(getModelStock(designId, model) === 0){
+      // Ce modèle est épuisé → ouvrir la popup pour choisir un autre
+      showCartToast('⚠️ ' + model + ' épuisé pour ce design');
+      // Continuer vers la popup
+    } else {
+      _doAddToCart(designId, model);
+      return;
+    }
   }
 
   // Sinon → ouvrir la popup légère de choix de modèle
