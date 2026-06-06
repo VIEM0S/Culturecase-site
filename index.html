@@ -3080,7 +3080,9 @@ function updatePrice(){
     waSpan.textContent='Commander sur WhatsApp';
   }
   syncMobileBar();
-}(msg){
+}
+
+function toast(msg){
   const el=document.getElementById('toast-el');
   el.textContent=msg;el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'),2800);
