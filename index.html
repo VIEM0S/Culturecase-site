@@ -1408,6 +1408,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
     padding: 1rem 0;
     box-shadow: 0 8px 32px rgba(0,0,0,.4);
     pointer-events: none;
+    height: auto;
   }
   .nav-mobile-menu.open {
     pointer-events: all;
@@ -1522,9 +1523,8 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 
 /* ─── STICKY COMMANDER MOBILE ──────────────────────────── */
 @media (max-width: 640px) {
-  #mobile-order-bar { display: block !important; }
-  #wa-order-btn { display: none; } /* caché sur mobile — remplacé par le sticky */
-  .det { padding-bottom: 90px; } /* espace pour le sticky bar */
+  #wa-order-btn { display: flex; }
+  .det { padding-bottom: 1.5rem; }
 }
 .tl-body { flex: 1; }
 
@@ -2188,8 +2188,79 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 
 @media (max-width:640px) { .cart-drawer { width:100vw; } .cart-btn { margin-left:0; } }
 
-</style>
 
+/* ── Footer ─────────────────────────────────────────────────── */
+.footer {
+  background: var(--dusk);
+  color: rgba(255,255,255,.6);
+  padding: 3rem 2.5rem 1.5rem;
+  margin-top: 0;
+}
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 2.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.footer-brand-col {}
+.footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  color: var(--gold);
+  letter-spacing: 3px;
+  margin-bottom: .75rem;
+}
+.footer-tagline {
+  font-size: 12px;
+  line-height: 1.7;
+  color: rgba(255,255,255,.45);
+  margin-bottom: 1rem;
+}
+.footer-social { display: flex; gap: 8px; }
+.footer-soc-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.12);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.5);
+  font-size: 16px;
+  transition: border-color .2s, color .2s, background .2s;
+  text-decoration: none;
+}
+.footer-soc-btn:hover { border-color: var(--gold); color: var(--gold); }
+.footer-col-title {
+  font-size: 10px; font-weight: 800;
+  letter-spacing: 2px; color: rgba(255,255,255,.35);
+  text-transform: uppercase; margin-bottom: .75rem;
+}
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.footer-links button {
+  background: none; border: none; cursor: pointer;
+  color: rgba(255,255,255,.55); font-size: 12.5px;
+  font-family: inherit; text-align: left; padding: 0;
+  transition: color .2s;
+}
+.footer-links button:hover { color: #fff; }
+.footer-desc { font-size: 12px; color: rgba(255,255,255,.4); line-height: 1.6; }
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; color: rgba(255,255,255,.25);
+  flex-wrap: wrap; gap: .5rem;
+}
+@media (max-width: 900px) {
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .footer-brand-col { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .footer { padding: 2rem 1rem 1.25rem; }
+  .footer-top { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .footer-brand-col { grid-column: 1 / -1; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+}
+
+</style>
 
 <nav class="nav">
   <div class="logo" onclick="go('home')">CULTURECASE<span class="logo-sub">Bamako · Mali</span></div>
@@ -2489,17 +2560,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 </div>
 
 <!-- ══ STICKY COMMANDER MOBILE ══ -->
-<div id="mobile-order-bar" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;background:var(--dusk2);border-top:1px solid rgba(232,160,32,.25);padding:.75rem 1rem;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
-  <div style="display:flex;align-items:center;gap:10px">
-    <div style="flex:1;min-width:0">
-      <div id="mob-design-name" style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
-      <div id="mob-price" style="font-size:12px;color:var(--gold)"></div>
-    </div>
-    <button onclick="orderWA()" style="display:flex;align-items:center;gap:7px;background:#25D366;color:#fff;border:none;border-radius:var(--radius);padding:.65rem 1.1rem;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0;white-space:nowrap">
-      <i class="ti ti-brand-whatsapp"></i> Commander
-    </button>
-  </div>
-</div>
+
 
 <!-- ABOUT -->
 <div class="pg" id="pg-about">
@@ -2809,6 +2870,55 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   </div>
 </div>
 
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-brand-col">
+      <div class="footer-logo">CULTURECASE</div>
+      <p class="footer-tagline">L'âme du Mali, dans ta main.<br>Designs exclusifs inspirés du patrimoine malien. Conçus à Bamako, portés partout.</p>
+      <div class="footer-social">
+        <a href="https://wa.me/22375992482" target="_blank" rel="noopener" class="footer-soc-btn" aria-label="WhatsApp">
+          <i class="ti ti-brand-whatsapp"></i>
+        </a>
+        <a href="https://instagram.com/culturecase.ml" target="_blank" rel="noopener" class="footer-soc-btn" aria-label="Instagram">
+          <i class="ti ti-brand-instagram"></i>
+        </a>
+      </div>
+    </div>
+    <div>
+      <p class="footer-col-title">Navigation</p>
+      <ul class="footer-links">
+        <li><button onclick="go('home')">Accueil</button></li>
+        <li><button onclick="go('catalogue')">Catalogue</button></li>
+        <li><button onclick="go('about')">Notre histoire</button></li>
+        <li><button onclick="go('blog')">Blog</button></li>
+        <li><button onclick="go('contact')">Contact</button></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Informations</p>
+      <ul class="footer-links">
+        <li><button onclick="go('livraison')">Livraison</button></li>
+        <li><button onclick="go('paiement')">Modes de paiement</button></li>
+        <li><button onclick="go('faq')">FAQ</button></li>
+        <li><button onclick="go('politique')">Politique de confidentialité</button></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Commander</p>
+      <p class="footer-desc">Commandez via WhatsApp — livraison le jour même ou le lendemain à Bamako.</p>
+      <a href="https://wa.me/22375992482" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;gap:7px;margin-top:.75rem;padding:9px 16px;background:#25D366;color:#fff;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:.5px;text-decoration:none">
+        <i class="ti ti-brand-whatsapp"></i> +223 75 99 24 82
+      </a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 CultureCase · Bamako, Mali</span>
+    <span>Fait avec ❤️ au Mali</span>
+  </div>
+</footer>
+
 <!-- ══ POPUP CHOIX MODÈLE (ajout rapide panier) ══ -->
 <div id="model-pick-overlay" onclick="closeModelPick()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:850;backdrop-filter:blur(3px)"></div>
 <div id="model-pick-popup" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:860;background:var(--cream);border-radius:20px 20px 0 0;padding:1.5rem;box-shadow:0 -8px 40px rgba(0,0,0,.25);transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)">
@@ -2822,6 +2932,16 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 </div>
 
 <div class="toast" id="toast-el"></div>
+
+<!-- 404 -->
+<div class="pg" id="pg-404">
+  <div style="min-height:70vh;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:3rem 1.5rem">
+    <div style="font-size:72px;margin-bottom:1rem;opacity:.25">🔍</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--ink);letter-spacing:2px;margin-bottom:.5rem">PAGE INTROUVABLE</h2>
+    <p style="color:var(--muted);font-size:14px;line-height:1.6;max-width:340px;margin-bottom:2rem">Cette page n'existe pas. Retournez à l'accueil pour découvrir nos designs.</p>
+    <button onclick="go('home')" style="padding:12px 28px;background:var(--ember);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;font-family:inherit">← RETOUR À L'ACCUEIL</button>
+  </div>
+</div>
 
 <!-- ══ FIREBASE SDK ══ -->
 <script type="module">
@@ -2996,6 +3116,16 @@ onSnapshot(doc(db, "data", "main"), snap => {
 // Détection offline/online navigateur
 window.addEventListener('offline', () => setFbStatus('offline'));
 window.addEventListener('online',  () => setFbStatus('loading'));
+
+// Démarrer les écoutes blog et avis dès que Firebase est prêt
+window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot };
+if(typeof listenBlog === 'function')     listenBlog();
+if(typeof listenReviews === 'function')  listenReviews();
+// Fallback si les fonctions ne sont pas encore définies
+window.addEventListener('load', () => {
+  if(typeof listenBlog === 'function' && !window.__blogListening)     { listenBlog();    window.__blogListening = true; }
+  if(typeof listenReviews === 'function' && !window.__revListening)   { listenReviews(); window.__revListening = true; }
+});
 </script>
 
 <script>
@@ -3155,13 +3285,13 @@ function updatePrice(){
     sb.className='det-stock limited';
     sb.innerHTML=`<i class="ti ti-alert-triangle"></i> Plus que ${qty} en stock — commandez vite`;
     waBtn.disabled=false; waBtn.style.opacity='1'; waBtn.style.cursor='pointer';
-    waSpan.textContent='Commander sur WhatsApp';
+    waSpan.textContent='Commander';
     if(cartBtn){ cartBtn.disabled=false; cartBtn.style.opacity='1'; }
   } else {
     sb.className='det-stock available';
     sb.innerHTML='<i class="ti ti-circle-check"></i> En stock';
     waBtn.disabled=false; waBtn.style.opacity='1'; waBtn.style.cursor='pointer';
-    waSpan.textContent='Commander sur WhatsApp';
+    waSpan.textContent='Commander';
     if(cartBtn){ cartBtn.disabled=false; cartBtn.style.opacity='1'; }
   }
   syncMobileBar();
@@ -3262,20 +3392,6 @@ function toggleMobileMenu(){
 var CART = []; // [{ designId, name, img, model, qty, price }]
 function syncMobileBar() {
   if(typeof CART !== 'undefined') updateCartBadge();
-  if (window.innerWidth > 640) return;
-  const bar = document.getElementById('mobile-order-bar');
-  const pg = document.querySelector('.pg.on')?.id;
-  if (!bar) return;
-  bar.style.display = pg === 'pg-detail' ? 'block' : 'none';
-  if (pg === 'pg-detail' && curD) {
-    const nameEl = document.getElementById('mob-design-name');
-    const priceEl = document.getElementById('mob-price');
-    if (nameEl) nameEl.textContent = curD.name;
-    if (priceEl) {
-      const priceBox = document.getElementById('d-price-display');
-      priceEl.textContent = priceBox ? priceBox.textContent : '';
-    }
-  }
 }
 
 // Fermer le menu si clic en dehors
@@ -3352,9 +3468,6 @@ function card(d){
       <div class="pc-hint">${stockDot}${stockHint}</div>
       <div class="pc-row">
         <div class="pc-price">${price}</div>
-        <button class="pc-add" onclick="event.stopPropagation();orderQuick('${d.id}')" aria-label="Commander via WhatsApp" title="Commander via WhatsApp">
-          <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
-        </button>
       </div>
     </div>
   </div>`;
