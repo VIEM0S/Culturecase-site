@@ -1347,6 +1347,32 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
    RESPONSIVE — iPhone & iPad
    ═══════════════════════════════════════════════════════════ */
 
+/* Menu mobile — caché par défaut sur tous les écrans */
+.nav-mobile-menu {
+  display: none;
+  position: fixed;
+  top: 60px; left: 0; right: 0;
+  z-index: 350;
+  pointer-events: none;
+}
+.nav-mobile-menu.open {
+  display: block;
+  pointer-events: all;
+}
+
+/* Menu mobile — toujours fixed, jamais dans le flux */
+.nav-mobile-menu {
+  display: none !important;
+  position: fixed !important;
+  top: 60px; left: 0; right: 0;
+  z-index: 350;
+  pointer-events: none;
+}
+.nav-mobile-menu.open {
+  display: block !important;
+  pointer-events: all;
+}
+
 /* ─── iPad (768px–1024px) ────────────────────────────────── */
 @media (max-width: 1024px) and (min-width: 641px) {
   .nav { padding: 0 1.5rem; }
