@@ -2402,22 +2402,24 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
           <div class="os"><div class="os-num">3</div> Envoyer WhatsApp</div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;margin-bottom:0">
-          <button class="wa-btn" id="wa-order-btn" onclick="orderWA()">
-            <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
-            <span>Commander</span>
-          </button>
-          <button
-            id="det-cart-btn"
-            onclick="addToCartFromDet()"
-            title="Ajouter au panier"
-            style="padding:0 18px;background:transparent;border:2px solid var(--ember);color:var(--ember);border-radius:var(--radius);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s;flex-shrink:0"
-            onmouseover="if(!this.disabled){this.style.background='var(--ember)';this.style.color='#fff'}"
-            onmouseout="if(!this.disabled){this.style.background='transparent';this.style.color='var(--ember)'}">
-            <i class="ti ti-shopping-cart-plus"></i>
-          </button>
-        </div>
-        <p class="order-note">Votre commande sera envoyée sur WhatsApp. Nous confirmons <strong>sous 30 min</strong> et livrons <strong>le jour même ou le lendemain</strong> à Bamako.</p>
+        <!-- CTA principal : Commander via WhatsApp -->
+        <button class="wa-btn" id="wa-order-btn" onclick="orderWA()" style="width:100%;margin-bottom:10px">
+          <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
+          <span>Commander sur WhatsApp</span>
+        </button>
+
+        <!-- CTA secondaire : Ajouter au panier (plusieurs articles) -->
+        <button
+          id="det-cart-btn"
+          onclick="addToCartFromDet()"
+          style="width:100%;padding:11px;background:transparent;border:1.5px solid var(--ember);color:var(--ember);border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s,color .2s;letter-spacing:.5px;font-family:inherit"
+          onmouseover="if(!this.disabled){this.style.background='var(--ember)';this.style.color='#fff'}"
+          onmouseout="if(!this.disabled){this.style.background='transparent';this.style.color='var(--ember)'}">
+          <i class="ti ti-shopping-cart-plus"></i>
+          Ajouter au panier (commander plusieurs)
+        </button>
+
+        <p class="order-note" style="margin-top:10px">Confirmation <strong>sous 30 min</strong> · Livraison <strong>le jour même ou le lendemain</strong> à Bamako.</p>
         <div class="det-feats">
           <div class="df"><i class="ti ti-shield-check" aria-hidden="true"></i>Protection renforcée</div>
           <div class="df"><i class="ti ti-palette" aria-hidden="true"></i>Impression HD</div>
@@ -3655,6 +3657,39 @@ function renderCartItems(){
   }
 }
 
+function showOrderConfirmation(nom) {
+  const items = document.getElementById('cart-items');
+  const footer = document.getElementById('cart-footer');
+  if(!items) return;
+  if(footer) footer.style.display = 'none';
+
+  const prenom = nom.split(' ')[0];
+  items.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem 1.5rem;text-align:center;flex:1;gap:1rem">
+      <div style="width:64px;height:64px;background:rgba(37,211,102,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px">✓</div>
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--ink);margin-bottom:.3rem">Commande envoyée !</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">Merci ${prenom} 🙏<br>Ton message WhatsApp a bien été ouvert.<br>On te confirme <strong style="color:var(--ink)">sous 30 min</strong>.</div>
+      </div>
+      <div style="background:var(--sand);border-radius:var(--radius-lg);padding:1rem 1.25rem;width:100%;font-size:12px;color:var(--muted);line-height:1.8;text-align:left">
+        <div style="font-weight:700;color:var(--ink);margin-bottom:.4rem;font-size:11px;letter-spacing:1px">ET APRÈS ?</div>
+        <div>📲 Envoie le message WhatsApp si ce n'est pas encore fait</div>
+        <div>⏱ On te répond sous 30 min avec confirmation</div>
+        <div>🛵 Livraison le jour même ou le lendemain</div>
+      </div>
+      <div style="display:flex;gap:8px;width:100%;margin-top:.5rem">
+        <button onclick="closeCart();go('catalogue')"
+          style="flex:1;padding:10px;background:var(--ember);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">
+          Continuer les achats
+        </button>
+        <button onclick="closeCart()"
+          style="padding:10px 16px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:var(--radius);font-size:13px;cursor:pointer;font-family:inherit">
+          Fermer
+        </button>
+      </div>
+    </div>`;
+}
+
 function openCart(){
   renderCartItems();
   document.getElementById('cart-overlay').classList.add('open');
@@ -3674,10 +3709,14 @@ function cartOrderWA(){
   const tel = (document.getElementById('cart-tel').value || '').trim();
   const quartier = (document.getElementById('cart-quartier').value || '').trim();
 
+  // Validation minimale
+  if(!nom){ showCartToast('⚠️ Indique ton prénom pour qu\'on te retrouve'); return; }
+  if(!tel){ showCartToast('⚠️ Indique ton numéro de téléphone'); return; }
+
   // Mémoriser infos client
   try {
-    if(nom) localStorage.setItem('cc_nom', nom);
-    if(tel) localStorage.setItem('cc_tel', tel);
+    localStorage.setItem('cc_nom', nom);
+    localStorage.setItem('cc_tel', tel);
     if(quartier) localStorage.setItem('cc_quartier', quartier);
   } catch(e){}
 
@@ -3693,7 +3732,13 @@ function cartOrderWA(){
   if(quartier) msg += `\n📍 Quartier : ${quartier}`;
   msg += '\n\nMerci ! 🙏';
 
+  // Ouvrir WhatsApp
   window.open('https://wa.me/22375992482?text=' + encodeURIComponent(msg), '_blank');
+
+  // Vider le panier et afficher confirmation
+  CART.length = 0;
+  updateCartBadge();
+  showOrderConfirmation(nom);
 }
 
 // Ajouter depuis la page détail au panier
