@@ -2755,58 +2755,54 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   </div>
 </div>
 
-<div class="footer">
+<footer class="footer">
   <div class="footer-top">
     <div class="footer-brand-col">
-      <span class="footer-logo">CULTURECASE</span>
-      <p class="footer-brand-desc">Designs exclusifs inspirés du patrimoine malien. Conçus à Bamako, portés partout.</p>
+      <div class="footer-logo">CULTURECASE</div>
+      <p class="footer-tagline">L'âme du Mali, dans ta main.<br>Designs exclusifs inspirés du patrimoine malien. Conçus à Bamako, portés partout.</p>
       <div class="footer-social">
-        <a class="soc" href="https://www.instagram.com/culturecase_official" title="Instagram"><i class="ti ti-brand-instagram" aria-hidden="true"></i></a>
-        <a class="soc" href="https://www.tiktok.com/@culturecase" title="TikTok"><i class="ti ti-brand-tiktok" aria-hidden="true"></i></a>
-        <a class="soc" href="https://wa.me/22375992482" title="WhatsApp"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i></a>
+        <a href="https://wa.me/22375992482" target="_blank" rel="noopener" class="footer-soc-btn" aria-label="WhatsApp"><i class="ti ti-brand-whatsapp"></i></a>
+        <a href="https://www.instagram.com/culturecase_official" target="_blank" rel="noopener" class="footer-soc-btn" aria-label="Instagram"><i class="ti ti-brand-instagram"></i></a>
+        <a href="https://www.tiktok.com/@culturecase" target="_blank" rel="noopener" class="footer-soc-btn" aria-label="TikTok"><i class="ti ti-brand-tiktok"></i></a>
       </div>
     </div>
     <div>
-      <div class="footer-col-title">Navigation</div>
-      <div class="footer-links">
-        <button class="footer-link" onclick="go('catalogue')">Catalogue</button>
-        <button class="footer-link" onclick="go('about')">Notre histoire</button>
-        <button class="footer-link" onclick="go('blog')">Blog</button>
-        <button class="footer-link" onclick="go('contact')">Contact</button>
-      </div>
+      <p class="footer-col-title">Navigation</p>
+      <ul class="footer-links">
+        <li><button onclick="go('home')">Accueil</button></li>
+        <li><button onclick="go('catalogue')">Catalogue</button></li>
+        <li><button onclick="go('about')">Notre histoire</button></li>
+        <li><button onclick="go('blog')">Blog</button></li>
+        <li><button onclick="go('contact')">Contact</button></li>
+      </ul>
     </div>
     <div>
-      <div class="footer-col-title">Commander</div>
-      <div class="footer-links">
-        <a class="footer-link" href="https://wa.me/22375992482" style="text-decoration:none">WhatsApp</a>
-        <button class="footer-link" onclick="go('contact')">Nous écrire</button>
-        <button class="footer-link" onclick="go('catalogue')">Voir les designs</button>
-      </div>
+      <p class="footer-col-title">Informations</p>
+      <ul class="footer-links">
+        <li><button onclick="go('livraison')">Livraison &amp; retours</button></li>
+        <li><button onclick="go('paiement')">Modes de paiement</button></li>
+        <li><button onclick="go('faq')">FAQ</button></li>
+        <li><button onclick="go('politique')">Politique commerciale</button></li>
+      </ul>
     </div>
     <div>
-      <div class="footer-col-title">Informations</div>
-      <div class="footer-links">
-        <span class="footer-link" style="cursor:default">📍 Bamako, Mali</span>
-        <span class="footer-link" style="cursor:default">📦 Livraison Bamako</span>
-        <span class="footer-link" style="cursor:default">💬 Réponse rapide WA</span>
+      <p class="footer-col-title">Commander</p>
+      <ul class="footer-links">
+        <li><button onclick="go('contact')">Nous écrire</button></li>
+        <li><button onclick="go('catalogue')">Voir les designs</button></li>
+      </ul>
+      <div style="margin-top:1rem;font-size:11px;color:rgba(255,255,255,.25);line-height:1.8">
+        📍 Bamako, Mali<br>
+        📦 Livraison Bamako<br>
+        💬 Réponse rapide WA
       </div>
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© <span id="footer-year"></span> CultureCase · Tous droits réservés</span>
-    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:center">
-      <button class="footer-link" onclick="go('faq')" style="font-size:12px;opacity:.7">FAQ</button>
-      <button class="footer-link" onclick="go('livraison')" style="font-size:12px;opacity:.7">Livraison &amp; retours</button>
-      <button class="footer-link" onclick="go('politique')" style="font-size:12px;opacity:.7">Politique commerciale</button>
-      <button class="footer-link" onclick="go('paiement')" style="font-size:12px;opacity:.7">Modes de paiement</button>
-    </div>
-    <span class="footer-made">Fait avec <span>♥</span> à Bamako</span>
+    <span>© <span id="footer-year"></span> CultureCase · Tous droits réservés</span>
+    <span>Fait avec ❤️ à Bamako</span>
   </div>
-</div>
-</div>
-
-<!-- ══ PAGE FAQ ══ -->
-<!-- ══ PAGE FAQ ══ -->
+</footer>
 <div class="pg" id="pg-faq">
   <div style="max-width:760px;margin:0 auto;padding:3rem 1.5rem 5rem">
     <button onclick="go('home')" style="background:none;border:none;color:var(--ember);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:2rem;padding:0"><i class="ti ti-arrow-left"></i> Retour à l'accueil</button>
@@ -2897,53 +2893,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 </div>
 
 <!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-top">
-    <div class="footer-brand-col">
-      <div class="footer-logo">CULTURECASE</div>
-      <p class="footer-tagline">L'âme du Mali, dans ta main.<br>Designs exclusifs inspirés du patrimoine malien. Conçus à Bamako, portés partout.</p>
-      <div class="footer-social">
-        <a href="https://wa.me/22375992482" target="_blank" rel="noopener" class="footer-soc-btn" aria-label="WhatsApp">
-          <i class="ti ti-brand-whatsapp"></i>
-        </a>
-        <a href="https://instagram.com/culturecase.ml" target="_blank" rel="noopener" class="footer-soc-btn" aria-label="Instagram">
-          <i class="ti ti-brand-instagram"></i>
-        </a>
-      </div>
-    </div>
-    <div>
-      <p class="footer-col-title">Navigation</p>
-      <ul class="footer-links">
-        <li><button onclick="go('home')">Accueil</button></li>
-        <li><button onclick="go('catalogue')">Catalogue</button></li>
-        <li><button onclick="go('about')">Notre histoire</button></li>
-        <li><button onclick="go('blog')">Blog</button></li>
-        <li><button onclick="go('contact')">Contact</button></li>
-      </ul>
-    </div>
-    <div>
-      <p class="footer-col-title">Informations</p>
-      <ul class="footer-links">
-        <li><button onclick="go('livraison')">Livraison</button></li>
-        <li><button onclick="go('paiement')">Modes de paiement</button></li>
-        <li><button onclick="go('faq')">FAQ</button></li>
-        <li><button onclick="go('politique')">Politique de confidentialité</button></li>
-      </ul>
-    </div>
-    <div>
-      <p class="footer-col-title">Commander</p>
-      <p class="footer-desc">Commandez via WhatsApp — livraison le jour même ou le lendemain à Bamako.</p>
-      <a href="https://wa.me/22375992482" target="_blank" rel="noopener"
-        style="display:inline-flex;align-items:center;gap:7px;margin-top:.75rem;padding:9px 16px;background:#25D366;color:#fff;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:.5px;text-decoration:none">
-        <i class="ti ti-brand-whatsapp"></i> +223 75 99 24 82
-      </a>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2025 CultureCase · Bamako, Mali</span>
-    <span>Fait avec ❤️ au Mali</span>
-  </div>
-</footer>
+
 
 <!-- ══ POPUP CHOIX MODÈLE (ajout rapide panier) ══ -->
 <div id="model-pick-overlay" onclick="closeModelPick()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:850;backdrop-filter:blur(3px)"></div>
@@ -3418,6 +3368,26 @@ function toggleMobileMenu(){
 var CART = []; // [{ designId, name, img, model, qty, price }]
 function syncMobileBar() {
   if(typeof CART !== 'undefined') updateCartBadge();
+  if(window.innerWidth > 640) return;
+  const bar = document.getElementById('mobile-order-bar');
+  const pg  = document.querySelector('.pg.on')?.id;
+  if(!bar) return;
+
+  // Masquer si pas sur page détail ou curD pas défini
+  if(pg !== 'pg-detail' || !curD){ bar.style.display = 'none'; return; }
+
+  // Masquer si toutes ruptures de stock
+  const hasStock = ALL_MDS.some(m => getModelStock(curD.id, m) > 0);
+  if(!hasStock){ bar.style.display = 'none'; return; }
+
+  bar.style.display = 'block';
+  const nameEl  = document.getElementById('mob-design-name');
+  const priceEl = document.getElementById('mob-price');
+  if(nameEl)  nameEl.textContent  = curD.name;
+  if(priceEl){
+    const priceBox = document.getElementById('d-price-display');
+    priceEl.textContent = priceBox ? priceBox.textContent : '';
+  }
 }
 
 // Fermer le menu si clic en dehors
@@ -3638,22 +3608,27 @@ function goBack(){go(prevPg)}
 function dq(d){dQty=Math.max(1,dQty+d);document.getElementById('d-qty').textContent=dQty;updatePrice();}
 
 function orderWA(){
-  if(!curD)return;
-  const model=document.getElementById('d-mod').value;
-  const nom=(document.getElementById('lf-nom').value||'').trim();
-  const tel=(document.getElementById('lf-tel').value||'').trim();
-  const quartier=(document.getElementById('lf-quartier').value||'').trim();
-  // mémoriser pour la prochaine commande
-  if(nom) localStorage.setItem('cc_nom',nom);
-  if(tel) localStorage.setItem('cc_tel',tel);
-  const price=getPrice(model);
-  const total=fp((MDS_G1.includes(model)?3500:5000)*dQty);
-  let msg=`Bonjour CultureCase 👋\n\n🎨 Design : ${curD.name}\n📱 Modèle : ${model}\n🔢 Quantité : ${dQty}\n💰 Total : ${total}`;
-  if(nom) msg+=`\n\n👤 Nom : ${nom}`;
-  if(tel) msg+=`\n📞 Téléphone : ${tel}`;
-  if(quartier) msg+=`\n📍 Quartier : ${quartier}`;
-  msg+=`\n\nMerci !`;
-  window.open('https://wa.me/22375992482?text='+encodeURIComponent(msg),'_blank');
+  if(!curD) return;
+  const model = document.getElementById('d-mod').value;
+  if(!model){ toast('⚠️ Choisis un modèle iPhone d\'abord'); return; }
+  const nom      = (document.getElementById('lf-nom').value     || '').trim();
+  const tel      = (document.getElementById('lf-tel').value     || '').trim();
+  const quartier = (document.getElementById('lf-quartier').value|| '').trim();
+  if(!nom){ toast('⚠️ Indique ton prénom pour qu\'on te retrouve'); return; }
+  if(!tel){ toast('⚠️ Indique ton numéro de téléphone'); return; }
+  try {
+    localStorage.setItem('cc_nom', nom);
+    localStorage.setItem('cc_tel', tel);
+    if(quartier) localStorage.setItem('cc_quartier', quartier);
+  } catch(e){}
+  const safeQty = (typeof dQty === 'number' && dQty > 0) ? dQty : 1;
+  const total   = fp((MDS_G1.includes(model) ? 3500 : 5000) * safeQty);
+  let msg = `Bonjour CultureCase 👋\n\n🎨 Design : ${curD.name}\n📱 Modèle : ${model}\n🔢 Quantité : ${safeQty}\n💰 Total : ${total}`;
+  if(nom)      msg += `\n\n👤 Nom : ${nom}`;
+  if(tel)      msg += `\n📞 Téléphone : ${tel}`;
+  if(quartier) msg += `\n📍 Quartier : ${quartier}`;
+  msg += `\n\nMerci !`;
+  window.open('https://wa.me/22375992482?text=' + encodeURIComponent(msg), '_blank');
 }
 
 function orderQuick(id){
@@ -3825,7 +3800,7 @@ function removeFromCart(idx){
 function updateCartQty(idx, delta){
   const item = CART[idx];
   if(!item) return;
-  const maxQty = getModelStock(item.designId, item.model);
+  const maxQty = getModelStock(item.designId, item.model) || 99;
   item.qty = Math.min(maxQty, Math.max(1, item.qty + delta));
   updateCartBadge();
   renderCartItems();
@@ -3861,29 +3836,71 @@ function renderCartItems(){
     }, 50);
   } catch(e){}
 
-  container.innerHTML = CART.map((item, idx) => `
-    <div class="cart-item">
-      <div class="cart-item-img">
-        ${item.img
-          ? `<img src="${cldImg(item.img,120)}" alt="${item.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-          : ``}
-        <span style="font-size:28px;display:${item.img?'none':'flex'};align-items:center;justify-content:center;width:100%;height:100%">📱</span>
-      </div>
-      <div class="cart-item-info">
-        <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-model">${item.model}</div>
-        <div class="cart-item-bottom">
-          <div class="cart-item-price">${fp(item.price * item.qty)}</div>
-          <div class="cart-item-qty">
-            <button onclick="updateCartQty(${idx}, -1)">−</button>
-            <span>${item.qty}</span>
-            <button onclick="updateCartQty(${idx}, +1)">+</button>
-          </div>
-        </div>
-      </div>
-      <button class="cart-item-del" onclick="removeFromCart(${idx})" title="Retirer">✕</button>
-    </div>
-  `).join('');
+  // Construction sécurisée anti-XSS (textContent pour les données utilisateur)
+  container.innerHTML = '';
+  CART.forEach((item, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'cart-item';
+
+    const imgBox = document.createElement('div');
+    imgBox.className = 'cart-item-img';
+    if(item.img){
+      const img = document.createElement('img');
+      img.src = cldImg(item.img, 120);
+      img.alt = item.name;
+      img.loading = 'lazy';
+      const fallback = document.createElement('span');
+      fallback.style.cssText = 'font-size:28px;display:none;align-items:center;justify-content:center;width:100%;height:100%';
+      fallback.textContent = '📱';
+      img.onerror = function(){ this.style.display='none'; fallback.style.display='flex'; };
+      imgBox.appendChild(img);
+      imgBox.appendChild(fallback);
+    } else {
+      const fallback = document.createElement('span');
+      fallback.style.cssText = 'font-size:28px;display:flex;align-items:center;justify-content:center;width:100%;height:100%';
+      fallback.textContent = '📱';
+      imgBox.appendChild(fallback);
+    }
+
+    const info = document.createElement('div');
+    info.className = 'cart-item-info';
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'cart-item-name';
+    nameEl.textContent = item.name;
+
+    const modelEl = document.createElement('div');
+    modelEl.className = 'cart-item-model';
+    modelEl.textContent = item.model;
+
+    const bottom = document.createElement('div');
+    bottom.className = 'cart-item-bottom';
+
+    const priceEl = document.createElement('div');
+    priceEl.className = 'cart-item-price';
+    priceEl.textContent = fp(item.price * item.qty);
+
+    const qtyEl = document.createElement('div');
+    qtyEl.className = 'cart-item-qty';
+    qtyEl.innerHTML = `<button onclick="updateCartQty(${idx},-1)">−</button><span>${item.qty}</span><button onclick="updateCartQty(${idx},+1)">+</button>`;
+
+    bottom.appendChild(priceEl);
+    bottom.appendChild(qtyEl);
+    info.appendChild(nameEl);
+    info.appendChild(modelEl);
+    info.appendChild(bottom);
+
+    const del = document.createElement('button');
+    del.className = 'cart-item-del';
+    del.title = 'Retirer';
+    del.textContent = '✕';
+    del.onclick = () => removeFromCart(idx);
+
+    wrap.appendChild(imgBox);
+    wrap.appendChild(info);
+    wrap.appendChild(del);
+    container.appendChild(wrap);
+  });
 
   if(footer){
     footer.style.display = 'block';
@@ -3980,17 +3997,21 @@ function addToCartFromDet(){
   if(!curD) return;
   const model = document.getElementById('d-mod').value;
   if(!model){ showCartToast('⚠️ Choisis un modèle iPhone d\'abord'); return; }
-  if(getModelStock(curD.id, model) === 0){ showCartToast('❌ Ce modèle est épuisé'); return; }
+  const stock = getModelStock(curD.id, model);
+  if(stock === 0){ showCartToast('❌ Ce modèle est épuisé'); return; }
   const price = getCartPrice(model);
   const existing = CART.find(i => i.designId === curD.id && i.model === model);
   if(existing){
-    existing.qty += dQty;
+    const newQty = existing.qty + dQty;
+    existing.qty = stock > 0 ? Math.min(newQty, stock) : newQty;
   } else {
-    CART.push({ designId: curD.id, name: curD.name, img: curD.img, model, qty: dQty, price });
+    const qty = stock > 0 ? Math.min(dQty, stock) : dQty;
+    CART.push({ designId: curD.id, name: curD.name, img: curD.img, model, qty, price });
   }
   updateCartBadge();
   renderCartItems();
-  showCartToast('✓ ' + curD.name + ' ajouté au panier');
+  showCartToast('✓ ' + curD.name + ' · ' + model + ' ajouté au panier');
+  openCart();
 }
 
 function sendContact(){
