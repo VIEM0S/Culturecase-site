@@ -3103,11 +3103,9 @@ function startListeners() {
   window.addEventListener('online',  () => setFbStatus('loading'));
 
   window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot };
-  if (typeof listenBlog    === 'function') listenBlog();
-  if (typeof listenReviews === 'function') listenReviews();
+  if (typeof listenBlog === 'function') listenBlog();
   window.addEventListener('load', () => {
-    if (typeof listenBlog    === 'function' && !window.__blogListening)  { listenBlog();    window.__blogListening = true; }
-    if (typeof listenReviews === 'function' && !window.__revListening)   { listenReviews(); window.__revListening  = true; }
+    if (typeof listenBlog === 'function' && !window.__blogListening) { listenBlog(); window.__blogListening = true; }
   });
 }
 
@@ -3517,17 +3515,6 @@ function setSort(sort, btn) {
   filt();
 }
 
-var activeSort = 'popular';
-
-function setSort(sort, btn) {
-  activeSort = sort;
-  document.querySelectorAll('#sort-pop, #sort-new').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  const label = document.getElementById('cat-sort-label');
-  if(label) label.textContent = sort === 'popular' ? '🔥 Les plus populaires' : '✨ Nouveautés en premier';
-  filt();
-}
-
 function toggleDispo(btn){
   stockFilter = stockFilter === 'available' ? 'all' : 'available';
   btn.classList.toggle('on');
@@ -3667,8 +3654,6 @@ function orderQuick(id){
 // ══════════════════════════════════════════════════════════════════════════════
 
 
-function fp(n){ return n.toLocaleString('fr-FR') + ' FCFA'; }
-
 function getCartPrice(model){
   // Même logique que le reste du site
   return (typeof MDS_G1 !== 'undefined' && MDS_G1.includes(model)) ? 3500 : 5000;
@@ -3777,8 +3762,9 @@ function confirmModelPick() {
   const model = sel ? sel.value : '';
   if(!model || model === '') { showCartToast('⚠️ Choisis un modèle'); return; }
   try { localStorage.setItem('cc_last_model', model); } catch(e){}
+  const designId = _pickDesignId; // capturer avant closeModelPick() qui nullifie _pickDesignId
   closeModelPick();
-  setTimeout(() => _doAddToCart(_pickDesignId, model), 320);
+  setTimeout(() => _doAddToCart(designId, model), 320);
 }
 
 function _doAddToCart(designId, model) {
