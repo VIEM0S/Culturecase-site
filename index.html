@@ -23,7 +23,7 @@
 </head>
 <body>
 <style>
-html { overflow-x: hidden; max-width: 100%; }
+html { overflow-x: hidden; max-width: 100%; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
 
 /* ─── RESET & TOKENS ─────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -55,8 +55,6 @@ img, video, svg, iframe { max-width: 100%; }
   --radius-lg: 10px;
   --transition: cubic-bezier(0.22, 1, 0.36, 1);
 }
-
-html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
 
 body {
   font-family: 'DM Sans', sans-serif;
@@ -1174,7 +1172,6 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 
   /* Model CTA bar */
   .model-cta-inner { flex-direction: column; align-items: stretch; gap: .75rem; padding: .75rem 1rem; }
-  .model-cta-bar { padding: 0; }
 
   /* Général */
   .mf-grid { grid-template-columns: 1fr; }
@@ -1239,79 +1236,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   color: var(--muted);
 }
 
-/* ftags-wrap layout */
-#ftags-wrap {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-/* Model bar sticky */
-.model-bar {
-  position: sticky;
-  top: 62px;
-  z-index: 99;
-}
-
-
-
-/* ─── MODEL CTA BAR (accueil) ─────────────────────────────── */
-.model-cta-bar {
-  background: var(--ink);
-  border-top: 1px solid rgba(232,160,32,.15);
-  border-bottom: 1px solid rgba(232,160,32,.15);
-  padding: 1.1rem 2.5rem;
-}
-.model-cta-inner {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  max-width: 900px;
-  margin: 0 auto;
-}
-.model-cta-text {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-.model-cta-text i { color: var(--ember); font-size: 18px; }
-.model-cta-text > span:first-of-type {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 17px;
-  letter-spacing: 2px;
-  color: #fff;
-}
-.model-cta-sub { display: none; }
-.model-cta-sel {
-  flex: 1;
-  background: rgba(255,255,255,.06);
-  border: 1.5px solid rgba(232,160,32,.3);
-  color: #fff;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  padding: 10px 14px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: border-color .2s;
-}
-.model-cta-sel:focus { outline: none; border-color: var(--ember); }
-.model-cta-sel option { background: var(--ink); color: #fff; }
-.model-cta-btn {
-  background: var(--ember);
-  color: #fff;
-  border: none;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 14px;
-  letter-spacing: 2px;
-  padding: 10px 22px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background .2s, transform .2s;
-  flex-shrink: 0;
-}
-.model-cta-btn:hover { background: var(--ember2); transform: translateY(-1px); }
+/* Model bar sticky — réservé pour usage futur */
 
 /* ─── REVIEWS SECTION ─────────────────────────────────────── */
 .reviews-section {
@@ -1586,6 +1511,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 }
 .ftag:hover { border-color: var(--ember); color: var(--ember); background: rgba(217,78,21,.05); }
 .ftag.on  { border-color: var(--ember); background: var(--ember); color: #fff; box-shadow: 0 2px 8px rgba(217,78,21,.25); }
+#sort-new.on { border-color: var(--gold2); background: var(--gold); color: var(--ink); box-shadow: 0 2px 8px rgba(232,160,32,.3); }
 
 .cat-count-bar {
   padding: .6rem 2.5rem;
@@ -2029,14 +1955,14 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
         </div>
       </div>
       <div class="hero-r">
-        <div class="hi" style="grid-row:span 2" onclick="openDet('D12')"><img src="https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767675/zutdygs9wnxbheeilcl9.jpg" alt="Bogolan"><div class="hi-lbl">BOGOLAN</div></div>
-        <div class="hi" onclick="openDet('D1')"><img src="https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767538/ynvij5rszvqmamfs9hgm.jpg" alt="Djenné"><div class="hi-lbl">DJENNÉ</div></div>
-        <div class="hi" onclick="openDet('D13')"><img src="https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767905/wketzekxsrqlupeqrdi2.jpg" alt="N'Ko"><div class="hi-lbl">N'KO</div></div>
+        <div class="hi" style="grid-row:span 2" onclick="openDet('D12')"><img src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_400,f_auto,q_auto/v1779767675/zutdygs9wnxbheeilcl9.jpg" alt="Bogolan"><div class="hi-lbl">BOGOLAN</div></div>
+        <div class="hi" onclick="openDet('D1')"><img src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_300,f_auto,q_auto/v1779767538/ynvij5rszvqmamfs9hgm.jpg" alt="Djenné"><div class="hi-lbl">DJENNÉ</div></div>
+        <div class="hi" onclick="openDet('D13')"><img src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_300,f_auto,q_auto/v1779767905/wketzekxsrqlupeqrdi2.jpg" alt="N'Ko"><div class="hi-lbl">N'KO</div></div>
       </div>
     </div>
     <div class="hero-stats">
-      <div class="hst"><div class="hst-n">∞</div><div class="hst-l">Designs en croissance</div></div>
-      <div class="hst"><div class="hst-n">21</div><div class="hst-l">Modèles iPhone</div></div>
+      <div class="hst"><div class="hst-n" id="stat-designs">46</div><div class="hst-l">Designs exclusifs</div></div>
+      <div class="hst"><div class="hst-n" id="stat-models">21</div><div class="hst-l">Modèles iPhone</div></div>
       <div class="hst"><div class="hst-n">Bamako</div><div class="hst-l">Disponible maintenant</div></div>
       <div class="hst"><div class="hst-n">100%</div><div class="hst-l">Identité malienne</div></div>
     </div>
@@ -2050,7 +1976,6 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
     <div class="section-header">
       <div>
         <div class="section-title">Coups de <em>cœur</em></div>
-        <div class="section-sub">Sélection de la semaine</div>
       </div>
       <button class="see-all-btn" onclick="go('catalogue')">Tout voir →</button>
     </div>
@@ -2062,7 +1987,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
     <div class="section-header">
       <div>
         <div class="section-title">Ils <em>parlent</em> de nous</div>
-        <div class="section-sub">Avis clients vérifiés</div>
+        <div class="section-sub">Avis clients</div>
       </div>
     </div>
     <div class="reviews-grid" id="reviews-grid">
@@ -2105,18 +2030,18 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
         <select class="cat-model-sel" id="global-model" onchange="onGlobalModelChange()">
           <option value="">— Choisir mon modèle —</option>
           <optgroup label="iPhone 12 / 13 · 3 500 FCFA">
-            <option>iPhone 12</option><option>iPhone 12 Pro Max</option>
-            <option>iPhone 13</option><option>iPhone 13 Pro</option><option>iPhone 13 Pro Max</option>
+            <option value="iPhone 12">iPhone 12</option><option value="iPhone 12 Pro Max">iPhone 12 Pro Max</option>
+            <option value="iPhone 13">iPhone 13</option><option value="iPhone 13 Pro">iPhone 13 Pro</option><option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
           </optgroup>
           <optgroup label="iPhone 14 et plus · 5 000 FCFA">
-            <option>iPhone 14</option><option>iPhone 14 Plus</option>
-            <option>iPhone 14 Pro</option><option>iPhone 14 Pro Max</option>
-            <option>iPhone 15</option><option>iPhone 15 Plus</option>
-            <option>iPhone 15 Pro</option><option>iPhone 15 Pro Max</option>
-            <option>iPhone 16</option><option>iPhone 16 Plus</option>
-            <option>iPhone 16 Pro</option><option>iPhone 16 Pro Max</option>
-            <option>iPhone 17</option><option>iPhone 17 Air</option>
-            <option>iPhone 17 Pro</option><option>iPhone 17 Pro Max</option>
+            <option value="iPhone 14">iPhone 14</option><option value="iPhone 14 Plus">iPhone 14 Plus</option>
+            <option value="iPhone 14 Pro">iPhone 14 Pro</option><option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
+            <option value="iPhone 15">iPhone 15</option><option value="iPhone 15 Plus">iPhone 15 Plus</option>
+            <option value="iPhone 15 Pro">iPhone 15 Pro</option><option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
+            <option value="iPhone 16">iPhone 16</option><option value="iPhone 16 Plus">iPhone 16 Plus</option>
+            <option value="iPhone 16 Pro">iPhone 16 Pro</option><option value="iPhone 16 Pro Max">iPhone 16 Pro Max</option>
+            <option value="iPhone 17">iPhone 17</option><option value="iPhone 17 Air">iPhone 17 Air</option>
+            <option value="iPhone 17 Pro">iPhone 17 Pro</option><option value="iPhone 17 Pro Max">iPhone 17 Pro Max</option>
           </optgroup>
         </select>
         <div class="cat-model-price" id="mb-price-hint"></div>
@@ -2128,11 +2053,11 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   <div class="cat-filters">
     <div class="cat-search-wrap">
       <i class="ti ti-search"></i>
-      <input class="fsrch" type="search" id="sinp" placeholder="Rechercher un design..." oninput="filt()">
+      <input class="fsrch" type="search" id="sinp" placeholder="Rechercher un design..." oninput="filt()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </div>
     <div class="cat-filter-sep"></div>
-    <button class="ftag on" id="sort-pop" onclick="setSort('popular',this)">🔥 Populaires</button>
-    <button class="ftag" id="sort-new" onclick="setSort('new',this)">✨ Nouveautés</button>
+    <button class="ftag on" id="sort-pop" onclick="setSort('popular',this)">TOUS</button>
+    <button class="ftag" id="sort-new" onclick="setSort('new',this)">✦ NOUVEAUTÉS</button>
     <div class="cat-filter-sep"></div>
     <button class="ftag" id="dispo-btn" onclick="toggleDispo(this)" disabled style="opacity:.38;cursor:not-allowed" title="Choisis d'abord ton modèle iPhone">✓ Disponible</button>
     <div style="margin-left:auto;font-size:10px;color:var(--muted)" id="mb-info"></div>
@@ -2141,7 +2066,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   <!-- COMPTEUR -->
   <div class="cat-count-bar">
     <div class="cat-count" id="cat-count"></div>
-    <div class="cat-sort" id="cat-sort-label">🔥 Les plus populaires</div>
+    <div class="cat-sort" id="cat-sort-label">Tous les designs</div>
   </div>
 
   <!-- GRILLE -->
@@ -2178,7 +2103,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
           <button class="qb" onclick="dq(1)">+</button>
         </div>
         <div class="prix-box">
-          💬 <strong>Prix sélectionné :</strong> <span id="d-price-display" class="prix-val"></span>
+          → <strong>Prix sélectionné :</strong> <span id="d-price-display" class="prix-val"></span>
         </div>
 
         <div class="livraison-form">
@@ -2269,9 +2194,9 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
       <p>Une marque conçue à Bamako, pour ceux qui portent leur culture avec fierté.</p>
     </div>
     <div class="ab-r">
-      <div class="aimg" style="grid-row:span 2"><img src="https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767813/ujlarvjopqep37hwm2n2.jpg" alt="Ciwara"></div>
-      <div class="aimg"><img src="https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767550/erdvdubi3wvbb3pgoirj.jpg" alt="Munyu"></div>
-      <div class="aimg"><img src="https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767718/smtv6hdke2pdelv3z0ob.jpg" alt="Bènkadi"></div>
+      <div class="aimg" style="grid-row:span 2"><img src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_500,f_auto,q_auto/v1779767813/ujlarvjopqep37hwm2n2.jpg" alt="Ciwara"></div>
+      <div class="aimg"><img src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_300,f_auto,q_auto/v1779767550/erdvdubi3wvbb3pgoirj.jpg" alt="Munyu"></div>
+      <div class="aimg"><img src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_300,f_auto,q_auto/v1779767718/smtv6hdke2pdelv3z0ob.jpg" alt="Bènkadi"></div>
     </div>
   </div>
   <div class="ab-vals">
@@ -2426,60 +2351,6 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   </div>
 </div>
 
-<footer class="footer">
-  <div class="footer-top">
-    <div class="footer-brand-col">
-      <div class="footer-logo">CULTURECASE</div>
-      <p class="footer-tagline">L'âme du Mali, dans ta main.<br>Designs exclusifs inspirés du patrimoine malien. Conçus à Bamako, portés partout.</p>
-      <div class="footer-social">
-        <a href="https://wa.me/22375992482" target="_blank" rel="noopener" class="footer-soc-btn footer-soc-wa" aria-label="WhatsApp">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        </a>
-        <a href="https://www.instagram.com/culturecase_official" target="_blank" rel="noopener" class="footer-soc-btn footer-soc-ig" aria-label="Instagram">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-        </a>
-        <a href="https://www.tiktok.com/@culturecase" target="_blank" rel="noopener" class="footer-soc-btn footer-soc-tt" aria-label="TikTok">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.86a8.22 8.22 0 004.8 1.54V6.95a4.85 4.85 0 01-1.03-.26z"/></svg>
-        </a>
-      </div>
-    </div>
-    <div>
-      <p class="footer-col-title">Navigation</p>
-      <ul class="footer-links">
-        <li><button onclick="go('home')">Accueil</button></li>
-        <li><button onclick="go('catalogue')">Catalogue</button></li>
-        <li><button onclick="go('about')">Notre histoire</button></li>
-        <li><button onclick="go('blog')">Blog</button></li>
-        <li><button onclick="go('contact')">Contact</button></li>
-      </ul>
-    </div>
-    <div>
-      <p class="footer-col-title">Informations</p>
-      <ul class="footer-links">
-        <li><button onclick="go('livraison')">Livraison &amp; retours</button></li>
-        <li><button onclick="go('paiement')">Modes de paiement</button></li>
-        <li><button onclick="go('faq')">FAQ</button></li>
-        <li><button onclick="go('politique')">Politique commerciale</button></li>
-      </ul>
-    </div>
-    <div>
-      <p class="footer-col-title">Commander</p>
-      <ul class="footer-links">
-        <li><button onclick="go('contact')">Nous écrire</button></li>
-        <li><button onclick="go('catalogue')">Voir les designs</button></li>
-      </ul>
-      <div style="margin-top:1rem;font-size:11px;color:rgba(255,255,255,.25);line-height:1.8">
-        📍 Bamako, Mali<br>
-        📦 Livraison Bamako<br>
-        💬 Réponse rapide WA
-      </div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© <span id="footer-year"></span> CultureCase · Tous droits réservés</span>
-    <span>Fait avec ❤️ à Bamako</span>
-  </div>
-</footer>
 <div class="pg" id="pg-faq">
   <div style="max-width:760px;margin:0 auto;padding:3rem 1.5rem 5rem">
     <button onclick="go('home')" style="background:none;border:none;color:var(--ember);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:2rem;padding:0"><i class="ti ti-arrow-left"></i> Retour à l'accueil</button>
@@ -2610,6 +2481,61 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 </div>
 
 <!-- ══ FIREBASE SDK ══ -->
+
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-brand-col">
+      <div class="footer-logo">CULTURECASE</div>
+      <p class="footer-tagline">L'âme du Mali, dans ta main.<br>Designs exclusifs inspirés du patrimoine malien. Conçus à Bamako, portés partout.</p>
+      <div class="footer-social">
+        <a href="https://wa.me/22375992482" target="_blank" rel="noopener" class="footer-soc-btn footer-soc-wa" aria-label="WhatsApp">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/culturecase_official" target="_blank" rel="noopener" class="footer-soc-btn footer-soc-ig" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@culturecase" target="_blank" rel="noopener" class="footer-soc-btn footer-soc-tt" aria-label="TikTok">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.86a8.22 8.22 0 004.8 1.54V6.95a4.85 4.85 0 01-1.03-.26z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div>
+      <p class="footer-col-title">Navigation</p>
+      <ul class="footer-links">
+        <li><button onclick="go('home')">Accueil</button></li>
+        <li><button onclick="go('catalogue')">Catalogue</button></li>
+        <li><button onclick="go('about')">Notre histoire</button></li>
+        <li><button onclick="go('blog')">Blog</button></li>
+        <li><button onclick="go('contact')">Contact</button></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Informations</p>
+      <ul class="footer-links">
+        <li><button onclick="go('livraison')">Livraison &amp; retours</button></li>
+        <li><button onclick="go('paiement')">Modes de paiement</button></li>
+        <li><button onclick="go('faq')">FAQ</button></li>
+        <li><button onclick="go('politique')">Politique commerciale</button></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Commander</p>
+      <ul class="footer-links">
+        <li><button onclick="go('contact')">Nous écrire</button></li>
+        <li><button onclick="go('catalogue')">Voir les designs</button></li>
+      </ul>
+      <div style="margin-top:1rem;font-size:11px;color:rgba(255,255,255,.25);line-height:1.8">
+        📍 Bamako, Mali<br>
+        📦 Livraison Bamako<br>
+        💬 Réponse rapide WA
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="footer-year"></span> CultureCase · Tous droits réservés</span>
+    <span>Fait avec ❤️ à Bamako</span>
+  </div>
+</footer>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
 import { getFirestore, doc, onSnapshot, collection, query, where, orderBy } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
@@ -2700,11 +2626,19 @@ window.__applyFirebaseData = function(data) {
     // Mettre à jour tous les sélecteurs de modèle (catalogue header)
     const gSel = document.getElementById('global-model');
     if (gSel) {
-      const cur = gSel.value;
+      const cur = gSel.value; // sauvegarder avant rebuild
       const opts = '<option value="">— Choisir mon modèle —</option>' +
         ALL_MDS.map(m => `<option value="${m}">${m} — ${modelPrices[m] ? Number(modelPrices[m]).toLocaleString('fr-FR') + ' FCFA' : '3 500 – 5 000 FCFA'}</option>`).join('');
       gSel.innerHTML = opts;
-      if (cur && ALL_MDS.includes(cur)) { gSel.value = cur; onGlobalModelChange(); }
+      // Restaurer la sélection si le modèle est toujours valide
+      if (cur && ALL_MDS.includes(cur)) {
+        gSel.value = cur;
+        onGlobalModelChange();
+      }
+      // Si aucun modèle n'était sélectionné, s'assurer que filt() tourne quand même
+      else if (!cur) {
+        filt();
+      }
     }
 
     // 6. Blog depuis settings.blog (sauvegardé par BlogPage.jsx du back-office)
@@ -3188,7 +3122,12 @@ function goToCatalogueWithModel(model){
 
 function initHome(){
   const grid = document.getElementById('home-grid');
-  if(grid) grid.innerHTML = DS.slice(0,8).map(card).join(''); // 8 designs = 2 rangées de 4
+  if(grid) grid.innerHTML = DS.slice(0,8).map(card).join('');
+  // Stats dynamiques
+  const statD = document.getElementById('stat-designs');
+  const statM = document.getElementById('stat-models');
+  if(statD) statD.textContent = DS.length;
+  if(statM) statM.textContent = ALL_MDS.length;
 }
 
 function initCat(){
@@ -3202,7 +3141,7 @@ function setSort(sort, btn) {
   document.querySelectorAll('#sort-pop, #sort-new').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
   const label = document.getElementById('cat-sort-label');
-  if(label) label.textContent = sort === 'popular' ? '🔥 Les plus populaires' : '✨ Nouveautés en premier';
+  if(label) label.textContent = sort === 'popular' ? 'Tous les designs' : '✦ Les 6 derniers ajoutés';
   filt();
 }
 
@@ -3252,7 +3191,8 @@ function onGlobalModelChange(){
 }
 
 function filt(){
-  const q=(document.getElementById('sinp')?.value||'').toLowerCase();
+  if(!DS || DS.length === 0) return;
+  const q=(document.getElementById('sinp')?.value||'').trim().toLowerCase();
   const gm=(document.getElementById('global-model')?.value)||'';
   let res=DS.filter(d=>{
     if(stockFilter==='available'&&gm&&getModelStock(d.id,gm)===0)return false;
@@ -3262,18 +3202,17 @@ function filt(){
 
   // Tri selon activeSort
   if(activeSort === 'popular') {
-    // Ordre éditorial DS[] = ordre de popularité défini dans le backoffice.
-    // On remonte simplement les designs avec stock devant ceux en rupture totale.
+    // TOUS — ordre éditorial DS[], ruptures totales en fin de liste
     const dsOrder = DS.map(d => d.id);
     res.sort((a, b) => {
       const aOut = ALL_MDS.every(m => getModelStock(a.id, m) === 0);
       const bOut = ALL_MDS.every(m => getModelStock(b.id, m) === 0);
-      if(aOut !== bOut) return aOut ? 1 : -1; // rupture totale → fin de liste
-      return dsOrder.indexOf(a.id) - dsOrder.indexOf(b.id); // sinon ordre éditorial
+      if(aOut !== bOut) return aOut ? 1 : -1;
+      return dsOrder.indexOf(a.id) - dsOrder.indexOf(b.id);
     });
   } else if(activeSort === 'new') {
-    // Inverser l'ordre DS — les derniers ajoutés (ID élevé) en premier
-    res = [...res].reverse();
+    // NOUVEAUTÉS — les 6 derniers ajoutés (fin de DS[]), du plus récent au plus ancien
+    res = [...res].reverse().slice(0, 6);
   }
 
   // Compteur
