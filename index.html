@@ -2134,7 +2134,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
     <button class="ftag on" id="sort-pop" onclick="setSort('popular',this)">🔥 Populaires</button>
     <button class="ftag" id="sort-new" onclick="setSort('new',this)">✨ Nouveautés</button>
     <div class="cat-filter-sep"></div>
-    <button class="ftag" id="dispo-btn" onclick="toggleDispo(this)">✓ Disponible</button>
+    <button class="ftag" id="dispo-btn" onclick="toggleDispo(this)" disabled style="opacity:.38;cursor:not-allowed" title="Choisis d'abord ton modèle iPhone">✓ Disponible</button>
     <div style="margin-left:auto;font-size:10px;color:var(--muted)" id="mb-info"></div>
   </div>
 
@@ -3053,7 +3053,7 @@ function openBlog(id){
   // related
   const rel=BLOG.filter(x=>x.id!==id).slice(0,3);
   document.getElementById('bd-related').innerHTML=rel.map(r=>`<div class="bcard" onclick="openBlog('${r.id}')">
-    <div class="bc-img"><img src="${r.img}" alt="${r.title}" loading="lazy"></div>
+    <div class="bc-img"><img src="${cldImg(r.img,400)}" alt="${r.title}" loading="lazy"></div>
     <div class="bc-body"><span class="bc-tag">${r.tag}</span><div class="bc-title">${r.title}</div><div class="bc-meta"><span class="bc-date">${r.date}</span><span>·</span><span>${r.read}</span></div></div>
   </div>`).join('');
   go('blogdet');
@@ -3136,7 +3136,12 @@ function card(d){
   let stockHint = 'Disponible';
   if(gm){
     const qty = getModelStock(d.id, gm);
-    if(qty > 0 && qty <= 3){
+    if(qty === -1){
+      // Pas de données stock pour ce design × modèle
+      availBadge = '';
+      stockDot = '<span class="pc-stock-dot dot-out"></span>';
+      stockHint = `Stock inconnu pour ${gm}`;
+    } else if(qty > 0 && qty <= 3){
       availBadge = `<div class="stock-badge stock-limited">Derniers</div>`;
       stockDot = '<span class="pc-stock-dot dot-lim"></span>';
       stockHint = `${qty} restant${qty>1?'s':''} pour ${gm}`;
@@ -3203,10 +3208,7 @@ function setSort(sort, btn) {
 
 function toggleDispo(btn){
   const gm = (document.getElementById('global-model')?.value) || '';
-  if(!gm){
-    showCartToast('⚠️ Choisis d\'abord ton modèle iPhone pour filtrer par dispo');
-    return;
-  }
+  if(!gm) return; // guard — le bouton est disabled mais au cas où
   stockFilter = stockFilter === 'available' ? 'all' : 'available';
   btn.classList.toggle('on');
   filt();
@@ -3218,6 +3220,26 @@ function onGlobalModelChange(){
   sel.classList.toggle('chosen', !!m);
   const hint = document.getElementById('mb-price-hint');
   const info = document.getElementById('mb-info');
+  // Activer/désactiver le bouton "Disponible" selon si un modèle est choisi
+  const dispoBtn = document.getElementById('dispo-btn');
+  if(dispoBtn){
+    if(m){
+      dispoBtn.disabled = false;
+      dispoBtn.style.opacity = '1';
+      dispoBtn.style.cursor = 'pointer';
+      dispoBtn.title = '';
+    } else {
+      dispoBtn.disabled = true;
+      dispoBtn.style.opacity = '.38';
+      dispoBtn.style.cursor = 'not-allowed';
+      dispoBtn.title = 'Choisis d\'abord ton modèle iPhone';
+      // Désactiver le filtre si actif
+      if(stockFilter === 'available'){
+        stockFilter = 'all';
+        dispoBtn.classList.remove('on');
+      }
+    }
+  }
   if(m){
     hint.textContent = MDS_G1.includes(m) ? '3 500 FCFA' : '5 000 FCFA';
     const dispo = DS.filter(d=>getModelStock(d.id,m)>0).length;
@@ -3240,16 +3262,14 @@ function filt(){
 
   // Tri selon activeSort
   if(activeSort === 'popular') {
-    // Trier par stock total décroissant (proxy de popularité)
-    // Les designs avec plus de stock vendu = plus populaires
-    // On utilise l'index DS comme ordre éditorial par défaut (déjà trié par popularité)
+    // Ordre éditorial DS[] = ordre de popularité défini dans le backoffice.
+    // On remonte simplement les designs avec stock devant ceux en rupture totale.
+    const dsOrder = DS.map(d => d.id);
     res.sort((a, b) => {
-      const stockA = ALL_MDS.reduce((s,m) => s + getModelStock(a.id,m), 0);
-      const stockB = ALL_MDS.reduce((s,m) => s + getModelStock(b.id,m), 0);
-      // D'abord ceux qui ont du stock, puis par ordre DS (éditorial)
-      const aHas = stockA > 0 ? 1 : 0;
-      const bHas = stockB > 0 ? 1 : 0;
-      return bHas - aHas;
+      const aOut = ALL_MDS.every(m => getModelStock(a.id, m) === 0);
+      const bOut = ALL_MDS.every(m => getModelStock(b.id, m) === 0);
+      if(aOut !== bOut) return aOut ? 1 : -1; // rupture totale → fin de liste
+      return dsOrder.indexOf(a.id) - dsOrder.indexOf(b.id); // sinon ordre éditorial
     });
   } else if(activeSort === 'new') {
     // Inverser l'ordre DS — les derniers ajoutés (ID élevé) en premier
@@ -3714,7 +3734,7 @@ var _stars = 0;
 function pickStar(n) {
   _stars = n;
   document.querySelectorAll('#star-row span').forEach(function(s, i) {
-    s.style.color = i < n ? 'var(--gold)' : 'var(--border2)';
+    s.style.color = (n > 0 && i < n) ? 'var(--gold)' : 'var(--border2)';
   });
 }
 
