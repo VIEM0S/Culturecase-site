@@ -3810,67 +3810,9 @@
           </div>
         </div>
         <div class="reviews-grid" id="reviews-grid">
-          <div class="review-card">
-            <div class="rev-stars">★★★★★</div>
-            <p class="rev-text">
-              « J'ai commandé le Bogolan pour mon iPhone 15. La qualité est
-              incroyable, le design est vraiment fidèle. Tout Bamako me demande
-              où j'ai eu ça ! »
-            </p>
-            <div class="rev-author">
-              <div class="rev-avatar">AK</div>
-              <div>
-                <div class="rev-name">Aminata K.</div>
-                <div class="rev-loc">Badalabougou, Bamako</div>
-              </div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rev-stars">★★★★★</div>
-            <p class="rev-text">
-              « Livraison rapide, coque bien protégée dans l'emballage. Le
-              design N'Ko est magnifique — un vrai bijou. Je vais en commander
-              une autre pour offrir. »
-            </p>
-            <div class="rev-author">
-              <div class="rev-avatar">IB</div>
-              <div>
-                <div class="rev-name">Ibrahim B.</div>
-                <div class="rev-loc">Hippodrome, Bamako</div>
-              </div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rev-stars">★★★★★</div>
-            <p class="rev-text">
-              « Enfin une marque malienne qui fait des coques de qualité ! Le
-              Ciwara est mon préféré. Porter sa culture sur son téléphone, c'est
-              exactement ce qu'il faut. »
-            </p>
-            <div class="rev-author">
-              <div class="rev-avatar">FD</div>
-              <div>
-                <div class="rev-name">Fatoumata D.</div>
-                <div class="rev-loc">ACI 2000, Bamako</div>
-              </div>
-            </div>
-          </div>
-          <div class="review-card">
-            <div class="rev-stars">★★★★☆</div>
-            <p class="rev-text">
-              « La réponse sur WhatsApp est ultra rapide, la livraison le
-              lendemain. La coque Djenné est superbe — ma femme l'a volée
-              directement ! Je vais devoir en racheter une. »
-            </p>
-            <div class="rev-author">
-              <div class="rev-avatar">MS</div>
-              <div>
-                <div class="rev-name">Moussa S.</div>
-                <div class="rev-loc">Kalaban Coura, Bamako</div>
-              </div>
-            </div>
-          </div>
+          <!-- Les avis apparaissent ici après approbation -->
         </div>
+        <p id="reviews-empty" style="text-align:center;color:var(--muted);font-size:13px;padding:2rem 0;display:none">Les premiers avis arrivent bientôt.</p>
       </div>
     </div>
 
@@ -6286,9 +6228,15 @@
           onSnapshot(
             q,
             (snap) => {
-              if (snap.empty) return; // garder les cards statiques si aucun avis publié
-              const grid = document.getElementById("reviews-grid");
+              const grid  = document.getElementById("reviews-grid");
+              const empty = document.getElementById("reviews-empty");
               if (!grid) return;
+              if (snap.empty) {
+                grid.innerHTML = '';
+                if (empty) empty.style.display = 'block';
+                return;
+              }
+              if (empty) empty.style.display = 'none';
               grid.innerHTML = snap.docs
                 .slice(0, 8)
                 .map((d) => {
