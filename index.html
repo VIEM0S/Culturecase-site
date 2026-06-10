@@ -2645,13 +2645,7 @@ window.__applyFirebaseData = function(data) {
       }
     }
 
-    // 6. Blog depuis settings.blog (sauvegardé par BlogPage.jsx du back-office)
-    const fbBlog = settings.blog || [];
-    if (fbBlog.length > 0) {
-      BLOG.length = 0;
-      fbBlog.forEach(function(a) { BLOG.push(a); });
-      if (document.querySelector('.pg.on')?.id === 'pg-blog') renderBlog();
-    }
+    // Blog géré directement via listenBlog() → collection blog_posts
 
   } catch(e) { console.error('[CultureCase] Firebase apply error:', e); }
 };
@@ -2963,15 +2957,38 @@ function cldImg(url, w) {
 }
 
 // ══ BLOG — Firestore (géré depuis culturecase-gs) ══════════════════════════
-let BLOG = []; // rempli en temps réel par __applyFirebaseData (via settings.blog)
+let BLOG = []; // rempli en temps réel depuis la collection blog_posts
 
 function listenBlog() {
-  // Le blog est maintenant dans settings.blog du document "main" Firebase
-  // __applyFirebaseData gère la mise à jour automatique via onSnapshot existant
-  // Cette fonction garde les articles statiques en fallback si Firebase n'a pas encore de blog
-  if (BLOG.length === 0 && window.__blogStaticFallback) {
-    BLOG = window.__blogStaticFallback;
-  }
+  if (window.__blogListening) return;
+  window.__blogListening = true;
+
+  const { collection, query, where, orderBy, onSnapshot } = window.__firestoreAPI;
+  const q = query(
+    collection(db, "blog_posts"),
+    where("published", "==", true),
+    orderBy("createdAt", "desc")
+  );
+
+  onSnapshot(q, function(snap) {
+    BLOG = snap.docs.map(function(d) {
+      const data = d.data();
+      return {
+        id:        d.id,
+        title:     data.title    || "",
+        excerpt:   data.excerpt  || "",
+        content:   data.content  || "",
+        cover:     data.cover    || "",
+        tag:       data.tags?.[0] || "culture",
+        tags:      data.tags     || [],
+        createdAt: data.createdAt,
+        published: data.published,
+      };
+    });
+    if (document.querySelector('.pg.on')?.id === 'pg-blog') renderBlog();
+  }, function(err) {
+    console.error('[CultureCase] Blog Firestore error:', err);
+  });
 }
 
 let activeBlogTag='all';
