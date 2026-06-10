@@ -986,9 +986,13 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
   pointer-events: none;
   border-left: 4px solid var(--ember);
   min-width: 200px;
+  max-width: calc(100vw - 40px);
   box-shadow: var(--shadow-deep);
 }
 .toast.show { transform: translateY(0); opacity: 1; }
+@media (max-width:640px) {
+  .toast { bottom: 80px; right: 1rem; left: 1rem; max-width: unset; text-align: center; border-left: none; border-top: 3px solid var(--ember); }
+}
 
 /* ─── FOOTER ─────────────────────────────────────────────── */
 .soc {
@@ -2329,7 +2333,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
       <div class="cf-title" style="display:flex;align-items:center;gap:8px">
         <i class="ti ti-star" style="color:var(--gold)"></i> Laisser un avis
       </div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:1.25rem">Votre avis apparaîtra directement sur l'accueil parmi les autres clients.</p>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:1.25rem">Votre avis apparaîtra sur l'accueil pendant cette session. Envoyez-nous aussi une capture sur WhatsApp pour qu'on le publie définitivement.</p>
 
       <!-- Étoiles -->
       <div class="cf-g">
@@ -2538,7 +2542,7 @@ textarea.cf-in { resize: vertical; min-height: 90px; }
 </footer>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-import { getFirestore, doc, onSnapshot, collection, query, where, orderBy } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot, collection, query, where, orderBy, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
 const app = initializeApp({
@@ -2722,11 +2726,38 @@ function startListeners() {
   window.addEventListener('offline', () => setFbStatus('offline'));
   window.addEventListener('online',  () => setFbStatus('loading'));
 
-  window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot };
-  if (typeof listenBlog === 'function') listenBlog();
-  window.addEventListener('load', () => {
-    if (typeof listenBlog === 'function' && !window.__blogListening) { listenBlog(); window.__blogListening = true; }
-  });
+  window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp };
+  // Un seul appel — window.__blogListening empêche le double listener Firestore
+  if (typeof listenBlog === 'function' && !window.__blogListening) {
+    listenBlog();
+    window.__blogListening = true;
+  }
+  // Listener avis publiés — remplace les cards statiques en temps réel
+  if (!window.__reviewsListening) {
+    window.__reviewsListening = true;
+    const q = query(
+      collection(db, 'reviews'),
+      where('status', '==', 'published'),
+      orderBy('createdAt', 'desc')
+    );
+    onSnapshot(q, snap => {
+      if (snap.empty) return; // garder les 4 avis statiques si rien de publié
+      const grid = document.getElementById('reviews-grid');
+      if (!grid) return;
+      grid.innerHTML = snap.docs.slice(0, 8).map(d => {
+        const r = d.data();
+        const stars = '★'.repeat(r.stars || 5) + '☆'.repeat(5 - (r.stars || 5));
+        const initials = (r.nom || '?').trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        // Construction par template — données approuvées par l'admin, pas de XSS
+        return `<div class="review-card">`
+          + `<div class="rev-stars" style="color:var(--gold)">${stars}</div>`
+          + `<p class="rev-text">\u00ab\u00a0${r.txt}\u00a0\u00bb</p>`
+          + `<div class="rev-author"><div class="rev-avatar">${initials}</div>`
+          + `<div><div class="rev-name">${r.nom}</div><div class="rev-loc">${r.loc || 'Bamako, Mali'}</div></div></div>`
+          + `</div>`;
+      }).join('');
+    }, err => console.warn('[CultureCase] Reviews listener:', err.code));
+  }
 }
 
 onAuthStateChanged(auth, user => {
@@ -2754,7 +2785,7 @@ const DS=[
   {id:'D5', name:'INDIGO & CORIS',   img:'https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767559/bxujdu2161ecy1zttj3y.jpg',  story:'L\'indigo, teinture ancestrale des tisserands du Mali. Les cauris, monnaie d\'échange et symbole de prospérité. Un mariage de traditions qui traverse les siècles.',cat:'TEXTILE'},
   {id:'D6', name:'MASQUE DOGON',       img:'https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767579/l0zypv1qg1yxkjzt50c3.jpg',  story:'Les masques dogon sont parmi les plus fascinants d\'Afrique de l\'Ouest. Utilisés lors des cérémonies Dama, ils incarnent les esprits des ancêtres et la connexion entre le monde des vivants et celui des morts.',cat:'MASQUE'},
   {id:'D7', name:'AFRICA',             img:'https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767567/cbryluhomr6fn6ucoc38.jpg',  story:'L\'Afrique dans toute sa splendeur. Un design qui célèbre le continent mère, berceau de l\'humanité et source inépuisable de culture, de richesse et de créativité.',cat:'VALEUR'},
-  {id:'D8', name:'TOUAREG',          img:'',  story:'Peuple du désert, gardiens du Sahara. Les Touaregs du Mali sont des nomades fiers dont la culture, les bijoux et les motifs géométriques constituent un art à part entière.',cat:'PEUPLE'},
+  {id:'D8', name:'TOUAREG',          img:'https://res.cloudinary.com/dknfqd2xp/image/upload/w_400,f_auto,q_auto/v1/culturecase/placeholder_desert',  story:'Peuple du désert, gardiens du Sahara. Les Touaregs du Mali sont des nomades fiers dont la culture, les bijoux et les motifs géométriques constituent un art à part entière.',cat:'PEUPLE'},
   {id:'D9', name:'KÔ MUSSO',         img:'https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767513/g9hlo9nazfns8zio19kh.jpg',  story:'La femme ciwara — symbole de fertilité et de travail. Dans la cosmogonie bambara, le ciwara est mi-homme mi-antilope, enseignant aux hommes l\'art de la culture de la terre.',cat:'CIWARA'},
   {id:'D10',name:'MUSSO',                  img:'https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767522/rh1twzztxdfkvxszxm2e.jpg',  story:'Musso signifie femme en bambara. Un hommage à la femme malienne — pilier de la famille, gardienne des traditions, force silencieuse d\'une société entière.',cat:'VALEUR'},
   {id:'D11',name:'DJOLIBA',                img:'https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767684/kz0hqllpclzst4tdxe4w.jpg',  story:'Le Djoliba — nom bambara du fleuve Niger. Artère vitale du Mali, source de vie pour des millions de personnes depuis des millénaires. Ce design rend hommage au grand fleuve.',cat:'NATURE'},
@@ -2880,14 +2911,21 @@ function updatePrice(){
   const qty=getModelStock(curD.id,model);
   const price=(MDS_G1.includes(model)?3500:5000);
 
-  // Ajuster dQty si dépasse le stock
-  if(dQty>qty){ dQty=Math.max(1,qty); document.getElementById('d-qty').textContent=dQty; }
+  // Ajuster dQty si dépasse le stock (ignorer si qty=-1 = pas de données)
+  if(qty > 0 && dQty>qty){ dQty=Math.max(1,qty); document.getElementById('d-qty').textContent=dQty; }
   const plusBtn=document.querySelectorAll('.qb')[1];
-  if(plusBtn) plusBtn.style.opacity=dQty>=qty?'.3':'1';
+  if(plusBtn) plusBtn.style.opacity=(qty > 0 && dQty>=qty)?'.3':'1';
 
   document.getElementById('d-price-display').textContent=fp(price)+' × '+dQty+' = '+fp(price*dQty);
 
-  if(qty===0){
+  if(qty===-1){
+    // Pas de données stock — on laisse commander
+    sb.className='det-stock available';
+    sb.innerHTML='<i class="ti ti-circle-check"></i> En stock';
+    waBtn.disabled=false; waBtn.style.opacity='1'; waBtn.style.cursor='pointer';
+    waSpan.textContent='Commander';
+    if(cartBtn){ cartBtn.disabled=false; cartBtn.style.opacity='1'; }
+  } else if(qty===0){
     sb.className='det-stock out';
     sb.innerHTML='<i class="ti ti-clock"></i> Rupture pour ce modèle';
     waBtn.disabled=true; waBtn.style.opacity='.35'; waBtn.style.cursor='not-allowed';
@@ -2918,7 +2956,8 @@ function toast(msg){
 // ══ CLOUDINARY — optimisation automatique des images ══════════════════════
 // Injecte w_auto,f_auto,q_auto dans les URLs Cloudinary pour 3-5x moins de poids
 function cldImg(url, w) {
-  if (!url || !url.includes('cloudinary.com')) return url;
+  if (!url) return ''; // guard — pas de requête vide
+  if (!url.includes('cloudinary.com')) return url;
   var width = w || 500;
   return url.replace('/upload/', '/upload/w_' + width + ',f_auto,q_auto/');
 }
@@ -3046,11 +3085,13 @@ window.addEventListener('resize', checkMobile);
 checkMobile();
 
 function go(p){
+  var target=document.getElementById('pg-'+p);
+  if(!target){ toast('⚠️ Page introuvable'); return; } // guard — évite TypeError si page absente
   document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
-  document.getElementById('pg-'+p).classList.add('on');
+  target.classList.add('on');
   document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));
-  const nb=document.getElementById('nm-'+p);if(nb)nb.classList.add('on');
-  const nbm=document.getElementById('nm-'+p+'-m');if(nbm)nbm.classList.add('on');
+  var nb=document.getElementById('nm-'+p);if(nb)nb.classList.add('on');
+  var nbm=document.getElementById('nm-'+p+'-m');if(nbm)nbm.classList.add('on');
   window.scrollTo(0,0);
   if(p==='catalogue')initCat();
   if(p==='home')initHome();
@@ -3246,7 +3287,9 @@ function openDet(id){
   if(!sel.innerHTML) sel.innerHTML='<option value="">Aucun modèle disponible</option>';
   // pré-sélectionner le modèle global si choisi, sinon le premier dispo
   const gm = (document.getElementById('global-model')?.value)||'';
-  const firstAvail = gm || ALL_MDS.find(m=>getModelStock(curD.id,m)>0) || ALL_MDS[0];
+  // Utiliser gm seulement si ce modèle est bien disponible pour ce design
+  const gmAvail = gm && getModelStock(curD.id, gm) > 0;
+  const firstAvail = gmAvail ? gm : (ALL_MDS.find(m=>getModelStock(curD.id,m)>0) || '');
   if(firstAvail) sel.value=firstAvail;
   // pré-remplir infos client si mémorisées
   try{
@@ -3277,7 +3320,8 @@ function orderWA(){
     if(quartier) localStorage.setItem('cc_quartier', quartier);
   } catch(e){}
   const safeQty = (typeof dQty === 'number' && dQty > 0) ? dQty : 1;
-  const total   = fp((MDS_G1.includes(model) ? 3500 : 5000) * safeQty);
+  const unitPrice = MDS_G1.includes(model) ? 3500 : 5000; // source unique — même logique que getCartPrice
+  const total   = fp(unitPrice * safeQty);
   let msg = `Bonjour CultureCase 👋\n\n🎨 Design : ${curD.name}\n📱 Modèle : ${model}\n🔢 Quantité : ${safeQty}\n💰 Total : ${total}`;
   if(nom)      msg += `\n\n👤 Nom : ${nom}`;
   if(tel)      msg += `\n📞 Téléphone : ${tel}`;
@@ -3293,7 +3337,8 @@ function orderQuick(id){
   const gm=(document.getElementById('global-model')?.value)||'';
   const nom=localStorage.getItem('cc_nom')||'';
   const tel=localStorage.getItem('cc_tel')||'';
-  let msg=`Bonjour CultureCase 👋\n\nJe voudrais commander :\n🎨 Design : ${d.name}\n📱 Modèle : ${gm||'(à préciser)'}\n🔢 Quantité : 1`;
+  const _price = gm ? fp(MDS_G1.includes(gm) ? 3500 : 5000) : '3 500 – 5 000 FCFA';
+  let msg=`Bonjour CultureCase 👋\n\nJe voudrais commander :\n🎨 Design : ${d.name}\n📱 Modèle : ${gm||'(à préciser)'}\n🔢 Quantité : 1\n💰 Prix unitaire : ${_price}`;
   if(nom) msg+=`\n\n👤 Nom : ${nom}`;
   if(tel) msg+=`\n📞 Téléphone : ${tel}`;
   msg+=`\n\nMerci !`;
@@ -3445,7 +3490,8 @@ function removeFromCart(idx){
 function updateCartQty(idx, delta){
   const item = CART[idx];
   if(!item) return;
-  const maxQty = getModelStock(item.designId, item.model) || 99;
+  const _s = getModelStock(item.designId, item.model);
+  const maxQty = (_s > 0) ? _s : 99; // -1 = pas de données → on laisse libre
   item.qty = Math.min(maxQty, Math.max(1, item.qty + delta));
   updateCartBadge();
   renderCartItems();
@@ -3591,13 +3637,16 @@ function openCart(){
   document.getElementById('cart-overlay').classList.add('open');
   document.getElementById('cart-drawer').classList.add('open');
   document.body.style.overflow = 'hidden';
+  document.addEventListener('keydown', _cartEscHandler);
 }
 
 function closeCart(){
   document.getElementById('cart-overlay').classList.remove('open');
   document.getElementById('cart-drawer').classList.remove('open');
   document.body.style.overflow = '';
+  document.removeEventListener('keydown', _cartEscHandler);
 }
+function _cartEscHandler(e){ if(e.key==='Escape') closeCart(); }
 
 function cartOrderWA(){
   if(CART.length === 0) return;
@@ -3662,7 +3711,8 @@ function addToCartFromDet(){
 function sendContact(){
   const n=document.getElementById('cf-n').value.trim();
   const m=document.getElementById('cf-m').value.trim();
-  if(!n||!m){toast('Veuillez remplir le formulaire');return;}
+  if(!n)      { toast('⚠️ Votre nom est requis'); return; }
+  if(m.length < 10) { toast('⚠️ Votre message est trop court'); return; }
   const msg=encodeURIComponent(`Bonjour CultureCase 👋\nNom : ${n}\nTéléphone : ${document.getElementById('cf-p').value}\n\n${m}`);
   window.open('https://wa.me/22375992482?text='+msg,'_blank');
 }
@@ -3687,61 +3737,50 @@ function submitAvis() {
   if (txt.length < 15) { err.textContent='Votre avis doit faire au moins 15 caractères.'; err.style.display='block'; return; }
   err.style.display = 'none';
 
-  var starsStr = '★'.repeat(_stars) + '☆'.repeat(5 - _stars);
-  var initials = nom.trim().split(/\s+/).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+  // Désactiver le bouton pendant l'envoi
+  var btn = document.querySelector('#av-err ~ button, .cf-btn[onclick="submitAvis()"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Envoi…'; }
 
-  var card = document.createElement('div');
-  card.className = 'review-card';
-  card.style.animation = 'pgFadeUp .4s ease both';
+  var payload = {
+    nom:       nom,
+    loc:       loc || 'Bamako, Mali',
+    txt:       txt,
+    stars:     _stars,
+    status:    'pending',   // en attente de modération dans le back-office
+    createdAt: (window.__firestoreAPI && window.__firestoreAPI.serverTimestamp)
+                 ? window.__firestoreAPI.serverTimestamp()
+                 : new Date().toISOString()
+  };
 
-  // Construction sécurisée — textContent pour les données utilisateur (anti-XSS)
-  var starsDiv = document.createElement('div');
-  starsDiv.className = 'rev-stars';
-  starsDiv.style.color = 'var(--gold)';
-  starsDiv.textContent = starsStr;
+  var db = window.__db;
+  var api = window.__firestoreAPI;
 
-  var textP = document.createElement('p');
-  textP.className = 'rev-text';
-  textP.textContent = '« ' + txt + ' »';
-
-  var avatarDiv = document.createElement('div');
-  avatarDiv.className = 'rev-avatar';
-  avatarDiv.textContent = initials;
-
-  var nameDiv = document.createElement('div');
-  nameDiv.className = 'rev-name';
-  nameDiv.textContent = nom;
-
-  var locDiv = document.createElement('div');
-  locDiv.className = 'rev-loc';
-  locDiv.textContent = loc || 'Bamako, Mali';
-
-  var authorInfo = document.createElement('div');
-  authorInfo.appendChild(nameDiv);
-  authorInfo.appendChild(locDiv);
-
-  var authorDiv = document.createElement('div');
-  authorDiv.className = 'rev-author';
-  authorDiv.appendChild(avatarDiv);
-  authorDiv.appendChild(authorInfo);
-
-  card.appendChild(starsDiv);
-  card.appendChild(textP);
-  card.appendChild(authorDiv);
-
-  var grid = document.getElementById('reviews-grid');
-  if (grid) {
-    grid.insertBefore(card, grid.firstChild);
-    var all = grid.querySelectorAll('.review-card');
-    if (all.length > 8) grid.removeChild(all[all.length - 1]);
+  if (db && api && api.addDoc && api.collection) {
+    api.addDoc(api.collection(db, 'reviews'), payload)
+      .then(function() {
+        _resetAvisForm();
+        toast('Merci ' + nom.split(' ')[0] + ' ! Votre avis est en cours de vérification. ✨');
+        go('home');
+      })
+      .catch(function(e) {
+        console.error('[CultureCase] submitAvis error:', e);
+        if (btn) { btn.disabled = false; btn.textContent = 'Publier mon avis →'; }
+        err.textContent = 'Erreur d\'envoi — vérifiez votre connexion.';
+        err.style.display = 'block';
+      });
+  } else {
+    // Firestore pas encore prêt (rare) — on réessaie dans 2s
+    setTimeout(submitAvis, 2000);
   }
+}
 
+function _resetAvisForm() {
   document.getElementById('av-nom').value = '';
   document.getElementById('av-loc').value = '';
   document.getElementById('av-txt').value = '';
   pickStar(0);
-  toast('Merci ' + nom.split(' ')[0] + ' ! Votre avis est publié. ✨');
-  go('home');
+  var btn = document.querySelector('.cf-btn[onclick="submitAvis()"]');
+  if (btn) { btn.disabled = false; btn.textContent = 'Publier mon avis →'; }
 }
 
 
