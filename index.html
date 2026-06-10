@@ -6250,13 +6250,13 @@
                     .join("")
                     .toUpperCase()
                     .slice(0, 2);
-                  // Construction par template — données approuvées par l'admin, pas de XSS
+                  // Échappement HTML : r.txt, r.nom, r.loc viennent de visiteurs publics
                   return (
                     `<div class="review-card">` +
                     `<div class="rev-stars" style="color:var(--gold)">${stars}</div>` +
-                    `<p class="rev-text">\u00ab\u00a0${r.txt}\u00a0\u00bb</p>` +
-                    `<div class="rev-author"><div class="rev-avatar">${initials}</div>` +
-                    `<div><div class="rev-name">${r.nom}</div><div class="rev-loc">${r.loc || "Bamako, Mali"}</div></div></div>` +
+                    `<p class="rev-text">\u00ab\u00a0${escapeHTML(r.txt)}\u00a0\u00bb</p>` +
+                    `<div class="rev-author"><div class="rev-avatar">${escapeHTML(initials)}</div>` +
+                    `<div><div class="rev-name">${escapeHTML(r.nom)}</div><div class="rev-loc">${escapeHTML(r.loc || "Bamako, Mali")}</div></div></div>` +
                     `</div>`
                   );
                 })
@@ -7162,6 +7162,45 @@
         return Number(n).toLocaleString("fr-FR") + " FCFA";
       }
 
+      // ── Sécurité : échapper le HTML pour éviter les injections XSS ────────────
+      function escapeHTML(str) {
+        if (str == null) return "";
+        return String(str).replace(/[&<>"']/g, (c) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+        }[c]));
+      }
+
+      // ── Mini-rendu Markdown → HTML (échappe d'abord, puis applique le markdown) ─
+      function renderMarkdown(src) {
+        if (!src) return "";
+        let html = escapeHTML(src);
+        // Titres
+        html = html.replace(/^### (.*)$/gm, "<h3>$1</h3>");
+        html = html.replace(/^## (.*)$/gm, "<h2>$1</h2>");
+        html = html.replace(/^# (.*)$/gm, "<h1>$1</h1>");
+        // Gras / italique
+        html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        html = html.replace(/_(.+?)_/g, "<em>$1</em>");
+        // Citation
+        html = html.replace(/^&gt; (.*)$/gm, "<blockquote>$1</blockquote>");
+        // Séparateur
+        html = html.replace(/^---$/gm, "<hr>");
+        // Listes
+        html = html.replace(/^- (.*)$/gm, "<li>$1</li>");
+        html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => "<ul>" + m + "</ul>");
+        // Paragraphes (lignes restantes non vides, non déjà des balises bloc)
+        html = html
+          .split(/\n{2,}/)
+          .map((block) => {
+            const trimmed = block.trim();
+            if (!trimmed) return "";
+            if (/^<(h1|h2|h3|ul|li|blockquote|hr)/.test(trimmed)) return trimmed;
+            return `<p>${trimmed.replace(/\n/g, "<br>")}</p>`;
+          })
+          .join("\n");
+        return html;
+      }
+
       // ticker
       const tItems = [
         "BOGOLAN",
@@ -7372,22 +7411,22 @@
         filtered.forEach((b, i) => {
           if (i === 0 && activeBlogTag === "all") {
             html += `<div class="blog-featured" onclick="openBlog('${b.id}')">
-        <div class="bf-img"><img src="${cldImg(b.img, 600)}" alt="${b.title}" loading="lazy"></div>
+        <div class="bf-img"><img src="${cldImg(b.img, 600)}" alt="${escapeHTML(b.title)}" loading="lazy"></div>
         <div class="bf-body">
-          <span class="bf-tag">${b.tag}</span>
-          <div class="bf-title">${b.title}</div>
-          <div class="bf-excerpt">${b.excerpt}</div>
-          <div class="bf-meta"><span class="bf-date">${b.date}</span><span>·</span><span>${b.read}</span></div>
+          <span class="bf-tag">${escapeHTML(b.tag)}</span>
+          <div class="bf-title">${escapeHTML(b.title)}</div>
+          <div class="bf-excerpt">${escapeHTML(b.excerpt)}</div>
+          <div class="bf-meta"><span class="bf-date">${escapeHTML(b.date)}</span><span>·</span><span>${escapeHTML(b.read)}</span></div>
         </div>
       </div>`;
           } else {
             html += `<div class="bcard" onclick="openBlog('${b.id}')">
-        <div class="bc-img"><img src="${cldImg(b.img, 600)}" alt="${b.title}" loading="lazy"></div>
+        <div class="bc-img"><img src="${cldImg(b.img, 600)}" alt="${escapeHTML(b.title)}" loading="lazy"></div>
         <div class="bc-body">
-          <span class="bc-tag">${b.tag}</span>
-          <div class="bc-title">${b.title}</div>
-          <div class="bc-excerpt">${b.excerpt}</div>
-          <div class="bc-meta"><span class="bc-date">${b.date}</span><span>·</span><span>${b.read}</span></div>
+          <span class="bc-tag">${escapeHTML(b.tag)}</span>
+          <div class="bc-title">${escapeHTML(b.title)}</div>
+          <div class="bc-excerpt">${escapeHTML(b.excerpt)}</div>
+          <div class="bc-meta"><span class="bc-date">${escapeHTML(b.date)}</span><span>·</span><span>${escapeHTML(b.read)}</span></div>
         </div>
       </div>`;
           }
@@ -7405,14 +7444,14 @@
         document.getElementById("bd-date").textContent = b.date;
         document.getElementById("bd-read").textContent = b.read;
         document.getElementById("bd-img").src = cldImg(b.img, 900);
-        document.getElementById("bd-content").innerHTML = b.content;
+        document.getElementById("bd-content").innerHTML = renderMarkdown(b.content);
         // related
         const rel = BLOG.filter((x) => x.id !== id).slice(0, 3);
         document.getElementById("bd-related").innerHTML = rel
           .map(
             (r) => `<div class="bcard" onclick="openBlog('${r.id}')">
-    <div class="bc-img"><img src="${cldImg(r.img, 400)}" alt="${r.title}" loading="lazy"></div>
-    <div class="bc-body"><span class="bc-tag">${r.tag}</span><div class="bc-title">${r.title}</div><div class="bc-meta"><span class="bc-date">${r.date}</span><span>·</span><span>${r.read}</span></div></div>
+    <div class="bc-img"><img src="${cldImg(r.img, 400)}" alt="${escapeHTML(r.title)}" loading="lazy"></div>
+    <div class="bc-body"><span class="bc-tag">${escapeHTML(r.tag)}</span><div class="bc-title">${escapeHTML(r.title)}</div><div class="bc-meta"><span class="bc-date">${escapeHTML(r.date)}</span><span>·</span><span>${escapeHTML(r.read)}</span></div></div>
   </div>`,
           )
           .join("");
