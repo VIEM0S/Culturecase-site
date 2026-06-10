@@ -6272,20 +6272,21 @@
           serverTimestamp,
         };
         // Un seul appel — window.__blogListening empêche le double listener Firestore
-        if (typeof listenBlog === "function") {
+        if (typeof listenBlog === "function" && !window.__blogListening) {
           listenBlog();
         }
         // Listener avis publiés — remplace les cards statiques en temps réel
         if (!window.__reviewsListening) {
           window.__reviewsListening = true;
           const q = query(
-            collection(db, "reviews"),
+            collection(window.__db, "reviews"),
             where("status", "==", "published"),
             orderBy("createdAt", "desc"),
           );
           onSnapshot(
             q,
             (snap) => {
+              if (snap.empty) return; // garder les cards statiques si aucun avis publié
               const grid = document.getElementById("reviews-grid");
               if (!grid) return;
               grid.innerHTML = snap.docs
