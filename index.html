@@ -7379,6 +7379,38 @@
 
       // ── Sticky mobile order bar ───────────────────────────────────────────────
       var CART = []; // [{ designId, name, img, model, qty, price }]
+
+      // ── Persistance du panier (localStorage) ──────────────────────────────────
+      const CART_STORAGE_KEY = "cc_cart";
+      function saveCart() {
+        try {
+          localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(CART));
+        } catch (e) {
+          console.error("[CultureCase] Impossible de sauvegarder le panier:", e);
+        }
+      }
+      function loadCart() {
+        try {
+          const raw = localStorage.getItem(CART_STORAGE_KEY);
+          if (!raw) return;
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            parsed.forEach((item) => {
+              if (item && item.designId && item.model && item.qty > 0) {
+                CART.push(item);
+              }
+            });
+          }
+        } catch (e) {
+          console.error("[CultureCase] Impossible de charger le panier:", e);
+          try { localStorage.removeItem(CART_STORAGE_KEY); } catch (_) {}
+        }
+      }
+      loadCart();
+      if (CART.length > 0) {
+        updateCartBadge();
+        renderCartItems();
+      }
       function syncMobileBar() {
         if (typeof CART !== "undefined") updateCartBadge();
         if (window.innerWidth > 640) return;
@@ -7916,6 +7948,7 @@
 
         updateCartBadge();
         renderCartItems();
+        saveCart();
         showCartToast("✓ " + d.name + " · " + model + " ajouté");
       }
 
@@ -7923,6 +7956,7 @@
         CART.splice(idx, 1);
         updateCartBadge();
         renderCartItems();
+        saveCart();
       }
 
       function updateCartQty(idx, delta) {
@@ -7933,6 +7967,7 @@
         item.qty = Math.min(maxQty, Math.max(1, item.qty + delta));
         updateCartBadge();
         renderCartItems();
+        saveCart();
       }
 
       function renderCartItems() {
@@ -8153,6 +8188,7 @@
 
         // Vider le panier et afficher confirmation
         CART.length = 0;
+        saveCart();
         updateCartBadge();
         showOrderConfirmation(nom);
       }
@@ -8190,6 +8226,7 @@
         }
         updateCartBadge();
         renderCartItems();
+        saveCart();
         showCartToast("✓ " + curD.name + " · " + model + " ajouté au panier");
         openCart();
       }
