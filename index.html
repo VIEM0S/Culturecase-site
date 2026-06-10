@@ -6282,6 +6282,55 @@
     </script>
 
     <script>
+      // ══ MONITORING — capture globale des erreurs JS ══════════════════════════════
+      (function () {
+        const RATE_LIMIT_KEY = "cc_err_count_" + new Date().toISOString().slice(0, 10);
+        const MAX_ERRORS_PER_DAY = 20; // évite le spam Firestore en cas de boucle d'erreur
+
+        function logError(payload) {
+          try {
+            let count = parseInt(sessionStorage.getItem(RATE_LIMIT_KEY) || "0", 10);
+            if (count >= MAX_ERRORS_PER_DAY) return;
+            sessionStorage.setItem(RATE_LIMIT_KEY, String(count + 1));
+
+            console.error("[CultureCase Error]", payload);
+
+            const db = window.__db;
+            const api = window.__firestoreAPI;
+            if (db && api && api.addDoc && api.collection) {
+              const data = {
+                ...payload,
+                url: location.href,
+                userAgent: navigator.userAgent,
+                createdAt: api.serverTimestamp ? api.serverTimestamp() : new Date().toISOString(),
+              };
+              api.addDoc(api.collection(db, "error_logs"), data).catch(() => {});
+            }
+          } catch (_) {
+            // jamais bloquer l'app à cause du logger lui-même
+          }
+        }
+
+        window.addEventListener("error", function (e) {
+          logError({
+            type: "error",
+            message: e.message || "Unknown error",
+            file: e.filename || "",
+            line: e.lineno || 0,
+            col: e.colno || 0,
+          });
+        });
+
+        window.addEventListener("unhandledrejection", function (e) {
+          const reason = e.reason;
+          logError({
+            type: "unhandledrejection",
+            message: (reason && (reason.message || String(reason))) || "Unknown rejection",
+            stack: (reason && reason.stack) ? String(reason.stack).slice(0, 500) : "",
+          });
+        });
+      })();
+
       // ══ DONNÉES STATIQUES (fallback + état initial) ══════════════════════════════
       // Remplacées en temps réel par Firebase dès que Firestore répond.
 
