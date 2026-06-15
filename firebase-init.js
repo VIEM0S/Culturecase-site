@@ -100,6 +100,11 @@ window.__applyFirebaseData = function (data) {
     // 5. Rafraîchir l'UI
     const pg =
       document.querySelector(".pg.on")?.id?.replace("pg-", "") || "home";
+    // Stats home toujours à jour (DS et ALL_MDS viennent d'être reconstruits)
+    const statD = document.getElementById("stat-designs");
+    const statM = document.getElementById("stat-models");
+    if (statD) statD.textContent = DS.length;
+    if (statM) statM.textContent = ALL_MDS.length;
     if (pg === "home") initHome();
     if (pg === "catalogue") filt();
     if (pg === "detail" && curD) {
