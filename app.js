@@ -1037,24 +1037,30 @@ function renderBlog() {
   if (!grid) return;
   let html = "";
   filtered.forEach((b, i) => {
+    const eid = escapeHTML(b.id);
+    const etitle = escapeHTML(b.title);
+    const etag = escapeHTML(b.tag);
+    const eexcerpt = escapeHTML(b.excerpt);
+    const edate = escapeHTML(b.date);
+    const eread = escapeHTML(b.read);
     if (i === 0 && activeBlogTag === "all") {
-      html += `<div class="blog-featured" onclick="openBlog('${b.id}')">
-  <div class="bf-img"><img src="${cldImg(b.img, 600)}" alt="${b.title}" loading="lazy"></div>
+      html += `<div class="blog-featured" data-blog-id="${eid}" style="cursor:pointer">
+  <div class="bf-img"><img src="${cldImg(b.img, 600)}" alt="${etitle}" loading="lazy"></div>
   <div class="bf-body">
-    <span class="bf-tag">${b.tag}</span>
-    <div class="bf-title">${b.title}</div>
-    <div class="bf-excerpt">${b.excerpt}</div>
-    <div class="bf-meta"><span class="bf-date">${b.date}</span><span>·</span><span>${b.read}</span></div>
+    <span class="bf-tag">${etag}</span>
+    <div class="bf-title">${etitle}</div>
+    <div class="bf-excerpt">${eexcerpt}</div>
+    <div class="bf-meta"><span class="bf-date">${edate}</span><span>·</span><span>${eread}</span></div>
   </div>
 </div>`;
     } else {
-      html += `<div class="bcard" onclick="openBlog('${b.id}')">
-  <div class="bc-img"><img src="${cldImg(b.img, 600)}" alt="${b.title}" loading="lazy"></div>
+      html += `<div class="bcard" data-blog-id="${eid}" style="cursor:pointer">
+  <div class="bc-img"><img src="${cldImg(b.img, 600)}" alt="${etitle}" loading="lazy"></div>
   <div class="bc-body">
-    <span class="bc-tag">${b.tag}</span>
-    <div class="bc-title">${b.title}</div>
-    <div class="bc-excerpt">${b.excerpt}</div>
-    <div class="bc-meta"><span class="bc-date">${b.date}</span><span>·</span><span>${b.read}</span></div>
+    <span class="bc-tag">${etag}</span>
+    <div class="bc-title">${etitle}</div>
+    <div class="bc-excerpt">${eexcerpt}</div>
+    <div class="bc-meta"><span class="bc-date">${edate}</span><span>·</span><span>${eread}</span></div>
   </div>
 </div>`;
     }
@@ -1062,6 +1068,10 @@ function renderBlog() {
   grid.innerHTML =
     html ||
     `<p style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--muted)">Aucun article dans cette catégorie pour l'instant.</p>`;
+  grid.onclick = function (e) {
+    const card = e.target.closest("[data-blog-id]");
+    if (card) openBlog(card.dataset.blogId);
+  };
 }
 
 function openBlog(id) {
@@ -1072,17 +1082,22 @@ function openBlog(id) {
   document.getElementById("bd-date").textContent = b.date;
   document.getElementById("bd-read").textContent = b.read;
   document.getElementById("bd-img").src = cldImg(b.img, 900);
-  document.getElementById("bd-content").innerHTML = b.content;
+  document.getElementById("bd-content").innerHTML = renderMarkdown(b.content);
   // related
   const rel = BLOG.filter((x) => x.id !== id).slice(0, 3);
-  document.getElementById("bd-related").innerHTML = rel
+  const relGrid = document.getElementById("bd-related");
+  relGrid.innerHTML = rel
     .map(
-      (r) => `<div class="bcard" onclick="openBlog('${r.id}')">
-    <div class="bc-img"><img src="${cldImg(r.img, 400)}" alt="${r.title}" loading="lazy"></div>
-    <div class="bc-body"><span class="bc-tag">${r.tag}</span><div class="bc-title">${r.title}</div><div class="bc-meta"><span class="bc-date">${r.date}</span><span>·</span><span>${r.read}</span></div></div>
+      (r) => `<div class="bcard" data-blog-id="${escapeHTML(r.id)}" style="cursor:pointer">
+    <div class="bc-img"><img src="${cldImg(r.img, 400)}" alt="${escapeHTML(r.title)}" loading="lazy"></div>
+    <div class="bc-body"><span class="bc-tag">${escapeHTML(r.tag)}</span><div class="bc-title">${escapeHTML(r.title)}</div><div class="bc-meta"><span class="bc-date">${escapeHTML(r.date)}</span><span>·</span><span>${escapeHTML(r.read)}</span></div></div>
   </div>`,
     )
     .join("");
+  relGrid.onclick = function (e) {
+    const card = e.target.closest("[data-blog-id]");
+    if (card) openBlog(card.dataset.blogId);
+  };
   go("blogdet");
 }
 
