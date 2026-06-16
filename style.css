@@ -23,6 +23,27 @@ iframe {
   overflow-x: hidden;
 }
 
+/* ─── ACCESSIBILITÉ — focus clavier visible sur tout élément interactif ─── */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.pcard:focus-visible,
+.hi:focus-visible,
+[onclick]:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+/* Boutons sur fond sombre (nav, hero) — anneau plus visible sur fond foncé */
+.nav button:focus-visible,
+.hero button:focus-visible,
+.btn-ghost:focus-visible {
+  outline-color: var(--gold);
+  outline-offset: 3px;
+}
+
 :root {
   --ink: #0f0700;
   --ember: #d94e15;
@@ -37,7 +58,8 @@ iframe {
   --cream: #fdfaf3;
   --border: #e2ceaa;
   --border2: #d4bc96;
-  --muted: #9a7848;
+  --muted: #7f5e30;
+  --muted-on-dark: #c9a878;
   --leaf: #1e5c35;
   --white: #fff;
   --shadow-card:
@@ -536,7 +558,7 @@ body {
 
 /* ─── FEATURED SECTION ───────────────────────────────────── */
 .featured-section {
-  padding: 1.75rem 2rem;
+  padding: 1.75rem 2.5rem;
 }
 .section-header {
   display: flex;
@@ -934,16 +956,17 @@ body {
   color: var(--muted);
 }
 .lf-in {
-  border: 1.5px solid var(--border);
+  border: 1.5px solid var(--border2);
   background: #fff;
   color: var(--ink);
   font-family: "DM Sans", sans-serif;
-  font-size: 12px;
-  padding: 8px 10px;
+  font-size: 13px;
+  padding: 10px 12px;
   border-radius: var(--radius);
   transition:
     border-color 0.2s,
     box-shadow 0.2s;
+  box-shadow: var(--shadow-card);
   width: 100%;
 }
 .lf-in:focus {
@@ -1721,7 +1744,7 @@ body {
   color: var(--ink);
   font-family: "DM Sans", sans-serif;
   font-size: 13px;
-  padding: 9px 11px;
+  padding: 10px 12px;
   border-radius: var(--radius);
   transition:
     border-color 0.2s,
@@ -2621,20 +2644,21 @@ textarea.cf-in {
 }
 .cat-search-wrap i {
   position: absolute;
-  left: 12px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--muted);
-  font-size: 14px;
+  font-size: 15px;
   pointer-events: none;
+  line-height: 1;
 }
 .fsrch {
-  border: 1.5px solid var(--border);
+  border: 1.5px solid var(--border2);
   background: var(--warm);
   color: var(--ink);
   font-family: "DM Sans", sans-serif;
-  font-size: 12px;
-  padding: 8px 14px 8px 34px;
+  font-size: 13px;
+  padding: 10px 14px 10px 40px;
   border-radius: var(--radius);
   width: 100%;
   transition:

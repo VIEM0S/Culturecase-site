@@ -1004,7 +1004,7 @@ function card(d) {
     : "3 500 – 5 000 FCFA";
   const isOut = gm && getModelStock(d.id, gm) === 0;
 
-  return `<div class="pcard${isOut ? " is-out" : ""}" onclick="openDet('${d.id}')">
+  return `<div class="pcard${isOut ? " is-out" : ""}" tabindex="0" role="button" aria-label="Voir le design ${d.name}" onclick="openDet('${d.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDet('${d.id}')}">
     <div class="pc-img">
 <img src="${cldImg(d.img, 400)}" alt="${d.name}" loading="lazy" onerror="this.parentNode.style.background='var(--sand)'">
 <div class="pc-overlay">
