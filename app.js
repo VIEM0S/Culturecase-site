@@ -1036,6 +1036,7 @@ function goToCatalogueWithModel(model) {
 }
 
 function initHome() {
+  if (!DS || DS.length === 0) return; // garde — laisse le skeleton visible tant que Firestore n'a pas répondu
   const grid = document.getElementById("home-grid");
   if (grid) grid.innerHTML = DS.slice(0, 8).map(card).join("");
   // Stats dynamiques

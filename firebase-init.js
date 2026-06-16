@@ -305,6 +305,11 @@ function startListeners() {
       (snap) => {
         const grid = document.getElementById("reviews-grid");
         if (!grid) return;
+        if (snap.docs.length === 0) {
+          grid.innerHTML =
+            '<p style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">Soyez le premier à laisser un avis !</p>';
+          return;
+        }
         grid.innerHTML = snap.docs
           .slice(0, 8)
           .map((d) => {

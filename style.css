@@ -3512,3 +3512,77 @@ textarea.cf-in {
     text-align: center;
   }
 }
+
+/* ══ SKELETON LOADER — affiché pendant le chargement Firestore ══════════ */
+@keyframes skel-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skel-shimmer,
+.skel-line,
+.skel-avatar {
+  background: linear-gradient(
+    90deg,
+    var(--dusk) 25%,
+    rgba(255, 255, 255, 0.06) 50%,
+    var(--dusk) 75%
+  );
+  background-size: 200% 100%;
+  animation: skel-shimmer 1.4s ease-in-out infinite;
+  border-radius: 6px;
+}
+.pcard-skel {
+  pointer-events: none;
+}
+.pcard-skel .pc-img {
+  aspect-ratio: 1 / 1;
+}
+.pcard-skel .skel-line {
+  height: 12px;
+  margin: 6px 0;
+}
+.pcard-skel .skel-line-name {
+  width: 70%;
+  height: 14px;
+}
+.pcard-skel .skel-line-hint {
+  width: 50%;
+}
+.review-card-skel {
+  pointer-events: none;
+}
+.review-card-skel .skel-line-stars {
+  width: 90px;
+  height: 16px;
+  margin-bottom: 12px;
+}
+.review-card-skel .skel-line-text {
+  width: 100%;
+  margin-bottom: 8px;
+}
+.review-card-skel .skel-line-text-short {
+  width: 65%;
+  margin-bottom: 16px;
+}
+.review-card-skel .skel-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.review-card-skel .skel-line-name-sm {
+  width: 90px;
+  height: 12px;
+  margin-bottom: 6px;
+}
+.review-card-skel .skel-line-loc {
+  width: 120px;
+  height: 10px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skel-shimmer,
+  .skel-line,
+  .skel-avatar {
+    animation: none;
+  }
+}
