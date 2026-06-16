@@ -3572,6 +3572,27 @@ textarea.cf-in {
 .pcard-skel .skel-line-hint {
   width: 50%;
 }
+.bcard-skel {
+  pointer-events: none;
+}
+.bcard-skel .bc-img {
+  aspect-ratio: 16 / 10;
+}
+.bcard-skel .skel-line {
+  height: 12px;
+  margin: 6px 0;
+}
+.bcard-skel .skel-line-tag {
+  width: 40%;
+  height: 10px;
+}
+.bcard-skel .skel-line-name {
+  width: 85%;
+  height: 14px;
+}
+.bcard-skel .skel-line-hint {
+  width: 55%;
+}
 .review-card-skel {
   pointer-events: none;
 }

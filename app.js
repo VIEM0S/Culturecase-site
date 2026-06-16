@@ -755,6 +755,50 @@ function cldImg(url, w) {
 // ══ BLOG — Firestore (géré depuis culturecase-gs) ══════════════════════════
 let BLOG = []; // rempli en temps réel depuis la collection blog_posts
 
+// ── Échappement HTML anti-XSS pour le contenu utilisateur/Firestore ───────
+function escapeHTML(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// ── Rendu markdown minimal pour le contenu des articles de blog ───────────
+function renderMarkdown(md) {
+  if (!md) return "";
+  let html = escapeHTML(md);
+  html = html.replace(/^### (.*)$/gm, "<h3>$1</h3>");
+  html = html.replace(/^## (.*)$/gm, "<h2>$1</h2>");
+  html = html.replace(/^# (.*)$/gm, "<h1>$1</h1>");
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
+  html = html.replace(/\n\n/g, "</p><p>");
+  html = "<p>" + html + "</p>";
+  return html;
+}
+
+// ── Estimation du temps de lecture (≈200 mots/min) ─────────────────────────
+function estimateReadTime(text) {
+  if (!text) return "1 min";
+  const words = text.trim().split(/\s+/).length;
+  const mins = Math.max(1, Math.round(words / 200));
+  return mins + " min";
+}
+
+// ── Conversion Firestore Timestamp → date FR lisible ────────────────────
+function formatBlogDate(ts) {
+  try {
+    const d = ts && typeof ts.toDate === "function" ? ts.toDate() : new Date(ts);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  } catch (e) {
+    return "";
+  }
+}
+
 function listenBlog() {
   if (window.__blogListening) return;
   window.__blogListening = true;
@@ -777,10 +821,12 @@ function listenBlog() {
           title: data.title || "",
           excerpt: data.excerpt || "",
           content: data.content || "",
-          cover: data.cover || "",
+          img: data.cover || data.img || "",
           tag: data.tags?.[0] || "culture",
           tags: data.tags || [],
           createdAt: data.createdAt,
+          date: formatBlogDate(data.createdAt),
+          read: estimateReadTime(data.content),
           published: data.published,
         };
       });
@@ -805,6 +851,7 @@ function filterBlog(tag, btn) {
 }
 
 function renderBlog() {
+  if (!BLOG || BLOG.length === 0) return; // garde — laisse le skeleton visible tant que Firestore n'a pas répondu
   const filtered = BLOG.filter(
     (b) => activeBlogTag === "all" || b.tag === activeBlogTag,
   );
@@ -874,6 +921,7 @@ function openBlog(id) {
     if (card) openBlog(card.dataset.blogId);
   };
   go("blogdet");
+  updatePageTitle(null, b.title + " — Blog CultureCase");
 }
 
 function toggleMobileMenu() {
@@ -961,11 +1009,27 @@ function go(p, opts) {
   if (p === "home") initHome();
   if (p === "blog") renderBlog();
   syncMobileBar();
+  updatePageTitle(p);
   // Écrire le hash sans déclencher un nouveau hashchange
   if (!opts || !opts.silent) {
     var newHash = (p === "home") ? "#/" : "#/" + p;
     if (location.hash !== newHash) history.pushState(null, "", newHash);
   }
+}
+
+const PAGE_TITLES = {
+  home: "CultureCase — Coques iPhone · Bamako, Mali",
+  catalogue: "Catalogue — CultureCase",
+  about: "À propos — CultureCase",
+  blog: "Blog — CultureCase",
+  contact: "Contact — CultureCase",
+  faq: "FAQ — CultureCase",
+  livraison: "Livraison & Retours — CultureCase",
+  politique: "Politique commerciale — CultureCase",
+  paiement: "Modes de paiement — CultureCase",
+};
+function updatePageTitle(p, override) {
+  document.title = override || PAGE_TITLES[p] || PAGE_TITLES.home;
 }
 
 function card(d) {
@@ -1203,6 +1267,7 @@ function openDet(id) {
   // Schema Product dynamique pour Google rich results
   injectProductSchema(curD);
   go("detail", { silent: true });
+  updatePageTitle(null, curD.name + " — CultureCase");
 }
 
 function injectProductSchema(d) {
@@ -1258,8 +1323,10 @@ function dq(d) {
   updatePrice();
 }
 
+var _orderWALock = false;
 function orderWA() {
   if (!curD) return;
+  if (_orderWALock) return; // évite l'ouverture de plusieurs onglets WhatsApp sur double-clic
   const model = document.getElementById("d-mod").value;
   if (!model) {
     toast("⚠️ Choisis un modèle iPhone d'abord");
@@ -1278,6 +1345,8 @@ function orderWA() {
     toast("⚠️ Indique ton numéro de téléphone");
     return;
   }
+  _orderWALock = true;
+  setTimeout(() => { _orderWALock = false; }, 1500);
   try {
     localStorage.setItem("cc_nom", nom);
     localStorage.setItem("cc_tel", tel);
@@ -1894,14 +1963,18 @@ function routeFromHash() {
   var pageMatch = hash.match(/^#\/([a-z]+)$/);
   if (pageMatch) {
     var pg = pageMatch[1];
-    var known = ["home","catalogue","about","blog","contact","faq","livraison","politique","paiement"];
+    var known = ["home","catalogue","about","blog","contact","faq","livraison","politique","paiement","404"];
     if (known.indexOf(pg) !== -1) {
       go(pg, { silent: true });
       return;
     }
   }
-  // #/ ou hash inconnu → home
-  go("home", { silent: true });
+  // #/ ou hash inconnu → page 404 (sauf racine, qui va à home)
+  if (hash === "#/" || hash === "") {
+    go("home", { silent: true });
+  } else {
+    go("404", { silent: true });
+  }
 }
 
 window.addEventListener("hashchange", function() {
