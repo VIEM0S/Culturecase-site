@@ -23,7 +23,7 @@
     />
     <meta
       property="og:image"
-      content="https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,f_auto,q_auto/v1781536595/12_yvqf94.jpg"
+      content="https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,f_auto,q_auto/v1779767675/zutdygs9wnxbheeilcl9.jpg"
     />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_ML" />
@@ -46,6 +46,73 @@
       href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css"
     />
     <link rel="stylesheet" href="style.css" />
+    <!-- SEO — Canonical -->
+    <link rel="canonical" href="https://viem0s.github.io/culturecase-site" />
+
+    <!-- SEO — Schema.org LocalBusiness -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "CultureCase",
+      "description": "Coques iPhone aux designs culturels africains. Bogolan, N'Ko, Ciwara — impression HD, livraison à Bamako.",
+      "url": "https://viem0s.github.io/culturecase-site",
+      "logo": "https://res.cloudinary.com/dknfqd2xp/image/upload/w_200,f_auto,q_auto/v1781131928/logo_jpg4ml.png",
+      "image": "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,f_auto,q_auto/v1779767675/zutdygs9wnxbheeilcl9.jpg",
+      "telephone": "+22375992482",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+22375992482",
+        "contactType": "customer service",
+        "availableLanguage": ["French", "Bambara"],
+        "contactOption": "TollFree"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Bamako",
+        "addressCountry": "ML"
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Bamako"
+      },
+      "priceRange": "3500 FCFA – 5000 FCFA",
+      "currenciesAccepted": "XOF",
+      "paymentAccepted": "Cash, Mobile Money",
+      "sameAs": [
+        "https://www.instagram.com/culturecase_official",
+        "https://www.tiktok.com/@culturecase",
+        "https://linktr.ee/culturecase"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Coques iPhone culturelles",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Coques iPhone — Série iPhone 12/13",
+              "description": "Coques iPhone 12 à 13 Pro Max aux designs culturels maliens"
+            },
+            "price": "3500",
+            "priceCurrency": "XOF"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Coques iPhone — Série iPhone 14 à 17",
+              "description": "Coques iPhone 14 à 17 Pro Max aux designs culturels maliens"
+            },
+            "price": "5000",
+            "priceCurrency": "XOF"
+          }
+        ]
+      }
+    }
+    </script>
+
   </head>
   <body>
     <nav class="nav">
@@ -226,18 +293,27 @@
               </button>
             </div>
           </div>
-          <div class="hero-r" id="hero-imgs">
-            <div class="hi" style="grid-row: span 2" id="hero-img-0">
-              <img id="hero-img-0-src" src="" alt="Design CultureCase" />
-              <div class="hi-lbl" id="hero-img-0-lbl"></div>
+          <div class="hero-r">
+            <div class="hi" style="grid-row: span 2" onclick="openDet('D12')">
+              <img
+                src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_400,f_auto,q_auto/v1779767675/zutdygs9wnxbheeilcl9.jpg"
+                alt="Bogolan"
+              />
+              <div class="hi-lbl">BOGOLAN</div>
             </div>
-            <div class="hi" id="hero-img-1">
-              <img id="hero-img-1-src" src="" alt="Design CultureCase" />
-              <div class="hi-lbl" id="hero-img-1-lbl"></div>
+            <div class="hi" onclick="openDet('D1')">
+              <img
+                src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_300,f_auto,q_auto/v1779767538/ynvij5rszvqmamfs9hgm.jpg"
+                alt="Djenné"
+              />
+              <div class="hi-lbl">DJENNÉ</div>
             </div>
-            <div class="hi" id="hero-img-2">
-              <img id="hero-img-2-src" src="" alt="Design CultureCase" />
-              <div class="hi-lbl" id="hero-img-2-lbl"></div>
+            <div class="hi" onclick="openDet('D13')">
+              <img
+                src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_300,f_auto,q_auto/v1779767905/wketzekxsrqlupeqrdi2.jpg"
+                alt="N'Ko"
+              />
+              <div class="hi-lbl">N'KO</div>
             </div>
           </div>
         </div>
@@ -727,15 +803,24 @@
             fierté.
           </p>
         </div>
-        <div class="ab-r" id="about-imgs">
-          <div class="aimg" style="grid-row: span 2" id="about-img-0">
-            <img id="about-img-0-src" src="" alt="Design CultureCase" />
+        <div class="ab-r">
+          <div class="aimg" style="grid-row: span 2">
+            <img
+              src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_500,f_auto,q_auto/v1779767813/ujlarvjopqep37hwm2n2.jpg"
+              alt="Ciwara"
+            />
           </div>
-          <div class="aimg" id="about-img-1">
-            <img id="about-img-1-src" src="" alt="Design CultureCase" />
+          <div class="aimg">
+            <img
+              src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_300,f_auto,q_auto/v1779767550/erdvdubi3wvbb3pgoirj.jpg"
+              alt="Munyu"
+            />
           </div>
-          <div class="aimg" id="about-img-2">
-            <img id="about-img-2-src" src="" alt="Design CultureCase" />
+          <div class="aimg">
+            <img
+              src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_300,f_auto,q_auto/v1779767718/smtv6hdke2pdelv3z0ob.jpg"
+              alt="Bènkadi"
+            />
           </div>
         </div>
       </div>

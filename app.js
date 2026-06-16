@@ -965,33 +965,6 @@ function toast(msg) {
   setTimeout(() => el.classList.remove("show"), 2800);
 }
 
-// ══ IMAGES STATIQUES (hero + about) — pilotées depuis Firestore ══════════
-// settings.heroImages  = [{id:"D12",w:400},{id:"D1",w:300},{id:"D13",w:300}]
-// settings.aboutImages = [{id:"D14",w:500},{id:"D3",w:300},{id:"D28",w:300}]
-const DEFAULT_HERO_IMAGES  = [{id:"D12",w:400},{id:"D1",w:300},{id:"D13",w:300}];
-const DEFAULT_ABOUT_IMAGES = [{id:"D14",w:500},{id:"D3",w:300},{id:"D28",w:300}];
-
-function renderStaticImages(heroImages, aboutImages) {
-  const heroList  = (heroImages  && heroImages.length)  ? heroImages  : DEFAULT_HERO_IMAGES;
-  const aboutList = (aboutImages && aboutImages.length) ? aboutImages : DEFAULT_ABOUT_IMAGES;
-  heroList.forEach((cfg, i) => {
-    const design = DS.find((d) => d.id === cfg.id);
-    if (!design) return;
-    const imgEl = document.getElementById("hero-img-"+i+"-src");
-    const lblEl = document.getElementById("hero-img-"+i+"-lbl");
-    const wrap  = document.getElementById("hero-img-"+i);
-    if (imgEl) imgEl.src = cldImg(design.img, cfg.w || 300);
-    if (lblEl) lblEl.textContent = design.name;
-    if (wrap)  wrap.onclick = () => openDet(design.id);
-  });
-  aboutList.forEach((cfg, i) => {
-    const design = DS.find((d) => d.id === cfg.id);
-    if (!design) return;
-    const imgEl = document.getElementById("about-img-"+i+"-src");
-    if (imgEl) imgEl.src = cldImg(design.img, cfg.w || 300);
-  });
-}
-
 // ══ CLOUDINARY — optimisation automatique des images ══════════════════════
 // Injecte w_auto,f_auto,q_auto dans les URLs Cloudinary pour 3-5x moins de poids
 function cldImg(url, w) {
@@ -1191,12 +1164,12 @@ function checkMobile() {
 window.addEventListener("resize", checkMobile);
 checkMobile();
 
-function go(p) {
+function go(p, opts) {
   var target = document.getElementById("pg-" + p);
   if (!target) {
     toast("⚠️ Page introuvable");
     return;
-  } // guard — évite TypeError si page absente
+  }
   document
     .querySelectorAll(".pg")
     .forEach((x) => x.classList.remove("on"));
@@ -1213,6 +1186,11 @@ function go(p) {
   if (p === "home") initHome();
   if (p === "blog") renderBlog();
   syncMobileBar();
+  // Écrire le hash sans déclencher un nouveau hashchange
+  if (!opts || !opts.silent) {
+    var newHash = (p === "home") ? "#/" : "#/" + p;
+    if (location.hash !== newHash) history.pushState(null, "", newHash);
+  }
 }
 
 function card(d) {
@@ -1443,11 +1421,18 @@ function openDet(id) {
     if (st) document.getElementById("lf-tel").value = st;
   } catch (e) {}
   updatePrice();
-  go("detail");
+  // Écrire le hash avant go() pour que go() ne l'écrase pas
+  var detHash = "#/design/" + curD.id;
+  if (location.hash !== detHash) history.pushState(null, "", detHash);
+  go("detail", { silent: true });
 }
 
 function goBack() {
-  go(prevPg);
+  if (history.length > 1) {
+    history.back();
+  } else {
+    go(prevPg);
+  }
 }
 function dq(d) {
   dQty = Math.max(1, dQty + d);
@@ -2063,3 +2048,47 @@ function _resetAvisForm() {
     btn.textContent = "Publier mon avis →";
   }
 }
+
+// ══ HASH ROUTING ════════════════════════════════════════════════════════════
+function routeFromHash() {
+  var hash = location.hash || "#/";
+  // #/design/D12
+  var detMatch = hash.match(/^#\/design\/(D\d+)$/);
+  if (detMatch) {
+    var id = detMatch[1];
+    // DS peut ne pas encore être peuplé par Firebase — on attend si nécessaire
+    var d = DS.find(function(x) { return x.id === id; });
+    if (d) {
+      openDet(id);
+    } else {
+      // Firebase pas encore prêt — réessayer après chargement
+      var attempts = 0;
+      var retry = setInterval(function() {
+        attempts++;
+        var d2 = DS.find(function(x) { return x.id === id; });
+        if (d2) { clearInterval(retry); openDet(id); }
+        if (attempts > 20) { clearInterval(retry); go("catalogue"); }
+      }, 200);
+    }
+    return;
+  }
+  // #/catalogue, #/blog, #/about, #/contact, etc.
+  var pageMatch = hash.match(/^#\/([a-z]+)$/);
+  if (pageMatch) {
+    var pg = pageMatch[1];
+    var known = ["home","catalogue","about","blog","contact","faq","livraison","politique","paiement"];
+    if (known.indexOf(pg) !== -1) {
+      go(pg, { silent: true });
+      return;
+    }
+  }
+  // #/ ou hash inconnu → home
+  go("home", { silent: true });
+}
+
+window.addEventListener("hashchange", function() {
+  routeFromHash();
+});
+
+// Routage initial au chargement de la page
+routeFromHash();
