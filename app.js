@@ -767,8 +767,9 @@ function escapeHTML(str) {
 }
 
 // ── Rendu markdown minimal pour le contenu des articles de blog ───────────
-function renderMarkdown(md) {
+function renderMarkdown(md, images) {
   if (!md) return "";
+  const imgs = images || [];
   let html = escapeHTML(md);
 
   // Titres
@@ -798,11 +799,19 @@ function renderMarkdown(md) {
     '<a href="$2" target="_blank" rel="noopener">$1</a>',
   );
 
-  // Images
+  // Images par URL directe (legacy)
   html = html.replace(
     /!\[(.+?)\]\((.+?)\)/g,
     '<img src="$2" alt="$1" loading="lazy">',
   );
+
+  // Repères de galerie {img:N} → résolus depuis le tableau images de l'article
+  html = html.replace(/\{img:(\d+)\}/g, (m, n) => {
+    const url = imgs[parseInt(n, 10) - 1];
+    if (!url) return "";
+    const safeUrl = cldImg(url, 800);
+    return `<img src="${safeUrl}" alt="Image ${n}" loading="lazy">`;
+  });
 
   // Code inline
   html = html.replace(/`(.+?)`/g, "<code>$1</code>");
@@ -863,6 +872,7 @@ function listenBlog() {
           title: data.title || "",
           excerpt: data.excerpt || "",
           content: data.content || "",
+          images: data.images || [],
           img: data.cover || data.img || "",
           tag: data.tags?.[0] || "culture",
           tags: data.tags || [],
@@ -946,7 +956,10 @@ function openBlog(id) {
   document.getElementById("bd-date").textContent = b.date;
   document.getElementById("bd-read").textContent = b.read;
   document.getElementById("bd-img").src = cldImg(b.img, 900);
-  document.getElementById("bd-content").innerHTML = renderMarkdown(b.content);
+  document.getElementById("bd-content").innerHTML = renderMarkdown(
+    b.content,
+    b.images,
+  );
   // related
   const rel = BLOG.filter((x) => x.id !== id).slice(0, 3);
   const relGrid = document.getElementById("bd-related");
