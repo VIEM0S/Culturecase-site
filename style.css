@@ -1614,7 +1614,63 @@ body {
   line-height: 1.7;
   box-shadow: var(--shadow-card);
 }
-.bd-related {
+.bd-content h1 {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 30px;
+  letter-spacing: 1.5px;
+  color: var(--ink);
+  margin: 0 0 1rem;
+}
+.bd-content h2 {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 27px;
+  letter-spacing: 1.5px;
+  color: var(--ink);
+  margin: 2.25rem 0 0.75rem;
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 0.4rem;
+}
+.bd-content h4 {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ember2);
+  margin: 1.5rem 0 0.5rem;
+}
+.bd-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
+}
+.bd-content ul {
+  margin: 0 0 1.1rem;
+  padding-left: 1.4rem;
+}
+.bd-content li {
+  font-size: 14.5px;
+  color: var(--ink);
+  line-height: 1.8;
+  margin-bottom: 0.4rem;
+}
+.bd-content code {
+  background: var(--sand);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--ember2);
+}
+.bd-content a {
+  color: var(--ember);
+  text-decoration: underline;
+  text-decoration-color: var(--gold);
+}
+.bd-content img {
+  max-width: 100%;
+  border-radius: var(--radius);
+  margin: 1.25rem 0;
+  box-shadow: var(--shadow-card);
+}
   background: var(--warm);
   border-top: 1px solid var(--border);
   padding: 2rem;
@@ -2269,35 +2325,6 @@ textarea.cf-in {
 .bd-date {
   color: var(--ember);
   font-weight: 600;
-}
-
-.bd-content {
-  font-size: 14.5px;
-  color: var(--ink);
-  line-height: 1.9;
-}
-.bd-content p {
-  margin-bottom: 1.1rem;
-}
-.bd-content h3 {
-  font-family: "Bebas Neue", sans-serif;
-  font-size: 24px;
-  letter-spacing: 1.5px;
-  color: var(--ink);
-  margin: 2rem 0 0.65rem;
-}
-.bd-content blockquote {
-  border-left: 4px solid var(--ember);
-  padding: 1.1rem 1.25rem;
-  background: var(--sand);
-  border-radius: 0 var(--radius) var(--radius) 0;
-  margin: 1.75rem 0;
-  font-family: "Cormorant Garamond", serif;
-  font-style: italic;
-  font-size: 15.5px;
-  color: var(--dusk);
-  line-height: 1.7;
-  box-shadow: var(--shadow-card);
 }
 
 /* Prix sélectionné box */

@@ -770,13 +770,55 @@ function escapeHTML(str) {
 function renderMarkdown(md) {
   if (!md) return "";
   let html = escapeHTML(md);
+
+  // Titres
+  html = html.replace(/^#### (.*)$/gm, "<h4>$1</h4>");
   html = html.replace(/^### (.*)$/gm, "<h3>$1</h3>");
   html = html.replace(/^## (.*)$/gm, "<h2>$1</h2>");
   html = html.replace(/^# (.*)$/gm, "<h1>$1</h1>");
+
+  // Gras + italique (gras+italique combiné en premier)
+  html = html.replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>");
   html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
-  html = html.replace(/\n\n/g, "</p><p>");
-  html = "<p>" + html + "</p>";
+
+  // Citation
+  html = html.replace(/^&gt; (.+)$/gm, "<blockquote>$1</blockquote>");
+
+  // Séparateur
+  html = html.replace(/^---$/gm, "<hr>");
+
+  // Listes non ordonnées
+  html = html.replace(/^[*-] (.+)$/gm, "<li>$1</li>");
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`);
+
+  // Liens — escapeHTML a déjà transformé les caractères, on cible la forme échappée
+  html = html.replace(
+    /\[(.+?)\]\((.+?)\)/g,
+    '<a href="$2" target="_blank" rel="noopener">$1</a>',
+  );
+
+  // Images
+  html = html.replace(
+    /!\[(.+?)\]\((.+?)\)/g,
+    '<img src="$2" alt="$1" loading="lazy">',
+  );
+
+  // Code inline
+  html = html.replace(/`(.+?)`/g, "<code>$1</code>");
+
+  // Paragraphes — ligne par ligne, on saute les lignes déjà transformées en bloc HTML
+  html = html
+    .split("\n")
+    .map((line) => {
+      const trimmed = line.trim();
+      if (!trimmed) return "";
+      if (/^<(h[1-4]|ul|ol|li|blockquote|hr|img|p|a)/.test(trimmed))
+        return trimmed;
+      return `<p>${trimmed}</p>`;
+    })
+    .join("\n");
+
   return html;
 }
 
