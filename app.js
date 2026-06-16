@@ -965,6 +965,33 @@ function toast(msg) {
   setTimeout(() => el.classList.remove("show"), 2800);
 }
 
+// ══ IMAGES STATIQUES (hero + about) — pilotées depuis Firestore ══════════
+// settings.heroImages  = [{id:"D12",w:400},{id:"D1",w:300},{id:"D13",w:300}]
+// settings.aboutImages = [{id:"D14",w:500},{id:"D3",w:300},{id:"D28",w:300}]
+const DEFAULT_HERO_IMAGES  = [{id:"D12",w:400},{id:"D1",w:300},{id:"D13",w:300}];
+const DEFAULT_ABOUT_IMAGES = [{id:"D14",w:500},{id:"D3",w:300},{id:"D28",w:300}];
+
+function renderStaticImages(heroImages, aboutImages) {
+  const heroList  = (heroImages  && heroImages.length)  ? heroImages  : DEFAULT_HERO_IMAGES;
+  const aboutList = (aboutImages && aboutImages.length) ? aboutImages : DEFAULT_ABOUT_IMAGES;
+  heroList.forEach((cfg, i) => {
+    const design = DS.find((d) => d.id === cfg.id);
+    if (!design) return;
+    const imgEl = document.getElementById("hero-img-"+i+"-src");
+    const lblEl = document.getElementById("hero-img-"+i+"-lbl");
+    const wrap  = document.getElementById("hero-img-"+i);
+    if (imgEl) imgEl.src = cldImg(design.img, cfg.w || 300);
+    if (lblEl) lblEl.textContent = design.name;
+    if (wrap)  wrap.onclick = () => openDet(design.id);
+  });
+  aboutList.forEach((cfg, i) => {
+    const design = DS.find((d) => d.id === cfg.id);
+    if (!design) return;
+    const imgEl = document.getElementById("about-img-"+i+"-src");
+    if (imgEl) imgEl.src = cldImg(design.img, cfg.w || 300);
+  });
+}
+
 // ══ CLOUDINARY — optimisation automatique des images ══════════════════════
 // Injecte w_auto,f_auto,q_auto dans les URLs Cloudinary pour 3-5x moins de poids
 function cldImg(url, w) {

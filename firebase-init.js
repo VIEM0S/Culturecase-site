@@ -105,6 +105,10 @@ window.__applyFirebaseData = function (data) {
     const statM = document.getElementById("stat-models");
     if (statD) statD.textContent = DS.length;
     if (statM) statM.textContent = ALL_MDS.length;
+    // Images hero + about dynamiques
+    if (typeof renderStaticImages === "function") {
+      renderStaticImages(settings.heroImages, settings.aboutImages);
+    }
     if (pg === "home") initHome();
     if (pg === "catalogue") filt();
     if (pg === "detail" && curD) {
