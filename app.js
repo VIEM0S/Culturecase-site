@@ -603,7 +603,7 @@ const tEl = document.getElementById("ttick");
 if (tEl) {
   const tH = tItems
     .map(
-      (x) => `<span class="ti"><span class="ti-dot"></span>${x}</span>`,
+      (x) => `<span class="tk-item"><span class="tk-dot"></span>${x}</span>`,
     )
     .join("");
   tEl.innerHTML = tH + tH;

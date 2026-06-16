@@ -539,7 +539,7 @@ body {
     transform: translateX(-50%);
   }
 }
-.ti {
+.tk-item {
   display: inline-flex;
   align-items: center;
   gap: 12px;
@@ -549,7 +549,7 @@ body {
   color: rgba(255, 255, 255, 0.9);
   padding: 0 2.5rem;
 }
-.ti-dot {
+.tk-dot {
   width: 3px;
   height: 3px;
   background: rgba(255, 255, 255, 0.5);
