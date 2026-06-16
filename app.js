@@ -7,7 +7,7 @@ const DS = [
   {
     id: "D1",
     name: "DJENNÉ",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767538/ynvij5rszvqmamfs9hgm.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536593/01_vcqaja.jpg",
     story:
       "La Grande Mosquée de Djenné — monument le plus emblématique de l'architecture soudano-sahélienne. Ce design célèbre l'une des plus belles constructions d'Afrique, inscrite au patrimoine mondial de l'UNESCO.",
     cat: "MONUMENT",
@@ -16,7 +16,7 @@ const DS = [
     id: "D2",
     name: "PORTE DE TOMBOUCTOU",
     status: "available",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767531/idasnkfvznmlzfn6vux1.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536593/02_kxez2b.jpg",
     story:
       "Tombouctou, la ville mystérieuse au bout du désert. Ses portes ont vu passer des siècles de commerce, de savoir et de civilisation. Un hommage à la cité des 333 saints.",
     cat: "MONUMENT",
@@ -24,7 +24,7 @@ const DS = [
   {
     id: "D3",
     name: "MUNYU",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767550/erdvdubi3wvbb3pgoirj.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536594/03_aum73y.jpg",
     story:
       "Munyu — mot bambara qui signifie la patience, la résilience. Une valeur cardinale de la culture malienne. Ce design en porte l'essence et la beauté.",
     cat: "VALEUR",
@@ -32,7 +32,7 @@ const DS = [
   {
     id: "D4",
     name: "BLM",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767873/x3wc21gdtcsosbkb8tsk.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536594/04_mtpc3c.jpg",
     story:
       "Un design qui porte un message universel — la dignité et la fierté noire. Ancré dans l'identité africaine, ouvert au monde entier.",
     cat: "VALEUR",
@@ -40,7 +40,7 @@ const DS = [
   {
     id: "D5",
     name: "INDIGO & CORIS",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767559/bxujdu2161ecy1zttj3y.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536595/05_lsgpkl.jpg",
     story:
       "L'indigo, teinture ancestrale des tisserands du Mali. Les cauris, monnaie d'échange et symbole de prospérité. Un mariage de traditions qui traverse les siècles.",
     cat: "TEXTILE",
@@ -48,7 +48,7 @@ const DS = [
   {
     id: "D6",
     name: "MASQUE DOGON",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767579/l0zypv1qg1yxkjzt50c3.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536591/06_2_wi9lko.jpg",
     story:
       "Les masques dogon sont parmi les plus fascinants d'Afrique de l'Ouest. Utilisés lors des cérémonies Dama, ils incarnent les esprits des ancêtres et la connexion entre le monde des vivants et celui des morts.",
     cat: "MASQUE",
@@ -56,7 +56,7 @@ const DS = [
   {
     id: "D7",
     name: "AFRICA",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767567/cbryluhomr6fn6ucoc38.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536591/07_2_e2teel.jpg",
     story:
       "L'Afrique dans toute sa splendeur. Un design qui célèbre le continent mère, berceau de l'humanité et source inépuisable de culture, de richesse et de créativité.",
     cat: "VALEUR",
@@ -64,7 +64,7 @@ const DS = [
   {
     id: "D8",
     name: "TOUAREG",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_400,f_auto,q_auto/v1/culturecase/placeholder_desert",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536593/01_vcqaja.jpg",
     story:
       "Peuple du désert, gardiens du Sahara. Les Touaregs du Mali sont des nomades fiers dont la culture, les bijoux et les motifs géométriques constituent un art à part entière.",
     cat: "PEUPLE",
@@ -72,7 +72,7 @@ const DS = [
   {
     id: "D9",
     name: "KÔ MUSSO",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767513/g9hlo9nazfns8zio19kh.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536593/08_2_hbhqug.jpg",
     story:
       "La femme ciwara — symbole de fertilité et de travail. Dans la cosmogonie bambara, le ciwara est mi-homme mi-antilope, enseignant aux hommes l'art de la culture de la terre.",
     cat: "CIWARA",
@@ -80,7 +80,7 @@ const DS = [
   {
     id: "D10",
     name: "MUSSO",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767522/rh1twzztxdfkvxszxm2e.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536594/10_2_qlcnyt.jpg",
     story:
       "Musso signifie femme en bambara. Un hommage à la femme malienne — pilier de la famille, gardienne des traditions, force silencieuse d'une société entière.",
     cat: "VALEUR",
@@ -88,7 +88,7 @@ const DS = [
   {
     id: "D11",
     name: "DJOLIBA",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767684/kz0hqllpclzst4tdxe4w.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536595/11_a4syzq.jpg",
     story:
       "Le Djoliba — nom bambara du fleuve Niger. Artère vitale du Mali, source de vie pour des millions de personnes depuis des millénaires. Ce design rend hommage au grand fleuve.",
     cat: "NATURE",
@@ -96,7 +96,7 @@ const DS = [
   {
     id: "D12",
     name: "BOGOLAN",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767675/zutdygs9wnxbheeilcl9.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536595/12_yvqf94.jpg",
     story:
       "Le bogolan est l'âme textile du Mali. Fabriqué à partir de coton tissé à la main et teint à la boue fermentée, ses motifs géométriques racontent des histoires, des proverbes et des batailles. Le textile africain le plus distinctif au monde.",
     cat: "TEXTILE",
@@ -104,7 +104,7 @@ const DS = [
   {
     id: "D13",
     name: "N'KO",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767905/wketzekxsrqlupeqrdi2.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536597/13_wdg9ck.jpg",
     story:
       "L'alphabet N'Ko, créé par Solomana Kanté en 1949 pour transcrire les langues mandingues. Un système d'écriture né au Mali, symbole d'indépendance culturelle et de fierté africaine.",
     cat: "CULTURE",
@@ -112,7 +112,7 @@ const DS = [
   {
     id: "D14",
     name: "CIWARA MARON",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767813/ujlarvjopqep37hwm2n2.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536599/14_yqyneu.jpg",
     story:
       "Le Ciwara, heaume cérémoniel bambara représentant l'antilope mythique qui enseigna l'agriculture aux hommes. L'une des icônes les plus reconnues de l'art africain dans le monde.",
     cat: "CIWARA",
@@ -120,7 +120,7 @@ const DS = [
   {
     id: "D15",
     name: "HOMME BLEU",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767825/aucphxdwahbfgtfvf3aw.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536598/15_i3j0yr.jpg",
     story:
       "L'Homme Bleu — surnom des Touaregs dont les vêtements en indigo teignent la peau. Figure mystérieuse du désert, symbole d'un peuple libre et indomptable.",
     cat: "PEUPLE",
@@ -128,7 +128,7 @@ const DS = [
   {
     id: "D16",
     name: "AZTÈQUE",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767836/siov0fyjiemh53flyiod.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536597/16_fff0wr.jpg",
     story:
       "Un dialogue entre les civilisations — les motifs aztèques résonnent avec les géométries du bogolan malien. Deux mondes, une même recherche de beauté et de sens.",
     cat: "CULTURE",
@@ -136,7 +136,7 @@ const DS = [
   {
     id: "D17",
     name: "CAURIS & BAMBARA",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767944/e9hka8dwnpzsxdiltivc.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536600/17_opbbyt.jpg",
     story:
       "Les cauris, monnaie sacrée et ornement de beauté. Le masque bambara, gardien des rites d'initiation. Deux symboles fondamentaux de la culture malienne réunis dans un design unique.",
     cat: "MASQUE",
@@ -144,7 +144,7 @@ const DS = [
   {
     id: "D18",
     name: "MONUMENT DU MALI",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767503/avfyqvpk913qxdhdaluq.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536597/18_ldvbc5.jpg",
     story:
       "Le Monument de la Paix de Bamako — symbole de la réconciliation nationale et de l'unité malienne. Porter ce design c'est affirmer son attachement à la paix et à la patrie.",
     cat: "MONUMENT",
@@ -152,7 +152,7 @@ const DS = [
   {
     id: "D19",
     name: "DJENNÉ ROUGE",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767700/nnj30wpau0ubjtwkcsuk.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536598/19_p8ace1.jpg",
     story:
       "Djenné dans les teintes du soleil couchant. La grande mosquée baignée de rouge ocre — couleur de la terre du Mali, couleur de la vie et de la chaleur africaine.",
     cat: "MONUMENT",
@@ -160,7 +160,7 @@ const DS = [
   {
     id: "D20",
     name: "NYA",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767662/ighfjwqwh4n8qqzxgclm.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536599/20_xzh2fg.jpg",
     story:
       "Nya — la divinité de la guérison et de la protection dans la tradition bambara. Un design qui porte en lui la puissance bienveillante des anciennes croyances maliennes.",
     cat: "CULTURE",
@@ -168,7 +168,7 @@ const DS = [
   {
     id: "D21",
     name: "CIWARA & BOGOLAN",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767961/cnfo3mbjmc0z6wd9x22l.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536599/21_kzasvg.jpg",
     story:
       "La rencontre des deux grands symboles du Mali — le Ciwara antilope et le bogolan mud cloth. Un design qui condense l'essence même de l'identité malienne.",
     cat: "CIWARA",
@@ -176,7 +176,7 @@ const DS = [
   {
     id: "D22",
     name: "SARAMAYA",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767610/lenx0fj5n2cd8zlzauj9.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536600/22_f0psmp.jpg",
     story:
       "Saramaya — \"la beauté de l'effort\" en bambara. Ce design célèbre ceux qui travaillent dans l'ombre pour faire briller les autres. Un hommage à la dignité du labeur.",
     cat: "VALEUR",
@@ -184,7 +184,7 @@ const DS = [
   {
     id: "D25",
     name: "WAX",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767470/hvzqpryowauueraiszqj.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536600/25_a9nj7t.jpg",
     story:
       "Le wax africain — tissu aux mille couleurs et aux mille histoires. Adopté et réinterprété par toute l'Afrique de l'Ouest, il est devenu un symbole de la mode africaine contemporaine.",
     cat: "TEXTILE",
@@ -192,7 +192,7 @@ const DS = [
   {
     id: "D28",
     name: "BÈNKADI",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767718/smtv6hdke2pdelv3z0ob.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536601/28_narwpn.jpg",
     story:
       'Bènkadi signifie "la bonne entente" en bambara — valeur fondamentale de la société malienne. Un appel à l\'harmonie, au dialogue et au vivre-ensemble.',
     cat: "VALEUR",
@@ -200,7 +200,7 @@ const DS = [
   {
     id: "D33",
     name: "SABABU",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767455/ygwn0mfqo8fslzspvjko.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536604/33_gkikgl.jpg",
     story:
       "Sababu — \"la raison d'être\" en bambara. Ce design invite à la réflexion sur le sens et l'identité. Pourquoi sommes-nous là ? Pour porter notre culture et la transmettre.",
     cat: "VALEUR",
@@ -208,7 +208,7 @@ const DS = [
   {
     id: "D34",
     name: "WARI",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767415/sfayi0sxmnru3sjmcynq.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536604/34_p8sirs.jpg",
     story:
       "Le Wari — jeu de stratégie ancestral répandu dans toute l'Afrique de l'Ouest. Bien plus qu'un jeu, c'est un exercice de sagesse, de calcul et de patience transmis de génération en génération.",
     cat: "CULTURE",
@@ -216,7 +216,7 @@ const DS = [
   {
     id: "D42",
     name: "AFRO QUEEN",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767356/yeiqf4sdqghcpuzjetti.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536591/42_up3ena.jpg",
     story:
       "La Reine Afro — célébration de la beauté naturelle africaine. Ce design est un hommage aux femmes noires qui portent leur identité avec fierté et élégance.",
     cat: "VALEUR",
@@ -224,7 +224,7 @@ const DS = [
   {
     id: "D43",
     name: "KAKÔLÔ",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779926695/scyw8ovkaojowkrnbibc.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536591/43_mphbqi.jpg",
     story:
       "Kakôlô — terme bambara évoquant l'origine, les racines profondes. Se souvenir d'où l'on vient pour savoir où l'on va.",
     cat: "CULTURE",
@@ -232,7 +232,7 @@ const DS = [
   {
     id: "D44",
     name: "BOZO",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779926709/fozrtqbz0gzwn6nvgegu.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536591/44_aiwqjg.jpg",
     story:
       "Les Bozo — peuple pêcheur du fleuve Niger, maîtres de l'eau et gardiens du Djoliba. Leur savoir-faire ancestral et leur lien intime avec le fleuve sont au cœur de ce design.",
     cat: "PEUPLE",
@@ -240,7 +240,7 @@ const DS = [
   {
     id: "D45",
     name: "N'MA",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779926721/f3mjcfsij2dwxljd1jzx.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536593/45_iiwc9y.jpg",
     story:
       "N'Ma — \"la mère\" en bambara. La mère est le pilier de la société malienne, source d'amour, de sagesse et de continuité culturelle.",
     cat: "VALEUR",
@@ -248,7 +248,7 @@ const DS = [
   {
     id: "D46",
     name: "SOUDAN",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779926774/zqfkjq0fug2htgxl1mql.jpg",
+    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1781536592/46_oleja0.jpg",
     story:
       "Le Soudan français — nom historique du Mali avant l'indépendance. Un design qui rappelle les racines historiques du pays et le chemin parcouru vers la liberté.",
     cat: "MONUMENT",
