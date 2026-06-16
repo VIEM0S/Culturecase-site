@@ -1424,7 +1424,49 @@ function openDet(id) {
   // Écrire le hash avant go() pour que go() ne l'écrase pas
   var detHash = "#/design/" + curD.id;
   if (location.hash !== detHash) history.pushState(null, "", detHash);
+  // Schema Product dynamique pour Google rich results
+  injectProductSchema(curD);
   go("detail", { silent: true });
+}
+
+function injectProductSchema(d) {
+  // Supprimer l'éventuel schema précédent
+  var old = document.getElementById("schema-product");
+  if (old) old.remove();
+  // Déterminer disponibilité et prix selon le modèle sélectionné
+  var sel = document.getElementById("d-mod");
+  var model = sel ? sel.value : "";
+  var isG2 = model && MDS_G2.indexOf(model) !== -1;
+  var price = isG2 ? "5000" : "3500";
+  var status = getDesignGlobalStatus(d.id);
+  var availability = status === "out"
+    ? "https://schema.org/OutOfStock"
+    : "https://schema.org/InStock";
+  var img = cldImg(d.img, 800);
+  var url = "https://viem0s.github.io/culturecase-site/#/design/" + d.id;
+  var schema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "CultureCase — " + d.name,
+    "description": d.story,
+    "image": img,
+    "url": url,
+    "brand": { "@type": "Brand", "name": "CultureCase" },
+    "category": "Coque iPhone",
+    "offers": {
+      "@type": "Offer",
+      "url": url,
+      "priceCurrency": "XOF",
+      "price": price,
+      "availability": availability,
+      "seller": { "@type": "Organization", "name": "CultureCase" }
+    }
+  };
+  var script = document.createElement("script");
+  script.id = "schema-product";
+  script.type = "application/ld+json";
+  script.textContent = JSON.stringify(schema);
+  document.head.appendChild(script);
 }
 
 function goBack() {
