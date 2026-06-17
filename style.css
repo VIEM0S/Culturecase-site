@@ -1690,9 +1690,34 @@ body {
 }
 
 /* ─── CONTACT ────────────────────────────────────────────── */
+.ct-top {
+  background: var(--dusk2);
+  padding: 2.5rem 2.5rem 2.5rem;
+  position: relative;
+}
+.ct-title {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 42px;
+  letter-spacing: 2px;
+  color: #fff;
+  margin-bottom: 0.75rem;
+}
+.ct-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.42);
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  max-width: 560px;
+}
+.ct-links-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
 .ct-wrap {
   background: var(--dusk2);
-  padding: 2.5rem;
+  padding: 0 2.5rem 2.5rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
@@ -1710,28 +1735,6 @@ body {
     transparent 65%
   );
   pointer-events: none;
-}
-.ct-l {
-  position: relative;
-  z-index: 1;
-}
-.ct-l h2 {
-  font-family: "Bebas Neue", sans-serif;
-  font-size: 42px;
-  letter-spacing: 2px;
-  color: #fff;
-  margin-bottom: 0.75rem;
-}
-.ct-l p {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.42);
-  line-height: 1.8;
-  margin-bottom: 1.5rem;
-}
-.ct-links {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
 }
 .ct-lnk {
   display: flex;
@@ -1941,8 +1944,11 @@ textarea.cf-in {
   .ab-hero {
     gap: 2rem;
   }
+  .ct-top {
+    padding: 2rem 2rem 0;
+  }
   .ct-wrap {
-    padding: 2rem;
+    padding: 0 2rem 2rem;
     gap: 2rem;
   }
   .det-grid {
@@ -2241,13 +2247,19 @@ textarea.cf-in {
   }
 
   /* Contact */
+  .ct-top {
+    padding: 1.5rem 1rem 0;
+  }
+  .ct-title {
+    font-size: 32px;
+  }
+  .ct-links-grid {
+    grid-template-columns: 1fr;
+  }
   .ct-wrap {
     grid-template-columns: 1fr;
-    padding: 1.25rem 1rem;
+    padding: 0 1rem 1.5rem;
     gap: 1.5rem;
-  }
-  .ct-l h2 {
-    font-size: 32px;
   }
   .ct-form {
     padding: 1.25rem 1rem;

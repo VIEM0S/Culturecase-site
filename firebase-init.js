@@ -300,6 +300,27 @@ function startListeners() {
       where("status", "==", "published"),
       orderBy("createdAt", "desc"),
     );
+    const renderReviewCard = (d) => {
+      const r = d.data();
+      const stars =
+        "★".repeat(r.stars || 5) + "☆".repeat(5 - (r.stars || 5));
+      const initials = (r.nom || "?")
+        .trim()
+        .split(/\s+/)
+        .map((w) => w[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+      // Construction par template — données approuvées par l'admin, pas de XSS
+      return (
+        `<div class="review-card">` +
+        `<div class="rev-stars" style="color:var(--gold)">${stars}</div>` +
+        `<p class="rev-text">\u00ab\u00a0${r.txt}\u00a0\u00bb</p>` +
+        `<div class="rev-author"><div class="rev-avatar">${initials}</div>` +
+        `<div><div class="rev-name">${r.nom}</div><div class="rev-loc">${r.loc || "Bamako, Mali"}</div></div></div>` +
+        `</div>`
+      );
+    };
     onSnapshot(
       q,
       (snap) => {
@@ -310,30 +331,7 @@ function startListeners() {
             '<p style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">Soyez le premier à laisser un avis !</p>';
           return;
         }
-        grid.innerHTML = snap.docs
-          .slice(0, 8)
-          .map((d) => {
-            const r = d.data();
-            const stars =
-              "★".repeat(r.stars || 5) + "☆".repeat(5 - (r.stars || 5));
-            const initials = (r.nom || "?")
-              .trim()
-              .split(/\s+/)
-              .map((w) => w[0])
-              .join("")
-              .toUpperCase()
-              .slice(0, 2);
-            // Construction par template — données approuvées par l'admin, pas de XSS
-            return (
-              `<div class="review-card">` +
-              `<div class="rev-stars" style="color:var(--gold)">${stars}</div>` +
-              `<p class="rev-text">\u00ab\u00a0${r.txt}\u00a0\u00bb</p>` +
-              `<div class="rev-author"><div class="rev-avatar">${initials}</div>` +
-              `<div><div class="rev-name">${r.nom}</div><div class="rev-loc">${r.loc || "Bamako, Mali"}</div></div></div>` +
-              `</div>`
-            );
-          })
-          .join("");
+        grid.innerHTML = snap.docs.slice(0, 8).map(renderReviewCard).join("");
       },
       (err) => console.warn("[CultureCase] Reviews listener:", err.code),
     );
