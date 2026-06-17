@@ -105,6 +105,8 @@ window.__applyFirebaseData = function (data) {
     newMdsG2.forEach((m) => MDS_G2.push(m));
     ALL_MDS.length = 0;
     allModels.forEach((m) => ALL_MDS.push(m));
+    // Exposer les prix réels pour que app.js puisse les lire
+    window.MODEL_PRICES = Object.assign({}, modelPrices);
 
     // 5. Rafraîchir l'UI
     const pg =

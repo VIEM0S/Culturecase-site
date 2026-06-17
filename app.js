@@ -613,8 +613,14 @@ const fyEl = document.getElementById("footer-year");
 if (fyEl) fyEl.textContent = new Date().getFullYear();
 initHome();
 
+function getModelPrice(model) {
+  // Source unique : prix réels Firestore via window.MODEL_PRICES
+  if (window.MODEL_PRICES && window.MODEL_PRICES[model] != null)
+    return Number(window.MODEL_PRICES[model]);
+  return MDS_G1.includes(model) ? 3500 : 5000; // fallback statique
+}
 function getPrice(model) {
-  return MDS_G1.includes(model) ? fp(3500) : fp(5000);
+  return fp(getModelPrice(model));
 }
 
 function updatePrice() {
@@ -643,7 +649,7 @@ function updatePrice() {
   }
 
   const qty = getModelStock(curD.id, model);
-  const price = MDS_G1.includes(model) ? 3500 : 5000;
+  const price = getModelPrice(model);
 
   // Ajuster dQty si dépasse le stock (ignorer si qty=-1 = pas de données)
   if (qty > 0 && dQty > qty) {
@@ -976,6 +982,8 @@ function openBlog(id) {
     if (card) openBlog(card.dataset.blogId);
   };
   go("blogdet");
+  // Écrire l'ID dans l'URL pour que le lien soit partageable et survivre au rafraîchissement
+  history.replaceState(null, "", "#/blog/" + encodeURIComponent(id));
   updatePageTitle(null, b.title + " — Blog CultureCase");
 }
 
@@ -1240,7 +1248,7 @@ function onGlobalModelChange() {
     }
   }
   if (m) {
-    hint.textContent = MDS_G1.includes(m) ? "3 500 FCFA" : "5 000 FCFA";
+    hint.textContent = Number(getModelPrice(m)).toLocaleString("fr-FR") + " FCFA";
     const dispo = DS.filter((d) => getModelStock(d.id, m) > 0).length;
     info.innerHTML = `<strong>${dispo} design${dispo > 1 ? "s" : ""}</strong> disponibles pour ${m}`;
   } else {
@@ -1352,7 +1360,7 @@ function injectProductSchema(d) {
   var sel = document.getElementById("d-mod");
   var model = sel ? sel.value : "";
   var isG2 = model && MDS_G2.indexOf(model) !== -1;
-  var price = isG2 ? "5000" : "3500";
+  var price = String(getModelPrice(model) || (isG2 ? 5000 : 3500));
   var status = getDesignGlobalStatus(d.id);
   var availability = status === "out"
     ? "https://schema.org/OutOfStock"
@@ -1427,7 +1435,7 @@ function orderWA() {
     if (quartier) localStorage.setItem("cc_quartier", quartier);
   } catch (e) {}
   const safeQty = typeof dQty === "number" && dQty > 0 ? dQty : 1;
-  const unitPrice = MDS_G1.includes(model) ? 3500 : 5000; // source unique — même logique que getCartPrice
+  const unitPrice = getModelPrice(model);
   const total = fp(unitPrice * safeQty);
   let msg = `Bonjour CultureCase 👋\n\n🎨 Design : ${curD.name}\n📱 Modèle : ${model}\n🔢 Quantité : ${safeQty}\n💰 Total : ${total}`;
   if (nom) msg += `\n\n👤 Nom : ${nom}`;
@@ -1449,7 +1457,7 @@ function orderQuick(id) {
   const nom = localStorage.getItem("cc_nom") || "";
   const tel = localStorage.getItem("cc_tel") || "";
   const _price = gm
-    ? fp(MDS_G1.includes(gm) ? 3500 : 5000)
+    ? fp(getModelPrice(gm))
     : "3 500 – 5 000 FCFA";
   let msg = `Bonjour CultureCase 👋\n\nJe voudrais commander :\n🎨 Design : ${d.name}\n📱 Modèle : ${gm || "(à préciser)"}\n🔢 Quantité : 1\n💰 Prix unitaire : ${_price}`;
   if (nom) msg += `\n\n👤 Nom : ${nom}`;
@@ -1466,10 +1474,7 @@ function orderQuick(id) {
 // ══════════════════════════════════════════════════════════════════════════════
 
 function getCartPrice(model) {
-  // Même logique que le reste du site
-  return typeof MDS_G1 !== "undefined" && MDS_G1.includes(model)
-    ? 3500
-    : 5000;
+  return getModelPrice(model); // source unique via MODEL_PRICES
 }
 
 function cartTotal() {
@@ -2034,6 +2039,25 @@ function routeFromHash() {
         var d2 = DS.find(function(x) { return x.id === id; });
         if (d2) { clearInterval(retry); openDet(id); }
         if (attempts > 20) { clearInterval(retry); go("catalogue"); }
+      }, 200);
+    }
+    return;
+  }
+  // #/blog/<id> — lien article direct (partage WhatsApp, rafraîchissement)
+  var blogMatch = hash.match(/^#\/blog\/(.+)$/);
+  if (blogMatch) {
+    var blogId = decodeURIComponent(blogMatch[1]);
+    var found = BLOG.find(function(x) { return x.id === blogId; });
+    if (found) {
+      openBlog(blogId);
+    } else {
+      // BLOG pas encore chargé — réessayer
+      var bAttempts = 0;
+      var bRetry = setInterval(function() {
+        bAttempts++;
+        var b2 = BLOG.find(function(x) { return x.id === blogId; });
+        if (b2) { clearInterval(bRetry); openBlog(blogId); }
+        if (bAttempts > 25) { clearInterval(bRetry); go("blog"); }
       }, 200);
     }
     return;
