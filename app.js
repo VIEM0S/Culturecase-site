@@ -1,259 +1,7 @@
-// ══ DONNÉES STATIQUES (fallback + état initial) ══════════════════════════════
-// Remplacées en temps réel par Firebase dès que Firestore répond.
-
-// status: 'available' | 'limited' | 'out'
-// Basé sur le backup stock réel du 31 mai 2026
-const DS = [
-  {
-    id: "D1",
-    name: "DJENNÉ",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767538/ynvij5rszvqmamfs9hgm.jpg",
-    story:
-      "La Grande Mosquée de Djenné — monument le plus emblématique de l'architecture soudano-sahélienne. Ce design célèbre l'une des plus belles constructions d'Afrique, inscrite au patrimoine mondial de l'UNESCO.",
-    cat: "MONUMENT",
-  },
-  {
-    id: "D2",
-    name: "PORTE DE TOMBOUCTOU",
-    status: "available",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767531/idasnkfvznmlzfn6vux1.jpg",
-    story:
-      "Tombouctou, la ville mystérieuse au bout du désert. Ses portes ont vu passer des siècles de commerce, de savoir et de civilisation. Un hommage à la cité des 333 saints.",
-    cat: "MONUMENT",
-  },
-  {
-    id: "D3",
-    name: "MUNYU",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767550/erdvdubi3wvbb3pgoirj.jpg",
-    story:
-      "Munyu — mot bambara qui signifie la patience, la résilience. Une valeur cardinale de la culture malienne. Ce design en porte l'essence et la beauté.",
-    cat: "VALEUR",
-  },
-  {
-    id: "D4",
-    name: "BLM",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767873/x3wc21gdtcsosbkb8tsk.jpg",
-    story:
-      "Un design qui porte un message universel — la dignité et la fierté noire. Ancré dans l'identité africaine, ouvert au monde entier.",
-    cat: "VALEUR",
-  },
-  {
-    id: "D5",
-    name: "INDIGO & CORIS",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767559/bxujdu2161ecy1zttj3y.jpg",
-    story:
-      "L'indigo, teinture ancestrale des tisserands du Mali. Les cauris, monnaie d'échange et symbole de prospérité. Un mariage de traditions qui traverse les siècles.",
-    cat: "TEXTILE",
-  },
-  {
-    id: "D6",
-    name: "MASQUE DOGON",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767579/l0zypv1qg1yxkjzt50c3.jpg",
-    story:
-      "Les masques dogon sont parmi les plus fascinants d'Afrique de l'Ouest. Utilisés lors des cérémonies Dama, ils incarnent les esprits des ancêtres et la connexion entre le monde des vivants et celui des morts.",
-    cat: "MASQUE",
-  },
-  {
-    id: "D7",
-    name: "AFRICA",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767567/cbryluhomr6fn6ucoc38.jpg",
-    story:
-      "L'Afrique dans toute sa splendeur. Un design qui célèbre le continent mère, berceau de l'humanité et source inépuisable de culture, de richesse et de créativité.",
-    cat: "VALEUR",
-  },
-  {
-    id: "D8",
-    name: "TOUAREG",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_400,f_auto,q_auto/v1/culturecase/placeholder_desert",
-    story:
-      "Peuple du désert, gardiens du Sahara. Les Touaregs du Mali sont des nomades fiers dont la culture, les bijoux et les motifs géométriques constituent un art à part entière.",
-    cat: "PEUPLE",
-  },
-  {
-    id: "D9",
-    name: "KÔ MUSSO",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767513/g9hlo9nazfns8zio19kh.jpg",
-    story:
-      "La femme ciwara — symbole de fertilité et de travail. Dans la cosmogonie bambara, le ciwara est mi-homme mi-antilope, enseignant aux hommes l'art de la culture de la terre.",
-    cat: "CIWARA",
-  },
-  {
-    id: "D10",
-    name: "MUSSO",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767522/rh1twzztxdfkvxszxm2e.jpg",
-    story:
-      "Musso signifie femme en bambara. Un hommage à la femme malienne — pilier de la famille, gardienne des traditions, force silencieuse d'une société entière.",
-    cat: "VALEUR",
-  },
-  {
-    id: "D11",
-    name: "DJOLIBA",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767684/kz0hqllpclzst4tdxe4w.jpg",
-    story:
-      "Le Djoliba — nom bambara du fleuve Niger. Artère vitale du Mali, source de vie pour des millions de personnes depuis des millénaires. Ce design rend hommage au grand fleuve.",
-    cat: "NATURE",
-  },
-  {
-    id: "D12",
-    name: "BOGOLAN",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767675/zutdygs9wnxbheeilcl9.jpg",
-    story:
-      "Le bogolan est l'âme textile du Mali. Fabriqué à partir de coton tissé à la main et teint à la boue fermentée, ses motifs géométriques racontent des histoires, des proverbes et des batailles. Le textile africain le plus distinctif au monde.",
-    cat: "TEXTILE",
-  },
-  {
-    id: "D13",
-    name: "N'KO",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767905/wketzekxsrqlupeqrdi2.jpg",
-    story:
-      "L'alphabet N'Ko, créé par Solomana Kanté en 1949 pour transcrire les langues mandingues. Un système d'écriture né au Mali, symbole d'indépendance culturelle et de fierté africaine.",
-    cat: "CULTURE",
-  },
-  {
-    id: "D14",
-    name: "CIWARA MARON",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767813/ujlarvjopqep37hwm2n2.jpg",
-    story:
-      "Le Ciwara, heaume cérémoniel bambara représentant l'antilope mythique qui enseigna l'agriculture aux hommes. L'une des icônes les plus reconnues de l'art africain dans le monde.",
-    cat: "CIWARA",
-  },
-  {
-    id: "D15",
-    name: "HOMME BLEU",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767825/aucphxdwahbfgtfvf3aw.jpg",
-    story:
-      "L'Homme Bleu — surnom des Touaregs dont les vêtements en indigo teignent la peau. Figure mystérieuse du désert, symbole d'un peuple libre et indomptable.",
-    cat: "PEUPLE",
-  },
-  {
-    id: "D16",
-    name: "AZTÈQUE",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767836/siov0fyjiemh53flyiod.jpg",
-    story:
-      "Un dialogue entre les civilisations — les motifs aztèques résonnent avec les géométries du bogolan malien. Deux mondes, une même recherche de beauté et de sens.",
-    cat: "CULTURE",
-  },
-  {
-    id: "D17",
-    name: "CAURIS & BAMBARA",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767944/e9hka8dwnpzsxdiltivc.jpg",
-    story:
-      "Les cauris, monnaie sacrée et ornement de beauté. Le masque bambara, gardien des rites d'initiation. Deux symboles fondamentaux de la culture malienne réunis dans un design unique.",
-    cat: "MASQUE",
-  },
-  {
-    id: "D18",
-    name: "MONUMENT DU MALI",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767503/avfyqvpk913qxdhdaluq.jpg",
-    story:
-      "Le Monument de la Paix de Bamako — symbole de la réconciliation nationale et de l'unité malienne. Porter ce design c'est affirmer son attachement à la paix et à la patrie.",
-    cat: "MONUMENT",
-  },
-  {
-    id: "D19",
-    name: "DJENNÉ ROUGE",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767700/nnj30wpau0ubjtwkcsuk.jpg",
-    story:
-      "Djenné dans les teintes du soleil couchant. La grande mosquée baignée de rouge ocre — couleur de la terre du Mali, couleur de la vie et de la chaleur africaine.",
-    cat: "MONUMENT",
-  },
-  {
-    id: "D20",
-    name: "NYA",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767662/ighfjwqwh4n8qqzxgclm.jpg",
-    story:
-      "Nya — la divinité de la guérison et de la protection dans la tradition bambara. Un design qui porte en lui la puissance bienveillante des anciennes croyances maliennes.",
-    cat: "CULTURE",
-  },
-  {
-    id: "D21",
-    name: "CIWARA & BOGOLAN",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767961/cnfo3mbjmc0z6wd9x22l.jpg",
-    story:
-      "La rencontre des deux grands symboles du Mali — le Ciwara antilope et le bogolan mud cloth. Un design qui condense l'essence même de l'identité malienne.",
-    cat: "CIWARA",
-  },
-  {
-    id: "D22",
-    name: "SARAMAYA",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767610/lenx0fj5n2cd8zlzauj9.jpg",
-    story:
-      "Saramaya — \"la beauté de l'effort\" en bambara. Ce design célèbre ceux qui travaillent dans l'ombre pour faire briller les autres. Un hommage à la dignité du labeur.",
-    cat: "VALEUR",
-  },
-  {
-    id: "D25",
-    name: "WAX",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767470/hvzqpryowauueraiszqj.jpg",
-    story:
-      "Le wax africain — tissu aux mille couleurs et aux mille histoires. Adopté et réinterprété par toute l'Afrique de l'Ouest, il est devenu un symbole de la mode africaine contemporaine.",
-    cat: "TEXTILE",
-  },
-  {
-    id: "D28",
-    name: "BÈNKADI",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767718/smtv6hdke2pdelv3z0ob.jpg",
-    story:
-      'Bènkadi signifie "la bonne entente" en bambara — valeur fondamentale de la société malienne. Un appel à l\'harmonie, au dialogue et au vivre-ensemble.',
-    cat: "VALEUR",
-  },
-  {
-    id: "D33",
-    name: "SABABU",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767455/ygwn0mfqo8fslzspvjko.jpg",
-    story:
-      "Sababu — \"la raison d'être\" en bambara. Ce design invite à la réflexion sur le sens et l'identité. Pourquoi sommes-nous là ? Pour porter notre culture et la transmettre.",
-    cat: "VALEUR",
-  },
-  {
-    id: "D34",
-    name: "WARI",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767415/sfayi0sxmnru3sjmcynq.jpg",
-    story:
-      "Le Wari — jeu de stratégie ancestral répandu dans toute l'Afrique de l'Ouest. Bien plus qu'un jeu, c'est un exercice de sagesse, de calcul et de patience transmis de génération en génération.",
-    cat: "CULTURE",
-  },
-  {
-    id: "D42",
-    name: "AFRO QUEEN",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779767356/yeiqf4sdqghcpuzjetti.jpg",
-    story:
-      "La Reine Afro — célébration de la beauté naturelle africaine. Ce design est un hommage aux femmes noires qui portent leur identité avec fierté et élégance.",
-    cat: "VALEUR",
-  },
-  {
-    id: "D43",
-    name: "KAKÔLÔ",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779926695/scyw8ovkaojowkrnbibc.jpg",
-    story:
-      "Kakôlô — terme bambara évoquant l'origine, les racines profondes. Se souvenir d'où l'on vient pour savoir où l'on va.",
-    cat: "CULTURE",
-  },
-  {
-    id: "D44",
-    name: "BOZO",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779926709/fozrtqbz0gzwn6nvgegu.jpg",
-    story:
-      "Les Bozo — peuple pêcheur du fleuve Niger, maîtres de l'eau et gardiens du Djoliba. Leur savoir-faire ancestral et leur lien intime avec le fleuve sont au cœur de ce design.",
-    cat: "PEUPLE",
-  },
-  {
-    id: "D45",
-    name: "N'MA",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779926721/f3mjcfsij2dwxljd1jzx.jpg",
-    story:
-      "N'Ma — \"la mère\" en bambara. La mère est le pilier de la société malienne, source d'amour, de sagesse et de continuité culturelle.",
-    cat: "VALEUR",
-  },
-  {
-    id: "D46",
-    name: "SOUDAN",
-    img: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1779926774/zqfkjq0fug2htgxl1mql.jpg",
-    story:
-      "Le Soudan français — nom historique du Mali avant l'indépendance. Un design qui rappelle les racines historiques du pays et le chemin parcouru vers la liberté.",
-    cat: "MONUMENT",
-  },
-];
+// ══ DONNÉES STATIQUES ═══════════════════════════════════════════════════════
+// Toutes les données viennent de Firestore (firebase-init.js).
+// DS est initialisé vide — rempli dès que Firestore répond (~500ms).
+const DS = [];
 
 // stock réel par design × modèle — extrait du backup 31/05/2026
 const STOCK_MAP = {
@@ -855,7 +603,7 @@ const tEl = document.getElementById("ttick");
 if (tEl) {
   const tH = tItems
     .map(
-      (x) => `<span class="ti"><span class="ti-dot"></span>${x}</span>`,
+      (x) => `<span class="tk-item"><span class="tk-dot"></span>${x}</span>`,
     )
     .join("");
   tEl.innerHTML = tH + tH;
@@ -965,6 +713,33 @@ function toast(msg) {
   setTimeout(() => el.classList.remove("show"), 2800);
 }
 
+// ══ IMAGES STATIQUES (hero + about) — pilotées depuis Firestore ══════════
+// settings.heroImages  = [{id:"D12",w:400},{id:"D1",w:300},{id:"D13",w:300}]
+// settings.aboutImages = [{id:"D14",w:500},{id:"D3",w:300},{id:"D28",w:300}]
+const DEFAULT_HERO_IMAGES  = [{id:"D12",w:400},{id:"D1",w:300},{id:"D13",w:300}];
+const DEFAULT_ABOUT_IMAGES = [{id:"D14",w:500},{id:"D3",w:300},{id:"D28",w:300}];
+
+function renderStaticImages(heroImages, aboutImages) {
+  const heroList  = (heroImages  && heroImages.length)  ? heroImages  : DEFAULT_HERO_IMAGES;
+  const aboutList = (aboutImages && aboutImages.length) ? aboutImages : DEFAULT_ABOUT_IMAGES;
+  heroList.forEach((cfg, i) => {
+    const design = DS.find((d) => d.id === cfg.id);
+    if (!design) return;
+    const imgEl = document.getElementById("hero-img-"+i+"-src");
+    const lblEl = document.getElementById("hero-img-"+i+"-lbl");
+    const wrap  = document.getElementById("hero-img-"+i);
+    if (imgEl) imgEl.src = cldImg(design.img, cfg.w || 300);
+    if (lblEl) lblEl.textContent = design.name;
+    if (wrap)  wrap.onclick = () => openDet(design.id);
+  });
+  aboutList.forEach((cfg, i) => {
+    const design = DS.find((d) => d.id === cfg.id);
+    if (!design) return;
+    const imgEl = document.getElementById("about-img-"+i+"-src");
+    if (imgEl) imgEl.src = cldImg(design.img, cfg.w || 300);
+  });
+}
+
 // ══ CLOUDINARY — optimisation automatique des images ══════════════════════
 // Injecte w_auto,f_auto,q_auto dans les URLs Cloudinary pour 3-5x moins de poids
 function cldImg(url, w) {
@@ -979,6 +754,101 @@ function cldImg(url, w) {
 
 // ══ BLOG — Firestore (géré depuis culturecase-gs) ══════════════════════════
 let BLOG = []; // rempli en temps réel depuis la collection blog_posts
+
+// ── Échappement HTML anti-XSS pour le contenu utilisateur/Firestore ───────
+function escapeHTML(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// ── Rendu markdown minimal pour le contenu des articles de blog ───────────
+function renderMarkdown(md, images) {
+  if (!md) return "";
+  const imgs = images || [];
+  let html = escapeHTML(md);
+
+  // Titres
+  html = html.replace(/^#### (.*)$/gm, "<h4>$1</h4>");
+  html = html.replace(/^### (.*)$/gm, "<h3>$1</h3>");
+  html = html.replace(/^## (.*)$/gm, "<h2>$1</h2>");
+  html = html.replace(/^# (.*)$/gm, "<h1>$1</h1>");
+
+  // Gras + italique (gras+italique combiné en premier)
+  html = html.replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>");
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+  // Citation
+  html = html.replace(/^&gt; (.+)$/gm, "<blockquote>$1</blockquote>");
+
+  // Séparateur
+  html = html.replace(/^---$/gm, "<hr>");
+
+  // Listes non ordonnées
+  html = html.replace(/^[*-] (.+)$/gm, "<li>$1</li>");
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`);
+
+  // Liens — escapeHTML a déjà transformé les caractères, on cible la forme échappée
+  html = html.replace(
+    /\[(.+?)\]\((.+?)\)/g,
+    '<a href="$2" target="_blank" rel="noopener">$1</a>',
+  );
+
+  // Images par URL directe (legacy)
+  html = html.replace(
+    /!\[(.+?)\]\((.+?)\)/g,
+    '<img src="$2" alt="$1" loading="lazy">',
+  );
+
+  // Repères de galerie {img:N} → résolus depuis le tableau images de l'article
+  html = html.replace(/\{img:(\d+)\}/g, (m, n) => {
+    const url = imgs[parseInt(n, 10) - 1];
+    if (!url) return "";
+    const safeUrl = cldImg(url, 800);
+    return `<img src="${safeUrl}" alt="Image ${n}" loading="lazy">`;
+  });
+
+  // Code inline
+  html = html.replace(/`(.+?)`/g, "<code>$1</code>");
+
+  // Paragraphes — ligne par ligne, on saute les lignes déjà transformées en bloc HTML
+  html = html
+    .split("\n")
+    .map((line) => {
+      const trimmed = line.trim();
+      if (!trimmed) return "";
+      if (/^<(h[1-4]|ul|ol|li|blockquote|hr|img|p|a)/.test(trimmed))
+        return trimmed;
+      return `<p>${trimmed}</p>`;
+    })
+    .join("\n");
+
+  return html;
+}
+
+// ── Estimation du temps de lecture (≈200 mots/min) ─────────────────────────
+function estimateReadTime(text) {
+  if (!text) return "1 min";
+  const words = text.trim().split(/\s+/).length;
+  const mins = Math.max(1, Math.round(words / 200));
+  return mins + " min";
+}
+
+// ── Conversion Firestore Timestamp → date FR lisible ────────────────────
+function formatBlogDate(ts) {
+  try {
+    const d = ts && typeof ts.toDate === "function" ? ts.toDate() : new Date(ts);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  } catch (e) {
+    return "";
+  }
+}
 
 function listenBlog() {
   if (window.__blogListening) return;
@@ -1002,10 +872,13 @@ function listenBlog() {
           title: data.title || "",
           excerpt: data.excerpt || "",
           content: data.content || "",
-          cover: data.cover || "",
+          images: data.images || [],
+          img: data.cover || data.img || "",
           tag: data.tags?.[0] || "culture",
           tags: data.tags || [],
           createdAt: data.createdAt,
+          date: formatBlogDate(data.createdAt),
+          read: estimateReadTime(data.content),
           published: data.published,
         };
       });
@@ -1030,6 +903,7 @@ function filterBlog(tag, btn) {
 }
 
 function renderBlog() {
+  if (!BLOG || BLOG.length === 0) return; // garde — laisse le skeleton visible tant que Firestore n'a pas répondu
   const filtered = BLOG.filter(
     (b) => activeBlogTag === "all" || b.tag === activeBlogTag,
   );
@@ -1082,7 +956,10 @@ function openBlog(id) {
   document.getElementById("bd-date").textContent = b.date;
   document.getElementById("bd-read").textContent = b.read;
   document.getElementById("bd-img").src = cldImg(b.img, 900);
-  document.getElementById("bd-content").innerHTML = renderMarkdown(b.content);
+  document.getElementById("bd-content").innerHTML = renderMarkdown(
+    b.content,
+    b.images,
+  );
   // related
   const rel = BLOG.filter((x) => x.id !== id).slice(0, 3);
   const relGrid = document.getElementById("bd-related");
@@ -1099,6 +976,7 @@ function openBlog(id) {
     if (card) openBlog(card.dataset.blogId);
   };
   go("blogdet");
+  updatePageTitle(null, b.title + " — Blog CultureCase");
 }
 
 function toggleMobileMenu() {
@@ -1186,11 +1064,27 @@ function go(p, opts) {
   if (p === "home") initHome();
   if (p === "blog") renderBlog();
   syncMobileBar();
+  updatePageTitle(p);
   // Écrire le hash sans déclencher un nouveau hashchange
   if (!opts || !opts.silent) {
     var newHash = (p === "home") ? "#/" : "#/" + p;
     if (location.hash !== newHash) history.pushState(null, "", newHash);
   }
+}
+
+const PAGE_TITLES = {
+  home: "CultureCase — Coques iPhone · Bamako, Mali",
+  catalogue: "Catalogue — CultureCase",
+  about: "À propos — CultureCase",
+  blog: "Blog — CultureCase",
+  contact: "Contact — CultureCase",
+  faq: "FAQ — CultureCase",
+  livraison: "Livraison & Retours — CultureCase",
+  politique: "Politique commerciale — CultureCase",
+  paiement: "Modes de paiement — CultureCase",
+};
+function updatePageTitle(p, override) {
+  document.title = override || PAGE_TITLES[p] || PAGE_TITLES.home;
 }
 
 function card(d) {
@@ -1229,7 +1123,7 @@ function card(d) {
     : "3 500 – 5 000 FCFA";
   const isOut = gm && getModelStock(d.id, gm) === 0;
 
-  return `<div class="pcard${isOut ? " is-out" : ""}" onclick="openDet('${d.id}')">
+  return `<div class="pcard${isOut ? " is-out" : ""}" tabindex="0" role="button" aria-label="Voir le design ${d.name}" onclick="openDet('${d.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDet('${d.id}')}">
     <div class="pc-img">
 <img src="${cldImg(d.img, 400)}" alt="${d.name}" loading="lazy" onerror="this.parentNode.style.background='var(--sand)'">
 <div class="pc-overlay">
@@ -1261,6 +1155,7 @@ function goToCatalogueWithModel(model) {
 }
 
 function initHome() {
+  if (!DS || DS.length === 0) return; // garde — laisse le skeleton visible tant que Firestore n'a pas répondu
   const grid = document.getElementById("home-grid");
   if (grid) grid.innerHTML = DS.slice(0, 8).map(card).join("");
   // Stats dynamiques
@@ -1427,6 +1322,7 @@ function openDet(id) {
   // Schema Product dynamique pour Google rich results
   injectProductSchema(curD);
   go("detail", { silent: true });
+  updatePageTitle(null, curD.name + " — CultureCase");
 }
 
 function injectProductSchema(d) {
@@ -1482,8 +1378,10 @@ function dq(d) {
   updatePrice();
 }
 
+var _orderWALock = false;
 function orderWA() {
   if (!curD) return;
+  if (_orderWALock) return; // évite l'ouverture de plusieurs onglets WhatsApp sur double-clic
   const model = document.getElementById("d-mod").value;
   if (!model) {
     toast("⚠️ Choisis un modèle iPhone d'abord");
@@ -1502,6 +1400,8 @@ function orderWA() {
     toast("⚠️ Indique ton numéro de téléphone");
     return;
   }
+  _orderWALock = true;
+  setTimeout(() => { _orderWALock = false; }, 1500);
   try {
     localStorage.setItem("cc_nom", nom);
     localStorage.setItem("cc_tel", tel);
@@ -2118,14 +2018,18 @@ function routeFromHash() {
   var pageMatch = hash.match(/^#\/([a-z]+)$/);
   if (pageMatch) {
     var pg = pageMatch[1];
-    var known = ["home","catalogue","about","blog","contact","faq","livraison","politique","paiement"];
+    var known = ["home","catalogue","about","blog","contact","faq","livraison","politique","paiement","404"];
     if (known.indexOf(pg) !== -1) {
       go(pg, { silent: true });
       return;
     }
   }
-  // #/ ou hash inconnu → home
-  go("home", { silent: true });
+  // #/ ou hash inconnu → page 404 (sauf racine, qui va à home)
+  if (hash === "#/" || hash === "") {
+    go("home", { silent: true });
+  } else {
+    go("404", { silent: true });
+  }
 }
 
 window.addEventListener("hashchange", function() {
@@ -2134,61 +2038,3 @@ window.addEventListener("hashchange", function() {
 
 // Routage initial au chargement de la page
 routeFromHash();
-
-// ══ ANDROID WAITLIST ════════════════════════════════════════════════════════
-function submitAndroid() {
-  var input = document.getElementById("android-tel");
-  var btn = document.querySelector(".android-btn");
-  if (!input || !btn) return;
-
-  var tel = input.value.trim().replace(/\s+/g, "");
-  if (!tel || tel.length < 8) {
-    input.style.borderColor = "var(--ember)";
-    input.focus();
-    setTimeout(function() { input.style.borderColor = ""; }, 1500);
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = "…";
-
-  // Sauvegarder dans Firestore android_waitlist
-  try {
-    var db = window.__db;
-    if (db) {
-      var { collection, addDoc, serverTimestamp } = window.__firestoreAPI;
-      addDoc(collection(db, "android_waitlist"), {
-        tel: tel,
-        ts: serverTimestamp(),
-        ua: navigator.userAgent.substring(0, 100)
-      }).then(function() {
-        showSuccess();
-      }).catch(function() {
-        // Firestore indisponible — fallback localStorage
-        fallbackAndroid(tel);
-        showSuccess();
-      });
-    } else {
-      fallbackAndroid(tel);
-      showSuccess();
-    }
-  } catch(e) {
-    fallbackAndroid(tel);
-    showSuccess();
-  }
-}
-
-function fallbackAndroid(tel) {
-  try {
-    var list = JSON.parse(localStorage.getItem("cc_android_waitlist") || "[]");
-    if (!list.includes(tel)) list.push(tel);
-    localStorage.setItem("cc_android_waitlist", JSON.stringify(list));
-  } catch(e) {}
-}
-
-function showSuccess() {
-  var form = document.getElementById("android-form");
-  var success = document.getElementById("android-success");
-  if (form) form.style.display = "none";
-  if (success) success.style.display = "flex";
-}
