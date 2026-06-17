@@ -800,10 +800,12 @@ function renderMarkdown(md, images) {
   html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`);
 
   // Liens — escapeHTML a déjà transformé les caractères, on cible la forme échappée
-  html = html.replace(
-    /\[(.+?)\]\((.+?)\)/g,
-    '<a href="$2" target="_blank" rel="noopener">$1</a>',
-  );
+  html = html.replace(/\[(.+?)\]\((.+?)\)/g, (_, text, url) => {
+    // Bloquer javascript:, data:, vbscript: et toute URL non http(s)
+    const safe = /^https?:\/\//i.test(url.trim());
+    if (!safe) return escapeHTML(text); // afficher le texte brut sans lien
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+  });
 
   // Images par URL directe (legacy)
   html = html.replace(
@@ -1144,9 +1146,7 @@ function card(d) {
   }
 
   const price = gm
-    ? MDS_G1.includes(gm)
-      ? "3 500 FCFA"
-      : "5 000 FCFA"
+    ? Number(getModelPrice(gm)).toLocaleString("fr-FR") + " FCFA"
     : "3 500 – 5 000 FCFA";
   const isOut = gm && getModelStock(d.id, gm) === 0;
 

@@ -108,6 +108,20 @@ window.__applyFirebaseData = function (data) {
     allModels.forEach((m) => ALL_MDS.push(m));
     // Exposer les prix réels pour que app.js puisse les lire
     window.MODEL_PRICES = Object.assign({}, modelPrices);
+    // Mettre à jour les prix affichés en HTML (optgroup, fiche produit)
+    if (newMdsG1.length > 0) {
+      const p1 = (modelPrices[newMdsG1[0]] || 3500);
+      const p2 = newMdsG2.length > 0 ? (modelPrices[newMdsG2[0]] || 5000) : 5000;
+      const fmt = (n) => Number(n).toLocaleString("fr-FR") + " FCFA";
+      const og1 = document.getElementById("og-g1");
+      const og2 = document.getElementById("og-g2");
+      if (og1) og1.label = og1.label.replace(/[\d\s]+FCFA/, fmt(p1));
+      if (og2) og2.label = og2.label.replace(/[\d\s]+FCFA/, fmt(p2));
+      const pr1 = document.getElementById("pr-price-g1");
+      const pr2 = document.getElementById("pr-price-g2");
+      if (pr1) pr1.textContent = fmt(p1);
+      if (pr2) pr2.textContent = fmt(p2);
+    }
 
     // 5. Rafraîchir l'UI
     const pg =
