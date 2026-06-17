@@ -23,7 +23,7 @@
     />
     <meta
       property="og:image"
-      content="https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,f_auto,q_auto/v1781536595/12_yvqf94.jpg"
+      content="https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,f_auto,q_auto/v1779767675/zutdygs9wnxbheeilcl9.jpg"
     />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_ML" />
@@ -58,7 +58,7 @@
       "description": "Coques iPhone aux designs culturels africains. Bogolan, N'Ko, Ciwara — impression HD, livraison à Bamako.",
       "url": "https://viem0s.github.io/culturecase-site",
       "logo": "https://res.cloudinary.com/dknfqd2xp/image/upload/w_200,f_auto,q_auto/v1781131928/logo_jpg4ml.png",
-      "image": "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,f_auto,q_auto/v1781536595/12_yvqf94.jpg",
+      "image": "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,f_auto,q_auto/v1779767675/zutdygs9wnxbheeilcl9.jpg",
       "telephone": "+22375992482",
       "contactPoint": {
         "@type": "ContactPoint",
@@ -133,7 +133,7 @@
             Catalogue
           </button>
           <button class="nb" id="nm-about" onclick="go('about')">
-            À propos
+            Histoire
           </button>
           <button class="nb" id="nm-blog" onclick="go('blog')">Blog</button>
           <button class="nb" id="nm-contact" onclick="go('contact')">
@@ -236,7 +236,7 @@
           toggleMobileMenu();
         "
       >
-        À propos
+        Histoire
       </button>
       <button
         class="nb"
@@ -293,18 +293,27 @@
               </button>
             </div>
           </div>
-          <div class="hero-r" id="hero-imgs">
-            <div class="hi" style="grid-row: span 2" id="hero-img-0">
-              <img id="hero-img-0-src" src="" alt="Design CultureCase" />
-              <div class="hi-lbl" id="hero-img-0-lbl"></div>
+          <div class="hero-r">
+            <div class="hi" style="grid-row: span 2" onclick="openDet('D12')">
+              <img
+                src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_400,f_auto,q_auto/v1779767675/zutdygs9wnxbheeilcl9.jpg"
+                alt="Bogolan"
+              />
+              <div class="hi-lbl">BOGOLAN</div>
             </div>
-            <div class="hi" id="hero-img-1">
-              <img id="hero-img-1-src" src="" alt="Design CultureCase" />
-              <div class="hi-lbl" id="hero-img-1-lbl"></div>
+            <div class="hi" onclick="openDet('D1')">
+              <img
+                src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_300,f_auto,q_auto/v1779767538/ynvij5rszvqmamfs9hgm.jpg"
+                alt="Djenné"
+              />
+              <div class="hi-lbl">DJENNÉ</div>
             </div>
-            <div class="hi" id="hero-img-2">
-              <img id="hero-img-2-src" src="" alt="Design CultureCase" />
-              <div class="hi-lbl" id="hero-img-2-lbl"></div>
+            <div class="hi" onclick="openDet('D13')">
+              <img
+                src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_300,f_auto,q_auto/v1779767905/wketzekxsrqlupeqrdi2.jpg"
+                alt="N'Ko"
+              />
+              <div class="hi-lbl">N'KO</div>
             </div>
           </div>
         </div>
@@ -341,7 +350,7 @@
             Tout voir →
           </button>
         </div>
-        <div class="pgrid" id="home-grid"><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div></div>
+        <div class="pgrid" id="home-grid"></div>
       </div>
 
       <!-- Témoignages -->
@@ -352,7 +361,68 @@
             <div class="section-sub">Avis clients</div>
           </div>
         </div>
-        <div class="reviews-grid" id="reviews-grid"><div class="review-card review-card-skel"><div class="skel-line skel-line-stars"></div><div class="skel-line skel-line-text"></div><div class="skel-line skel-line-text-short"></div><div class="rev-author"><div class="skel-avatar"></div><div><div class="skel-line skel-line-name-sm"></div><div class="skel-line skel-line-loc"></div></div></div></div><div class="review-card review-card-skel"><div class="skel-line skel-line-stars"></div><div class="skel-line skel-line-text"></div><div class="skel-line skel-line-text-short"></div><div class="rev-author"><div class="skel-avatar"></div><div><div class="skel-line skel-line-name-sm"></div><div class="skel-line skel-line-loc"></div></div></div></div><div class="review-card review-card-skel"><div class="skel-line skel-line-stars"></div><div class="skel-line skel-line-text"></div><div class="skel-line skel-line-text-short"></div><div class="rev-author"><div class="skel-avatar"></div><div><div class="skel-line skel-line-name-sm"></div><div class="skel-line skel-line-loc"></div></div></div></div></div>
+        <div class="reviews-grid" id="reviews-grid">
+          <div class="review-card">
+            <div class="rev-stars">★★★★★</div>
+            <p class="rev-text">
+              « J'ai commandé le Bogolan pour mon iPhone 15. La qualité est
+              incroyable, le design est vraiment fidèle. Tout Bamako me demande
+              où j'ai eu ça ! »
+            </p>
+            <div class="rev-author">
+              <div class="rev-avatar">AK</div>
+              <div>
+                <div class="rev-name">Aminata K.</div>
+                <div class="rev-loc">Badalabougou, Bamako</div>
+              </div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="rev-stars">★★★★★</div>
+            <p class="rev-text">
+              « Livraison rapide, coque bien protégée dans l'emballage. Le
+              design N'Ko est magnifique — un vrai bijou. Je vais en commander
+              une autre pour offrir. »
+            </p>
+            <div class="rev-author">
+              <div class="rev-avatar">IB</div>
+              <div>
+                <div class="rev-name">Ibrahim B.</div>
+                <div class="rev-loc">Hippodrome, Bamako</div>
+              </div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="rev-stars">★★★★★</div>
+            <p class="rev-text">
+              « Enfin une marque malienne qui fait des coques de qualité ! Le
+              Ciwara est mon préféré. Porter sa culture sur son téléphone, c'est
+              exactement ce qu'il faut. »
+            </p>
+            <div class="rev-author">
+              <div class="rev-avatar">FD</div>
+              <div>
+                <div class="rev-name">Fatoumata D.</div>
+                <div class="rev-loc">ACI 2000, Bamako</div>
+              </div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="rev-stars">★★★★☆</div>
+            <p class="rev-text">
+              « La réponse sur WhatsApp est ultra rapide, la livraison le
+              lendemain. La coque Djenné est superbe — ma femme l'a volée
+              directement ! Je vais devoir en racheter une. »
+            </p>
+            <div class="rev-author">
+              <div class="rev-avatar">MS</div>
+              <div>
+                <div class="rev-name">Moussa S.</div>
+                <div class="rev-loc">Kalaban Coura, Bamako</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -459,9 +529,38 @@
         <div class="cat-sort" id="cat-sort-label">Tous les designs</div>
       </div>
 
+      <!-- ANDROID — SECTION INTÉRÊT -->
+      <div class="android-banner" id="android-banner">
+        <div class="android-inner">
+          <div class="android-left">
+            <div class="android-icon">
+              <i class="ti ti-brand-android"></i>
+            </div>
+            <div class="android-text">
+              <div class="android-title">Vous avez un Samsung ?</div>
+              <div class="android-sub">Nos designs arrivent bientôt sur Android. Laissez votre numéro, on vous prévient en premier.</div>
+            </div>
+          </div>
+          <div class="android-form" id="android-form">
+            <input
+              class="android-input"
+              type="tel"
+              id="android-tel"
+              placeholder="Votre numéro WhatsApp"
+              autocomplete="tel"
+              maxlength="20"
+            />
+            <button class="android-btn" onclick="submitAndroid()">Me prévenir</button>
+          </div>
+          <div class="android-success" id="android-success" style="display:none">
+            <i class="ti ti-circle-check"></i> Enregistré — on vous contacte dès la sortie !
+          </div>
+        </div>
+      </div>
+
       <!-- GRILLE -->
       <div class="cat-body">
-        <div class="pgrid" id="cat-grid"><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="pcard pcard-skel"><div class="pc-img skel-shimmer"></div><div class="pc-body"><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div></div>
+        <div class="pgrid" id="cat-grid"></div>
       </div>
     </div>
 
@@ -733,15 +832,24 @@
             fierté.
           </p>
         </div>
-        <div class="ab-r" id="about-imgs">
-          <div class="aimg" style="grid-row: span 2" id="about-img-0">
-            <img id="about-img-0-src" src="" alt="Design CultureCase" />
+        <div class="ab-r">
+          <div class="aimg" style="grid-row: span 2">
+            <img
+              src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_500,f_auto,q_auto/v1779767813/ujlarvjopqep37hwm2n2.jpg"
+              alt="Ciwara"
+            />
           </div>
-          <div class="aimg" id="about-img-1">
-            <img id="about-img-1-src" src="" alt="Design CultureCase" />
+          <div class="aimg">
+            <img
+              src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_300,f_auto,q_auto/v1779767550/erdvdubi3wvbb3pgoirj.jpg"
+              alt="Munyu"
+            />
           </div>
-          <div class="aimg" id="about-img-2">
-            <img id="about-img-2-src" src="" alt="Design CultureCase" />
+          <div class="aimg">
+            <img
+              src="https://res.cloudinary.com/dknfqd2xp/image/upload/w_300,f_auto,q_auto/v1779767718/smtv6hdke2pdelv3z0ob.jpg"
+              alt="Bènkadi"
+            />
           </div>
         </div>
       </div>
@@ -765,34 +873,31 @@
         </div>
       </div>
       <div class="ab-story">
+        <div class="as-h">L'histoire</div>
         <p class="as-p">
-          La coque de téléphone n'est plus un simple accessoire — elle est
-          devenue une déclaration. Un objet que des millions de personnes
-          portent, voient, remarquent chaque jour.
-        </p>
-        <p class="as-p">
-          Au Mali, on portait des coques importées, sans âme, sans histoire.
-          Des marques étrangères qui ne nous parlaient pas. Pourquoi ne pas
-          porter le bogolan ? Le Ciwara ? La grande mosquée de Djenné ? Ces
-          symboles qui nous appartiennent et dont on est fiers.
+          Tout a commencé à Bamako, avec une idée simple : et si on mettait la
+          richesse culturelle du Mali dans la poche de chacun ? Du bogolan de
+          Ségou aux calligraphies N'Ko, des monuments de Djenné aux masques
+          dogon — notre patrimoine est extraordinaire et mérite d'être visible.
         </p>
         <div class="as-quote">
           <p>
-            «La culture n'est pas un musée. C'est quelque chose qu'on porte
-            avec soi, chaque jour.»
+            «La culture n'est pas un musée. C'est quelque chose qu'on porte avec
+            soi, chaque jour.»
           </p>
         </div>
         <p class="as-p">
-          Chaque design CultureCase est pensé comme une mini-œuvre d'art. On
-          ne copie pas — on crée. On va chercher dans les archives de l'art
-          malien, dans les marchés de Bamako, dans les récits des anciens.
-          Chaque couleur est choisie, chaque ligne a un sens.
+          Le constat était là, évident : au Mali, on portait des coques d'iPhone
+          importées, sans âme, sans histoire. Des marques étrangères qui ne nous
+          parlaient pas. Pourquoi ne pas porter le bogolan ? Le Ciwara ? La
+          grande mosquée de Djenné ? Ces symboles qui nous appartiennent et dont
+          on est fiers.
         </p>
         <p class="as-p">
-          Nos étuis allient protection premium contre les chutes et les chocs,
-          et identité visuelle forte. Parce que les utilisateurs veulent que
-          leur coque protège leur appareil <em>et</em> reflète qui ils sont,
-          d'où ils viennent.
+          Chaque design CultureCase est pensé comme une mini-œuvre d'art. On ne
+          copie pas — on crée. On va chercher dans les archives de l'art malien,
+          dans les marchés de Bamako, dans les récits des anciens. Chaque
+          couleur est choisie, chaque ligne a un sens. C'est ça, CultureCase.
         </p>
         <div class="as-quote">
           <p>«Nous ne vendons pas des coques. Nous vendons de la fierté.»</p>
@@ -800,12 +905,13 @@
         <p class="as-p">
           Aujourd'hui CultureCase grandit. De nouveaux designs arrivent, des
           exclusivités se préparent. La collection évolue avec notre culture —
-          vivante, créative, fière. Chaque coque portée dans les rues de
-          Bamako est un petit acte de résistance culturelle.
+          vivante, créative, fière. Chaque coque portée dans les rues de Bamako
+          est un petit acte de résistance culturelle.
         </p>
       </div>
 
       <div class="timeline">
+        <div class="tl-title">Notre parcours</div>
         <div class="tl-items">
           <div class="tl-item">
             <div class="tl-dot">💡</div>
@@ -924,7 +1030,7 @@
       </div>
 
       <div class="blog-body">
-        <div class="blog-grid" id="blog-grid"><div class="bcard bcard-skel"><div class="bc-img skel-shimmer"></div><div class="bc-body"><div class="skel-line skel-line-tag"></div><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="bcard bcard-skel"><div class="bc-img skel-shimmer"></div><div class="bc-body"><div class="skel-line skel-line-tag"></div><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="bcard bcard-skel"><div class="bc-img skel-shimmer"></div><div class="bc-body"><div class="skel-line skel-line-tag"></div><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="bcard bcard-skel"><div class="bc-img skel-shimmer"></div><div class="bc-body"><div class="skel-line skel-line-tag"></div><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="bcard bcard-skel"><div class="bc-img skel-shimmer"></div><div class="bc-body"><div class="skel-line skel-line-tag"></div><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div><div class="bcard bcard-skel"><div class="bc-img skel-shimmer"></div><div class="bc-body"><div class="skel-line skel-line-tag"></div><div class="skel-line skel-line-name"></div><div class="skel-line skel-line-hint"></div></div></div></div>
+        <div class="blog-grid" id="blog-grid"></div>
       </div>
     </div>
 
@@ -948,188 +1054,70 @@
 
     <!-- CONTACT -->
     <div class="pg" id="pg-contact">
-      <div class="ct-wrap">
-        <div class="ct-l">
-          <div class="hero-eyebrow" style="margin-bottom: 1rem">
+      <div class="ct-wrap-new">
+
+        <!-- BANDE CONTACTS -->
+        <div class="ct-hero">
+          <div class="hero-eyebrow" style="margin-bottom:0.75rem">
             <div class="ey-line"></div>
             <span class="ey-txt">Nous contacter</span>
           </div>
-          <h2>Parlons-nous</h2>
-          <p>
-            Pour commander, poser une question ou nous rejoindre comme
-            distributeur — on est disponibles sur WhatsApp.
-          </p>
-          <div class="ct-links">
-            <a class="ct-lnk" href="https://wa.me/22375992482"
-              ><i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
-              <div>
-                <div class="ct-lnk-m">+223 75 99 24 82</div>
-                <div class="ct-lnk-s">WhatsApp Business · Réponse rapide</div>
-              </div></a
-            >
-            <a
-              class="ct-lnk"
-              href="https://www.instagram.com/culturecase_official"
-              ><i class="ti ti-brand-instagram" aria-hidden="true"></i>
-              <div>
-                <div class="ct-lnk-m">@culturecase_official</div>
-                <div class="ct-lnk-s">Instagram</div>
-              </div></a
-            >
-            <a class="ct-lnk" href="https://www.tiktok.com/@culturecase"
-              ><i class="ti ti-brand-tiktok" aria-hidden="true"></i>
-              <div>
-                <div class="ct-lnk-m">@culturecase</div>
-                <div class="ct-lnk-s">TikTok</div>
-              </div></a
-            >
-            <a class="ct-lnk" href="https://linktr.ee/culturecase"
-              ><i class="ti ti-link" aria-hidden="true"></i>
-              <div>
-                <div class="ct-lnk-m">linktr.ee/culturecase</div>
-                <div class="ct-lnk-s">Tous nos liens</div>
-              </div></a
-            >
-            <div class="ct-lnk">
-              <i class="ti ti-map-pin" aria-hidden="true"></i>
-              <div>
-                <div class="ct-lnk-m">Bamako, Mali</div>
-                <div class="ct-lnk-s">Livraison dans tout Bamako</div>
+          <h2 class="ct-title">Parlons-nous</h2>
+          <p class="ct-sub">Pour commander, poser une question ou nous rejoindre comme distributeur — on est disponibles sur WhatsApp.</p>
+          <div class="ct-links-grid">
+            <a class="ct-lnk" href="https://wa.me/22375992482"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i><div><div class="ct-lnk-m">+223 75 99 24 82</div><div class="ct-lnk-s">WhatsApp Business · Réponse rapide</div></div></a>
+            <a class="ct-lnk" href="https://www.instagram.com/culturecase_official"><i class="ti ti-brand-instagram" aria-hidden="true"></i><div><div class="ct-lnk-m">@culturecase_official</div><div class="ct-lnk-s">Instagram</div></div></a>
+            <a class="ct-lnk" href="https://linktr.ee/culturecase"><i class="ti ti-link" aria-hidden="true"></i><div><div class="ct-lnk-m">linktr.ee/culturecase</div><div class="ct-lnk-s">Tous nos liens</div></div></a>
+            <a class="ct-lnk" href="https://www.tiktok.com/@culturecase"><i class="ti ti-brand-tiktok" aria-hidden="true"></i><div><div class="ct-lnk-m">@culturecase</div><div class="ct-lnk-s">TikTok</div></div></a>
+            <div class="ct-lnk ct-lnk-full"><i class="ti ti-map-pin" aria-hidden="true"></i><div><div class="ct-lnk-m">Bamako, Mali</div><div class="ct-lnk-s">Livraison dans tout Bamako</div></div></div>
+          </div>
+        </div>
+
+        <div class="ct-divider"></div>
+
+        <!-- BAS : FORMULAIRE + AVIS -->
+        <div class="ct-bottom">
+
+          <!-- FORMULAIRE MESSAGE -->
+          <div class="ct-form">
+            <div class="cf-title">Envoyer un message</div>
+            <div class="cf-g"><label class="cf-lbl">Nom</label><input class="cf-in" type="text" id="cf-n" placeholder="Votre nom" /></div>
+            <div class="cf-g"><label class="cf-lbl">Téléphone / WhatsApp</label><input class="cf-in" type="text" id="cf-p" placeholder="+223..." /></div>
+            <div class="cf-g"><label class="cf-lbl">Message</label><textarea class="cf-in" id="cf-m" placeholder="Votre question ou commande..."></textarea></div>
+            <button class="cf-btn" onclick="sendContact()">Envoyer via WhatsApp →</button>
+          </div>
+
+          <!-- AVIS CLIENTS -->
+          <div class="ct-reviews">
+            <div class="ct-reviews-header">
+              <div class="cf-title" style="margin-bottom:0">Avis clients</div>
+            </div>
+            <div class="ct-reviews-grid" id="contact-reviews-grid">
+              <!-- Avis chargés dynamiquement -->
+            </div>
+            <!-- FORMULAIRE AVIS -->
+            <div class="ct-form ct-leave-form">
+              <div class="cf-title" style="display:flex;align-items:center;gap:8px"><i class="ti ti-star" style="color:var(--gold)"></i> Laisser un avis</div>
+              <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Votre avis sera publié après une rapide vérification. Envoyez-nous aussi une capture sur WhatsApp pour accélérer la validation.</p>
+              <div class="cf-g"><label class="cf-lbl">Note *</label>
+                <div id="star-row" style="display:flex;gap:8px;font-size:2rem;cursor:pointer">
+                  <span onclick="pickStar(1)" style="color:var(--border2);transition:color 0.15s">★</span>
+                  <span onclick="pickStar(2)" style="color:var(--border2);transition:color 0.15s">★</span>
+                  <span onclick="pickStar(3)" style="color:var(--border2);transition:color 0.15s">★</span>
+                  <span onclick="pickStar(4)" style="color:var(--border2);transition:color 0.15s">★</span>
+                  <span onclick="pickStar(5)" style="color:var(--border2);transition:color 0.15s">★</span>
+                </div>
               </div>
+              <div class="ct-leave-grid">
+                <div class="cf-g"><label class="cf-lbl">Prénom &amp; initiale *</label><input class="cf-in" type="text" id="av-nom" placeholder="ex: Aminata K." maxlength="30" /></div>
+                <div class="cf-g"><label class="cf-lbl">Quartier (optionnel)</label><input class="cf-in" type="text" id="av-loc" placeholder="ex: Badalabougou, Bamako" maxlength="40" /></div>
+              </div>
+              <div class="cf-g"><label class="cf-lbl">Votre avis *</label><textarea class="cf-in" id="av-txt" placeholder="Partagez votre expérience…" maxlength="280" rows="3"></textarea></div>
+              <div id="av-err" style="display:none;background:#fff0ec;border:1px solid #f5c6b0;border-radius:var(--radius);padding:0.6rem 1rem;font-size:13px;color:#c03a08;margin-bottom:0.75rem"></div>
+              <button class="cf-btn" onclick="submitAvis()">Publier mon avis →</button>
             </div>
           </div>
-        </div>
-        <div class="ct-form">
-          <div class="cf-title">Envoyer un message</div>
-          <div class="cf-g">
-            <label class="cf-lbl">Nom</label
-            ><input
-              class="cf-in"
-              type="text"
-              id="cf-n"
-              placeholder="Votre nom"
-            />
-          </div>
-          <div class="cf-g">
-            <label class="cf-lbl">Téléphone / WhatsApp</label
-            ><input class="cf-in" type="text" id="cf-p" placeholder="+223..." />
-          </div>
-          <div class="cf-g">
-            <label class="cf-lbl">Message</label
-            ><textarea
-              class="cf-in"
-              id="cf-m"
-              placeholder="Votre question ou commande..."
-            ></textarea>
-          </div>
-          <button class="cf-btn" onclick="sendContact()">
-            Envoyer via WhatsApp →
-          </button>
-        </div>
 
-        <!-- ══ FORMULAIRE AVIS ══ -->
-        <div
-          class="ct-form"
-          style="
-            margin-top: 2rem;
-            border-top: 1px solid var(--border);
-            padding-top: 2rem;
-          "
-        >
-          <div
-            class="cf-title"
-            style="display: flex; align-items: center; gap: 8px"
-          >
-            <i class="ti ti-star" style="color: var(--gold)"></i> Laisser un
-            avis
-          </div>
-          <p
-            style="font-size: 13px; color: var(--muted); margin-bottom: 1.25rem"
-          >
-            Votre avis sera publié après une rapide vérification. Envoyez-nous
-            aussi une capture sur WhatsApp pour accélérer la validation.
-          </p>
-
-          <!-- Étoiles -->
-          <div class="cf-g">
-            <label class="cf-lbl">Note *</label>
-            <div
-              id="star-row"
-              style="display: flex; gap: 8px; font-size: 2rem; cursor: pointer"
-            >
-              <span
-                onclick="pickStar(1)"
-                style="color: var(--border2); transition: color 0.15s"
-                >★</span
-              >
-              <span
-                onclick="pickStar(2)"
-                style="color: var(--border2); transition: color 0.15s"
-                >★</span
-              >
-              <span
-                onclick="pickStar(3)"
-                style="color: var(--border2); transition: color 0.15s"
-                >★</span
-              >
-              <span
-                onclick="pickStar(4)"
-                style="color: var(--border2); transition: color 0.15s"
-                >★</span
-              >
-              <span
-                onclick="pickStar(5)"
-                style="color: var(--border2); transition: color 0.15s"
-                >★</span
-              >
-            </div>
-          </div>
-          <div class="cf-g">
-            <label class="cf-lbl">Prénom &amp; initiale *</label
-            ><input
-              class="cf-in"
-              type="text"
-              id="av-nom"
-              placeholder="ex: Aminata K."
-              maxlength="30"
-            />
-          </div>
-          <div class="cf-g">
-            <label class="cf-lbl">Quartier (optionnel)</label
-            ><input
-              class="cf-in"
-              type="text"
-              id="av-loc"
-              placeholder="ex: Badalabougou, Bamako"
-              maxlength="40"
-            />
-          </div>
-          <div class="cf-g">
-            <label class="cf-lbl">Votre avis *</label
-            ><textarea
-              class="cf-in"
-              id="av-txt"
-              placeholder="Partagez votre expérience…"
-              maxlength="280"
-              rows="4"
-            ></textarea>
-          </div>
-          <div
-            id="av-err"
-            style="
-              display: none;
-              background: #fff0ec;
-              border: 1px solid #f5c6b0;
-              border-radius: var(--radius);
-              padding: 0.6rem 1rem;
-              font-size: 13px;
-              color: #c03a08;
-              margin-bottom: 0.75rem;
-            "
-          ></div>
-          <button class="cf-btn" onclick="submitAvis()">
-            Publier mon avis →
-          </button>
         </div>
       </div>
     </div>
@@ -2417,7 +2405,7 @@
           <ul class="footer-links">
             <li><button onclick="go('home')">Accueil</button></li>
             <li><button onclick="go('catalogue')">Catalogue</button></li>
-            <li><button onclick="go('about')">À propos</button></li>
+            <li><button onclick="go('about')">Notre histoire</button></li>
             <li><button onclick="go('blog')">Blog</button></li>
             <li><button onclick="go('contact')">Contact</button></li>
           </ul>
