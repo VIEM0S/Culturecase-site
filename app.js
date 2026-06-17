@@ -1047,6 +1047,12 @@ function syncMobileBar() {
   }
 }
 
+// Délégation — cartes catalogue et home (remplace onclick inline)
+document.addEventListener("click", function (e) {
+  var card = e.target.closest("[data-det-id]");
+  if (card) { e.stopPropagation(); openDet(card.dataset.detId); return; }
+});
+
 // Fermer le menu si clic en dehors
 document.addEventListener("click", function (e) {
   const ham = document.getElementById("nav-ham");
@@ -1150,11 +1156,11 @@ function card(d) {
     : "3 500 – 5 000 FCFA";
   const isOut = gm && getModelStock(d.id, gm) === 0;
 
-  return `<div class="pcard${isOut ? " is-out" : ""}" tabindex="0" role="button" aria-label="Voir le design ${d.name}" onclick="openDet('${d.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDet('${d.id}')}">
+  return `<div class="pcard${isOut ? " is-out" : ""}" tabindex="0" role="button" data-det-id="${d.id}" aria-label="Voir le design ${d.name}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDet('${d.id}')}">
     <div class="pc-img">
 <img src="${cldImg(d.img, 400)}" alt="${d.name}" loading="lazy" onerror="this.parentNode.style.background='var(--sand)'">
 <div class="pc-overlay">
-  <button class="pc-ov-btn" onclick="event.stopPropagation();openDet('${d.id}')">Voir le design</button>
+  <button class="pc-ov-btn" data-det-id="${d.id}">Voir le design</button>
 </div>
 ${availBadge}
     </div>
@@ -1257,6 +1263,13 @@ function onGlobalModelChange() {
   }
   filt();
 }
+
+// Debounce — évite de re-render le catalogue à chaque frappe (réseau lent)
+function _debounce(fn, delay) {
+  var t;
+  return function () { clearTimeout(t); t = setTimeout(fn, delay); };
+}
+var _filtDebounced = _debounce(function () { filt(); }, 200);
 
 function filt() {
   if (!DS || DS.length === 0) return;
@@ -1743,7 +1756,19 @@ function renderCartItems() {
 
     const qtyEl = document.createElement("div");
     qtyEl.className = "cart-item-qty";
-    qtyEl.innerHTML = `<button onclick="updateCartQty(${idx},-1)">−</button><span>${item.qty}</span><button onclick="updateCartQty(${idx},+1)">+</button>`;
+    const qtyMinus = document.createElement("button");
+    qtyMinus.textContent = "−";
+    qtyMinus.setAttribute("aria-label", "Diminuer la quantité");
+    (function(i){ qtyMinus.onclick = function(){ updateCartQty(i, -1); }; })(idx);
+    const qtySp = document.createElement("span");
+    qtySp.textContent = item.qty;
+    const qtyPlus = document.createElement("button");
+    qtyPlus.textContent = "+";
+    qtyPlus.setAttribute("aria-label", "Augmenter la quantité");
+    (function(i){ qtyPlus.onclick = function(){ updateCartQty(i, +1); }; })(idx);
+    qtyEl.appendChild(qtyMinus);
+    qtyEl.appendChild(qtySp);
+    qtyEl.appendChild(qtyPlus);
 
     bottom.appendChild(priceEl);
     bottom.appendChild(qtyEl);
@@ -1858,16 +1883,24 @@ function cartOrderWA() {
   msg += "\n\nMerci ! 🙏";
 
   // Ouvrir WhatsApp
-  window.open(
+  var waOpened = window.open(
     "https://wa.me/22375992482?text=" + encodeURIComponent(msg),
     "_blank",
   );
 
-  // Vider le panier et afficher confirmation
-  CART.length = 0;
-  saveCart(); // effacer du localStorage aussi
-  updateCartBadge();
-  showOrderConfirmation(nom);
+  // Vider le panier après 1,5s — laisse le temps à WhatsApp de s'ouvrir.
+  // Si le popup est bloqué (waOpened === null), on ne vide pas et on prévient.
+  if (waOpened === null) {
+    showCartToast("⚠️ Popup bloqué — autorise les popups puis réessaie.");
+    if (btn) { btn.disabled = false; btn.textContent = "Commander via WhatsApp →"; }
+    return;
+  }
+  setTimeout(function () {
+    CART.length = 0;
+    saveCart();
+    updateCartBadge();
+    showOrderConfirmation(nom);
+  }, 1500);
 }
 
 // Ajouter depuis la page détail au panier
@@ -2029,6 +2062,7 @@ function submitAvis() {
     }
   } else {
     // Firestore pas encore prêt (rare) — on réessaie dans 2s
+    if (btn) btn.textContent = "Connexion en cours…";
     setTimeout(submitAvis, 2000);
   }
 }

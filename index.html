@@ -377,6 +377,7 @@
             <select
               class="cat-model-sel"
               id="global-model"
+              aria-label="Choisir votre modèle iPhone"
               onchange="onGlobalModelChange()"
             >
               <option value="">— Choisir mon modèle —</option>
@@ -420,7 +421,7 @@
             type="search"
             id="sinp"
             placeholder="Rechercher un design..."
-            oninput="filt()"
+            oninput="_filtDebounced()"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="off"
