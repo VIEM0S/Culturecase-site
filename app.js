@@ -1981,7 +1981,7 @@ function submitAvis() {
   var db = window.__db;
   var api = window.__firestoreAPI;
 
-  if (db && api && api.addDoc && api.collection) {
+  function _doSubmit() {
     api
       .addDoc(api.collection(db, "reviews"), payload)
       .then(function () {
@@ -2002,6 +2002,31 @@ function submitAvis() {
         err.textContent = "Erreur d'envoi — vérifiez votre connexion.";
         err.style.display = "block";
       });
+  }
+
+  if (db && api && api.addDoc && api.collection) {
+    var authObj = window.__auth;
+    if (authObj && authObj.currentUser) {
+      // Auth déjà prête → soumettre immédiatement
+      _doSubmit();
+    } else if (authObj) {
+      // Auth en cours (réseau lent) → attendre max 6s
+      var authWait = 0;
+      var authPoll = setInterval(function () {
+        authWait++;
+        if (authObj.currentUser) {
+          clearInterval(authPoll);
+          _doSubmit();
+        } else if (authWait > 30) {
+          clearInterval(authPoll);
+          if (btn) { btn.disabled = false; btn.textContent = "Publier mon avis →"; }
+          err.textContent = "Connexion trop lente — réessayez dans quelques secondes.";
+          err.style.display = "block";
+        }
+      }, 200);
+    } else {
+      _doSubmit(); // pas d'auth configurée (dev) → essai direct
+    }
   } else {
     // Firestore pas encore prêt (rare) — on réessaie dans 2s
     setTimeout(submitAvis, 2000);

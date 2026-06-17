@@ -27,6 +27,7 @@ const app = initializeApp({
 const db = getFirestore(app);
 const auth = getAuth(app);
 window.__db = db;
+window.__auth = auth;
 
 // ── escapeHTML local (évite dépendance sur app.js) ───────────────────────────
 const _esc = (s) =>
