@@ -36,7 +36,7 @@ let mainCache = null,
 
 // ══ FIREBASE → UI ════════════════════════════════════════════════════════════
 // Exposer les APIs Firestore pour le blog
-window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp };
+window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot };
 
 window.__applyFirebaseData = function (data) {
   try {
@@ -105,6 +105,10 @@ window.__applyFirebaseData = function (data) {
     const statM = document.getElementById("stat-models");
     if (statD) statD.textContent = DS.length;
     if (statM) statM.textContent = ALL_MDS.length;
+    // Images hero + about dynamiques
+    if (typeof renderStaticImages === "function") {
+      renderStaticImages(settings.heroImages, settings.aboutImages);
+    }
     if (pg === "home") initHome();
     if (pg === "catalogue") filt();
     if (pg === "detail" && curD) {
@@ -300,8 +304,13 @@ function startListeners() {
       q,
       (snap) => {
         const grid = document.getElementById("reviews-grid");
-        const gridContact = document.getElementById("contact-reviews-grid");
-        const cards = snap.docs
+        if (!grid) return;
+        if (snap.docs.length === 0) {
+          grid.innerHTML =
+            '<p style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">Soyez le premier à laisser un avis !</p>';
+          return;
+        }
+        grid.innerHTML = snap.docs
           .slice(0, 8)
           .map((d) => {
             const r = d.data();
@@ -321,21 +330,6 @@ function startListeners() {
               `<p class="rev-text">\u00ab\u00a0${r.txt}\u00a0\u00bb</p>` +
               `<div class="rev-author"><div class="rev-avatar">${initials}</div>` +
               `<div><div class="rev-name">${r.nom}</div><div class="rev-loc">${r.loc || "Bamako, Mali"}</div></div></div>` +
-              `</div>`
-            );
-          })
-          .join("");
-        if (grid) grid.innerHTML = cards;
-        if (gridContact) gridContact.innerHTML = snap.docs
-          .slice(0, 4)
-          .map((d) => {
-            const r = d.data();
-            const stars = "★".repeat(r.stars || 5) + "☆".repeat(5 - (r.stars || 5));
-            return (
-              `<div class="review-card">` +
-              `<div class="rev-stars" style="color:var(--gold)">${stars}</div>` +
-              `<p class="rev-text">« ${escapeHTML(r.txt)} »</p>` +
-              `<div class="rev-author"><div class="rev-name">${escapeHTML(r.nom)}</div><div class="rev-loc">${escapeHTML(r.loc || "Bamako, Mali")}</div></div>` +
               `</div>`
             );
           })
