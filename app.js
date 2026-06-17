@@ -988,6 +988,25 @@ function toggleMobileMenu() {
 
 // ── Sticky mobile order bar ───────────────────────────────────────────────
 var CART = []; // [{ designId, name, img, model, qty, price }]
+
+// ── Persistance panier (localStorage) ────────────────────────────────────────
+function saveCart() {
+  try {
+    localStorage.setItem("cc_cart", JSON.stringify(CART));
+  } catch (e) {}
+}
+function loadCart() {
+  try {
+    const raw = localStorage.getItem("cc_cart");
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      CART.length = 0;
+      parsed.forEach((i) => CART.push(i));
+    }
+  } catch (e) {}
+}
+loadCart(); // Restaurer au chargement
 function syncMobileBar() {
   if (typeof CART !== "undefined") updateCartBadge();
   if (window.innerWidth > 640) return;
@@ -1601,6 +1620,7 @@ function _doAddToCart(designId, model) {
 
   updateCartBadge();
   renderCartItems();
+  saveCart();
   showCartToast("✓ " + d.name + " · " + model + " ajouté");
 }
 
@@ -1608,6 +1628,7 @@ function removeFromCart(idx) {
   CART.splice(idx, 1);
   updateCartBadge();
   renderCartItems();
+  saveCart();
 }
 
 function updateCartQty(idx, delta) {
@@ -1618,6 +1639,7 @@ function updateCartQty(idx, delta) {
   item.qty = Math.min(maxQty, Math.max(1, item.qty + delta));
   updateCartBadge();
   renderCartItems();
+  saveCart();
 }
 
 function renderCartItems() {
@@ -1748,7 +1770,7 @@ function showOrderConfirmation(nom) {
   if (!items) return;
   if (footer) footer.style.display = "none";
 
-  const prenom = nom.split(" ")[0];
+  const prenom = escapeHTML(nom.split(" ")[0]);
   items.innerHTML = `
     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem 1.5rem;text-align:center;flex:1;gap:1rem">
 <div style="width:64px;height:64px;background:rgba(37,211,102,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px">✓</div>
@@ -1838,6 +1860,7 @@ function cartOrderWA() {
 
   // Vider le panier et afficher confirmation
   CART.length = 0;
+  saveCart(); // effacer du localStorage aussi
   updateCartBadge();
   showOrderConfirmation(nom);
 }
@@ -1875,6 +1898,7 @@ function addToCartFromDet() {
   }
   updateCartBadge();
   renderCartItems();
+  saveCart();
   showCartToast("✓ " + curD.name + " · " + model + " ajouté au panier");
   openCart();
 }

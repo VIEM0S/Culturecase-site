@@ -28,6 +28,15 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 window.__db = db;
 
+// ── escapeHTML local (évite dépendance sur app.js) ───────────────────────────
+const _esc = (s) =>
+  String(s ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 const chunkCache = new Map();
 let mainCache = null,
   chunkUnsubs = [],
@@ -315,9 +324,9 @@ function startListeners() {
       return (
         `<div class="review-card">` +
         `<div class="rev-stars" style="color:var(--gold)">${stars}</div>` +
-        `<p class="rev-text">\u00ab\u00a0${r.txt}\u00a0\u00bb</p>` +
+        `<p class="rev-text">\u00ab\u00a0${_esc(r.txt)}\u00a0\u00bb</p>` +
         `<div class="rev-author"><div class="rev-avatar">${initials}</div>` +
-        `<div><div class="rev-name">${r.nom}</div><div class="rev-loc">${r.loc || "Bamako, Mali"}</div></div></div>` +
+        `<div><div class="rev-name">${_esc(r.nom)}</div><div class="rev-loc">${_esc(r.loc) || "Bamako, Mali"}</div></div></div>` +
         `</div>`
       );
     };
