@@ -1433,11 +1433,18 @@ function orderWA() {
     document.getElementById("lf-quartier").value || ""
   ).trim();
   if (!nom) {
+    document.getElementById("lf-nom")?.focus();
     toast("⚠️ Indique ton prénom pour qu'on te retrouve");
     return;
   }
   if (!tel) {
+    document.getElementById("lf-tel")?.focus();
     toast("⚠️ Indique ton numéro de téléphone");
+    return;
+  }
+  if (tel.replace(/\D/g, "").length < 8) {
+    document.getElementById("lf-tel")?.focus();
+    toast("⚠️ Numéro trop court — vérifie ton numéro");
     return;
   }
   _orderWALock = true;
@@ -1466,14 +1473,24 @@ function orderQuick(id) {
   const d = DS.find((x) => x.id === id);
   if (!d) return;
   const gm = document.getElementById("global-model")?.value || "";
-  const nom = localStorage.getItem("cc_nom") || "";
-  const tel = localStorage.getItem("cc_tel") || "";
-  const _price = gm
-    ? fp(getModelPrice(gm))
-    : "3 500 – 5 000 FCFA";
-  let msg = `Bonjour ! Je voudrais commander :\n\n- *${d.name}* · ${gm || "(modèle à préciser)"} → ${_price}`;
-  if (nom) msg += `\n\nJe m'appelle ${nom}.`;
-  msg += `\n\nMerci 🙏`;
+  const nom = (localStorage.getItem("cc_nom") || "").trim();
+  const tel = (localStorage.getItem("cc_tel") || "").trim();
+
+  // Validation — si infos manquantes, ouvrir la fiche produit pour que le client les remplisse
+  if (!gm) {
+    toast("⚠️ Choisis d'abord ton modèle iPhone en haut de la page");
+    return;
+  }
+  if (!nom || !tel || tel.replace(/\D/g, "").length < 8) {
+    // Ouvrir la fiche produit où se trouve le formulaire de livraison
+    openDet(id);
+    setTimeout(() => toast("⚠️ Remplis ton prénom et numéro avant de commander"), 400);
+    return;
+  }
+
+  const _price = fp(getModelPrice(gm));
+  let msg = `Bonjour ! Je voudrais commander :\n\n- *${d.name}* · ${gm} → ${_price}`;
+  msg += `\n\nJe m'appelle ${nom}.\n📞 ${tel}\n\nMerci 🙏`;
   window.open(
     "https://wa.me/22375992482?text=" + encodeURIComponent(msg),
     "_blank",
