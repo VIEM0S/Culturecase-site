@@ -1447,6 +1447,11 @@ function orderWA() {
     toast("⚠️ Numéro trop court — vérifie ton numéro");
     return;
   }
+  if (!quartier) {
+    document.getElementById("lf-quartier")?.focus();
+    toast("⚠️ Indique ton quartier pour la livraison");
+    return;
+  }
   _orderWALock = true;
   setTimeout(() => { _orderWALock = false; }, 1500);
   try {
@@ -1481,16 +1486,16 @@ function orderQuick(id) {
     toast("⚠️ Choisis d'abord ton modèle iPhone en haut de la page");
     return;
   }
-  if (!nom || !tel || tel.replace(/\D/g, "").length < 8) {
-    // Ouvrir la fiche produit où se trouve le formulaire de livraison
+  const quartierQ = (localStorage.getItem("cc_quartier") || "").trim();
+  if (!nom || !tel || tel.replace(/\D/g, "").length < 8 || !quartierQ) {
     openDet(id);
-    setTimeout(() => toast("⚠️ Remplis ton prénom et numéro avant de commander"), 400);
+    setTimeout(() => toast("⚠️ Remplis ton prénom, numéro et quartier avant de commander"), 400);
     return;
   }
 
   const _price = fp(getModelPrice(gm));
   let msg = `Bonjour ! Je voudrais commander :\n\n- *${d.name}* · ${gm} → ${_price}`;
-  msg += `\n\nJe m'appelle ${nom}.\n📞 ${tel}\n\nMerci 🙏`;
+  msg += `\n\nJe m'appelle ${nom}, je suis à ${quartierQ}.\n📞 ${tel}\n\nMerci 🙏`;
   window.open(
     "https://wa.me/22375992482?text=" + encodeURIComponent(msg),
     "_blank",
@@ -1882,6 +1887,11 @@ function cartOrderWA() {
   if (tel.replace(/\D/g, "").length < 8) {
     document.getElementById("cart-tel").focus();
     showCartToast("⚠️ Numéro trop court — vérifie ton numéro");
+    return;
+  }
+  if (!quartier) {
+    document.getElementById("cart-quartier").focus();
+    showCartToast("⚠️ Indique ton quartier pour la livraison");
     return;
   }
 
