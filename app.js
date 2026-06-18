@@ -1450,11 +1450,10 @@ function orderWA() {
   const safeQty = typeof dQty === "number" && dQty > 0 ? dQty : 1;
   const unitPrice = getModelPrice(model);
   const total = fp(unitPrice * safeQty);
-  let msg = `Bonjour CultureCase 👋\n\n🎨 Design : ${curD.name}\n📱 Modèle : ${model}\n🔢 Quantité : ${safeQty}\n💰 Total : ${total}`;
-  if (nom) msg += `\n\n👤 Nom : ${nom}`;
-  if (tel) msg += `\n📞 Téléphone : ${tel}`;
-  if (quartier) msg += `\n📍 Quartier : ${quartier}`;
-  msg += `\n\nMerci !`;
+  const qtyStr = safeQty > 1 ? ` · x${safeQty} → ${total}` : ` → ${total}`;
+  let msg = `Bonjour ! Je voudrais commander :\n\n- *${curD.name}* · ${model}${qtyStr}\n\nJe m'appelle ${nom}`;
+  if (quartier) msg += `, je suis à ${quartier}`;
+  msg += `.\n📞 ${tel}\n\nMerci 🙏`;
   window.open(
     "https://wa.me/22375992482?text=" + encodeURIComponent(msg),
     "_blank",
@@ -1472,10 +1471,9 @@ function orderQuick(id) {
   const _price = gm
     ? fp(getModelPrice(gm))
     : "3 500 – 5 000 FCFA";
-  let msg = `Bonjour CultureCase 👋\n\nJe voudrais commander :\n🎨 Design : ${d.name}\n📱 Modèle : ${gm || "(à préciser)"}\n🔢 Quantité : 1\n💰 Prix unitaire : ${_price}`;
-  if (nom) msg += `\n\n👤 Nom : ${nom}`;
-  if (tel) msg += `\n📞 Téléphone : ${tel}`;
-  msg += `\n\nMerci !`;
+  let msg = `Bonjour ! Je voudrais commander :\n\n- *${d.name}* · ${gm || "(modèle à préciser)"} → ${_price}`;
+  if (nom) msg += `\n\nJe m'appelle ${nom}.`;
+  msg += `\n\nMerci 🙏`;
   window.open(
     "https://wa.me/22375992482?text=" + encodeURIComponent(msg),
     "_blank",
@@ -1853,13 +1851,20 @@ function cartOrderWA() {
     document.getElementById("cart-quartier").value || ""
   ).trim();
 
-  // Validation minimale
+  // Validation avec messages ciblés
   if (!nom) {
-    showCartToast("⚠️ Indique ton prénom pour qu'on te retrouve");
+    document.getElementById("cart-nom").focus();
+    showCartToast("⚠️ Indique ton prénom");
     return;
   }
   if (!tel) {
+    document.getElementById("cart-tel").focus();
     showCartToast("⚠️ Indique ton numéro de téléphone");
+    return;
+  }
+  if (tel.replace(/\D/g, "").length < 8) {
+    document.getElementById("cart-tel").focus();
+    showCartToast("⚠️ Numéro trop court — vérifie ton numéro");
     return;
   }
 
@@ -1870,17 +1875,18 @@ function cartOrderWA() {
     if (quartier) localStorage.setItem("cc_quartier", quartier);
   } catch (e) {}
 
-  let msg = "Bonjour CultureCase 👋\n\n🛒 *MA COMMANDE :*\n";
-  msg += "─────────────────\n";
-  CART.forEach((item, i) => {
-    msg += `\n${i + 1}. 🎨 *${item.name}*\n   📱 Modèle : ${item.model}\n   🔢 Quantité : ${item.qty}\n   💰 ${fp(item.price * item.qty)}\n`;
+  // Message naturel — du point de vue du client
+  let msg = "Bonjour ! Je voudrais commander :\n\n";
+  CART.forEach((item) => {
+    const ligne = item.qty > 1
+      ? `- *${item.name}* · ${item.model} · x${item.qty} → ${fp(item.price * item.qty)}`
+      : `- *${item.name}* · ${item.model} → ${fp(item.price)}`;
+    msg += ligne + "\n";
   });
-  msg += "─────────────────\n";
-  msg += `💰 *TOTAL : ${fp(cartTotal())}*`;
-  if (nom) msg += `\n\n👤 Nom : ${nom}`;
-  if (tel) msg += `\n📞 Téléphone : ${tel}`;
-  if (quartier) msg += `\n📍 Quartier : ${quartier}`;
-  msg += "\n\nMerci ! 🙏";
+  if (CART.length > 1) msg += `\n*Total : ${fp(cartTotal())}*\n`;
+  msg += `\nJe m'appelle ${nom}`;
+  if (quartier) msg += `, je suis à ${quartier}`;
+  msg += `.\n📞 ${tel}\n\nMerci 🙏`;
 
   // Ouvrir WhatsApp
   var waOpened = window.open(
