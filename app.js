@@ -2184,3 +2184,16 @@ window.addEventListener("hashchange", function() {
 
 // Routage initial au chargement de la page
 routeFromHash();
+
+// ── Init des carrousels lifestyle (hero + about) ─────────────────────────
+// Lancé ici plutôt que dans firebase-init.js pour garantir que cldImg
+// est déjà définie au moment de l'exécution (app.js defer > firebase-init.js module).
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function() {
+    initHeroCarousel();
+    initAboutCarousel();
+  });
+} else {
+  initHeroCarousel();
+  initAboutCarousel();
+}

@@ -362,13 +362,4 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// Carrousel hero — lancé dès que le DOM est prêt, indépendamment de Firebase
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", function() {
-    if (typeof initHeroCarousel  === "function") initHeroCarousel();
-    if (typeof initAboutCarousel === "function") initAboutCarousel();
-  });
-} else {
-  if (typeof initHeroCarousel  === "function") initHeroCarousel();
-  if (typeof initAboutCarousel === "function") initAboutCarousel();
-}
+// Carrousels hero et about initialisés depuis app.js (après defer)
