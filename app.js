@@ -723,13 +723,13 @@ function toast(msg) {
 // Photos lifestyle pilotées par cette liste — indépendantes du catalogue.
 // Pour ajouter/retirer une photo, modifier HERO_SLIDES uniquement.
 const HERO_SLIDES = [
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184735/7_frzegl.jpg", alt: "CultureCase au bord du Niger, coucher de soleil", pos: "center 60%" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184733/2_gqumyr.jpg", alt: "CultureCase au stade de Bamako",                  pos: "center 35%" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184734/9_oy5wu3.jpg", alt: "CultureCase dans les rues de Bamako",              pos: "center 40%" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184735/6_v4obbo.jpg", alt: "CultureCase — mains ornées de henné",              pos: "center 30%" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184734/5_rgaxb8.jpg", alt: "CultureCase — collection de designs",              pos: "center 40%" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184734/3_o6nwrz.jpg", alt: "CultureCase — groupe de mains",                   pos: "center 45%" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184735/8_unmxhu.jpg", alt: "CultureCase — designs sur sable",                  pos: "center 50%" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,h_600,c_fill,g_auto,f_auto,q_auto/v1782184735/7_frzegl.jpg",  alt: "CultureCase au bord du Niger, coucher de soleil" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,h_600,c_fill,g_auto,f_auto,q_auto/v1782184733/2_gqumyr.jpg",  alt: "CultureCase au stade de Bamako" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,h_600,c_fill,g_auto,f_auto,q_auto/v1782184734/9_oy5wu3.jpg",  alt: "CultureCase dans les rues de Bamako" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,h_600,c_fill,g_auto,f_auto,q_auto/v1782184735/6_v4obbo.jpg",  alt: "CultureCase — mains ornées de henné" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,h_600,c_fill,g_auto,f_auto,q_auto/v1782184734/5_rgaxb8.jpg",  alt: "CultureCase — collection de designs" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,h_600,c_fill,g_auto,f_auto,q_auto/v1782184734/3_o6nwrz.jpg",  alt: "CultureCase — groupe de mains" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,h_600,c_fill,g_auto,f_auto,q_auto/v1782184735/8_unmxhu.jpg",  alt: "CultureCase — designs sur sable" },
 ];
 
 function _shuffle(arr) {
@@ -755,9 +755,7 @@ function initHeroCarousel() {
     var slide = document.createElement("div");
     slide.className = "hc-slide" + (i === 0 ? " active" : "");
     var img = document.createElement("img");
-    img.src = s.url.includes("cloudinary.com")
-      ? s.url.replace("/upload/", "/upload/w_700,h_420,c_fill,g_auto,f_auto,q_auto/")
-      : s.url;
+    img.src = s.url;
     img.alt = s.alt;
     img.loading = i === 0 ? "eager" : "lazy";
     slide.appendChild(img);
@@ -798,10 +796,10 @@ function renderStaticImages(heroImages, aboutImages) {
 
 // ══ CARROUSEL ABOUT LIFESTYLE ══════════════════════════════════════════════
 const ABOUT_SLIDES = [
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187146/A_olpj2j.jpg", alt: "CultureCase — main tenant la coque dans une voiture", pos: "center 40%" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187147/B_eot8zw.jpg", alt: "CultureCase — coque dans les rues de Bamako",          pos: "center 35%" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187147/C_byzepn.jpg", alt: "CultureCase — coques sur planches en bois",             pos: "center 50%" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187149/D_kxjaeq.jpg", alt: "CultureCase — deux coques sur sable",                   pos: "center 45%" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,h_600,c_fill,g_auto,f_auto,q_auto/v1782187146/A_olpj2j.jpg", alt: "CultureCase — main tenant la coque dans une voiture" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,h_600,c_fill,g_auto,f_auto,q_auto/v1782187147/B_eot8zw.jpg", alt: "CultureCase — coque dans les rues de Bamako" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,h_600,c_fill,g_auto,f_auto,q_auto/v1782187147/C_byzepn.jpg", alt: "CultureCase — coques sur planches en bois" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,h_600,c_fill,g_auto,f_auto,q_auto/v1782187149/D_kxjaeq.jpg", alt: "CultureCase — deux coques sur sable" },
 ];
 
 function initAboutCarousel() {
@@ -816,9 +814,7 @@ function initAboutCarousel() {
     var slide = document.createElement("div");
     slide.className = "ac-slide" + (i === 0 ? " active" : "");
     var img = document.createElement("img");
-    img.src = s.url.includes("cloudinary.com")
-      ? s.url.replace("/upload/", "/upload/w_600,h_240,c_fill,g_auto,f_auto,q_auto/")
-      : s.url;
+    img.src = s.url;
     img.alt = s.alt;
     img.loading = i === 0 ? "eager" : "lazy";
     slide.appendChild(img);
