@@ -437,6 +437,7 @@ body {
   border-radius: 6px;
   background: var(--dusk);
   aspect-ratio: 1 / 1;
+  max-height: 420px;
 }
 
 .hc-track {
