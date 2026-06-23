@@ -723,51 +723,59 @@ function toast(msg) {
 // Photos lifestyle pilotées par cette liste — indépendantes du catalogue.
 // Pour ajouter/retirer une photo, modifier HERO_SLIDES uniquement.
 const HERO_SLIDES = [
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184735/7_frzegl.jpg", alt: "CultureCase au bord du Niger, coucher de soleil" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184733/2_gqumyr.jpg", alt: "CultureCase au stade de Bamako" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184734/9_oy5wu3.jpg", alt: "CultureCase dans les rues de Bamako" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184735/6_v4obbo.jpg", alt: "CultureCase — mains ornées de henné" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184734/5_rgaxb8.jpg", alt: "CultureCase — collection de designs" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184734/3_o6nwrz.jpg", alt: "CultureCase — groupe de mains" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184735/8_unmxhu.jpg", alt: "CultureCase — designs sur sable" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184735/7_frzegl.jpg", alt: "CultureCase au bord du Niger, coucher de soleil", pos: "center 60%" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184733/2_gqumyr.jpg", alt: "CultureCase au stade de Bamako",                  pos: "center 35%" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184734/9_oy5wu3.jpg", alt: "CultureCase dans les rues de Bamako",              pos: "center 40%" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184735/6_v4obbo.jpg", alt: "CultureCase — mains ornées de henné",              pos: "center 30%" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184734/5_rgaxb8.jpg", alt: "CultureCase — collection de designs",              pos: "center 40%" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184734/3_o6nwrz.jpg", alt: "CultureCase — groupe de mains",                   pos: "center 45%" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184735/8_unmxhu.jpg", alt: "CultureCase — designs sur sable",                  pos: "center 50%" },
 ];
+
+function _shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
 
 function initHeroCarousel() {
   var track = document.getElementById("hc-track");
   var dotsEl = document.getElementById("hc-dots");
   if (!track || !dotsEl) return;
 
+  var slides = _shuffle(HERO_SLIDES);
   var current = 0;
   var timer = null;
+  var len = slides.length;
 
-  HERO_SLIDES.forEach(function(s, i) {
+  slides.forEach(function(s, i) {
     var slide = document.createElement("div");
     slide.className = "hc-slide" + (i === 0 ? " active" : "");
     var img = document.createElement("img");
-    img.src = cldImg(s.url, 600);
+    img.src = s.url.includes("cloudinary.com")
+      ? s.url.replace("/upload/", "/upload/w_700,h_420,c_fill,g_auto,f_auto,q_auto/")
+      : s.url;
     img.alt = s.alt;
     img.loading = i === 0 ? "eager" : "lazy";
     slide.appendChild(img);
     track.appendChild(slide);
-
-    var dot = document.createElement("button");
-    dot.className = "hc-dot" + (i === 0 ? " active" : "");
-    dot.setAttribute("aria-label", "Photo " + (i + 1));
-    dot.addEventListener("click", function() { goTo(i); resetTimer(); });
-    dotsEl.appendChild(dot);
   });
 
   function goTo(n) {
-    var slides = track.querySelectorAll(".hc-slide");
-    var dots   = dotsEl.querySelectorAll(".hc-dot");
-    slides[current].classList.remove("active");
-    dots[current].classList.remove("active");
-    current = (n + HERO_SLIDES.length) % HERO_SLIDES.length;
-    slides[current].classList.add("active");
-    dots[current].classList.add("active");
+    var els = track.querySelectorAll(".hc-slide");
+    els[current].classList.remove("active");
+    current = (n + len) % len;
+    els[current].classList.add("active");
   }
 
-  function next() { goTo(current + 1); }
+  function next() {
+    var nextIdx;
+    do { nextIdx = Math.floor(Math.random() * len); } while (nextIdx === current && len > 1);
+    goTo(nextIdx);
+  }
 
   function resetTimer() {
     clearInterval(timer);
@@ -790,10 +798,10 @@ function renderStaticImages(heroImages, aboutImages) {
 
 // ══ CARROUSEL ABOUT LIFESTYLE ══════════════════════════════════════════════
 const ABOUT_SLIDES = [
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187146/A_olpj2j.jpg", alt: "CultureCase — main tenant la coque dans une voiture" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187147/B_eot8zw.jpg", alt: "CultureCase — coque dans les rues de Bamako" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187147/C_byzepn.jpg", alt: "CultureCase — coques sur planches en bois" },
-  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187149/D_kxjaeq.jpg", alt: "CultureCase — deux coques sur sable" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187146/A_olpj2j.jpg", alt: "CultureCase — main tenant la coque dans une voiture", pos: "center 40%" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187147/B_eot8zw.jpg", alt: "CultureCase — coque dans les rues de Bamako",          pos: "center 35%" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187147/C_byzepn.jpg", alt: "CultureCase — coques sur planches en bois",             pos: "center 50%" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187149/D_kxjaeq.jpg", alt: "CultureCase — deux coques sur sable",                   pos: "center 45%" },
 ];
 
 function initAboutCarousel() {
@@ -808,7 +816,9 @@ function initAboutCarousel() {
     var slide = document.createElement("div");
     slide.className = "ac-slide" + (i === 0 ? " active" : "");
     var img = document.createElement("img");
-    img.src = cldImg(s.url, 500);
+    img.src = s.url.includes("cloudinary.com")
+      ? s.url.replace("/upload/", "/upload/w_600,h_240,c_fill,g_auto,f_auto,q_auto/")
+      : s.url;
     img.alt = s.alt;
     img.loading = i === 0 ? "eager" : "lazy";
     slide.appendChild(img);
