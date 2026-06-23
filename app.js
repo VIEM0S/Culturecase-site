@@ -785,14 +785,63 @@ function initHeroCarousel() {
 const DEFAULT_ABOUT_IMAGES = [{id:"D14",w:500},{id:"D3",w:300},{id:"D28",w:300}];
 
 function renderStaticImages(heroImages, aboutImages) {
-  // heroImages ignoré — le hero est maintenant géré par initHeroCarousel()
-  var aboutList = (aboutImages && aboutImages.length) ? aboutImages : DEFAULT_ABOUT_IMAGES;
-  aboutList.forEach(function(cfg, i) {
-    var design = DS.find(function(d) { return d.id === cfg.id; });
-    if (!design) return;
-    var imgEl = document.getElementById("about-img-"+i+"-src");
-    if (imgEl) imgEl.src = cldImg(design.img, cfg.w || 300);
+  // heroImages et aboutImages ignorés — les deux carrousels sont autonomes
+}
+
+// ══ CARROUSEL ABOUT LIFESTYLE ══════════════════════════════════════════════
+const ABOUT_SLIDES = [
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187146/A_olpj2j.jpg", alt: "CultureCase — main tenant la coque dans une voiture" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187147/B_eot8zw.jpg", alt: "CultureCase — coque dans les rues de Bamako" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187147/C_byzepn.jpg", alt: "CultureCase — coques sur planches en bois" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782187149/D_kxjaeq.jpg", alt: "CultureCase — deux coques sur sable" },
+];
+
+function initAboutCarousel() {
+  var track = document.getElementById("ac-track");
+  var dotsEl = document.getElementById("ac-dots");
+  if (!track || !dotsEl) return;
+
+  var current = 0;
+  var timer = null;
+
+  ABOUT_SLIDES.forEach(function(s, i) {
+    var slide = document.createElement("div");
+    slide.className = "ac-slide" + (i === 0 ? " active" : "");
+    var img = document.createElement("img");
+    img.src = cldImg(s.url, 500);
+    img.alt = s.alt;
+    img.loading = i === 0 ? "eager" : "lazy";
+    slide.appendChild(img);
+    track.appendChild(slide);
+
+    var dot = document.createElement("button");
+    dot.className = "ac-dot" + (i === 0 ? " active" : "");
+    dot.setAttribute("aria-label", "Photo " + (i + 1));
+    dot.addEventListener("click", function() { goTo(i); resetTimer(); });
+    dotsEl.appendChild(dot);
   });
+
+  function goTo(n) {
+    var slides = track.querySelectorAll(".ac-slide");
+    var dots   = dotsEl.querySelectorAll(".ac-dot");
+    slides[current].classList.remove("active");
+    dots[current].classList.remove("active");
+    current = (n + ABOUT_SLIDES.length) % ABOUT_SLIDES.length;
+    slides[current].classList.add("active");
+    dots[current].classList.add("active");
+  }
+
+  function next() { goTo(current + 1); }
+
+  function resetTimer() {
+    clearInterval(timer);
+    timer = setInterval(next, 5000);
+  }
+
+  track.addEventListener("mouseenter", function() { clearInterval(timer); });
+  track.addEventListener("mouseleave", resetTimer);
+
+  resetTimer();
 }
 
 // ══ CLOUDINARY — optimisation automatique des images ══════════════════════
