@@ -719,29 +719,78 @@ function toast(msg) {
   setTimeout(() => el.classList.remove("show"), 2800);
 }
 
-// ══ IMAGES STATIQUES (hero + about) — pilotées depuis Firestore ══════════
-// settings.heroImages  = [{id:"D12",w:400},{id:"D1",w:300},{id:"D13",w:300}]
+// ══ CARROUSEL HERO LIFESTYLE ══════════════════════════════════════════════
+// Photos lifestyle pilotées par cette liste — indépendantes du catalogue.
+// Pour ajouter/retirer une photo, modifier HERO_SLIDES uniquement.
+const HERO_SLIDES = [
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184735/7_frzegl.jpg", alt: "CultureCase au bord du Niger, coucher de soleil" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184733/2_gqumyr.jpg", alt: "CultureCase au stade de Bamako" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184734/9_oy5wu3.jpg", alt: "CultureCase dans les rues de Bamako" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184735/6_v4obbo.jpg", alt: "CultureCase — mains ornées de henné" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184734/5_rgaxb8.jpg", alt: "CultureCase — collection de designs" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184734/3_o6nwrz.jpg", alt: "CultureCase — groupe de mains" },
+  { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/v1782184735/8_unmxhu.jpg", alt: "CultureCase — designs sur sable" },
+];
+
+function initHeroCarousel() {
+  var track = document.getElementById("hc-track");
+  var dotsEl = document.getElementById("hc-dots");
+  if (!track || !dotsEl) return;
+
+  var current = 0;
+  var timer = null;
+
+  HERO_SLIDES.forEach(function(s, i) {
+    var slide = document.createElement("div");
+    slide.className = "hc-slide" + (i === 0 ? " active" : "");
+    var img = document.createElement("img");
+    img.src = cldImg(s.url, 600);
+    img.alt = s.alt;
+    img.loading = i === 0 ? "eager" : "lazy";
+    slide.appendChild(img);
+    track.appendChild(slide);
+
+    var dot = document.createElement("button");
+    dot.className = "hc-dot" + (i === 0 ? " active" : "");
+    dot.setAttribute("aria-label", "Photo " + (i + 1));
+    dot.addEventListener("click", function() { goTo(i); resetTimer(); });
+    dotsEl.appendChild(dot);
+  });
+
+  function goTo(n) {
+    var slides = track.querySelectorAll(".hc-slide");
+    var dots   = dotsEl.querySelectorAll(".hc-dot");
+    slides[current].classList.remove("active");
+    dots[current].classList.remove("active");
+    current = (n + HERO_SLIDES.length) % HERO_SLIDES.length;
+    slides[current].classList.add("active");
+    dots[current].classList.add("active");
+  }
+
+  function next() { goTo(current + 1); }
+
+  function resetTimer() {
+    clearInterval(timer);
+    timer = setInterval(next, 4000);
+  }
+
+  track.addEventListener("mouseenter", function() { clearInterval(timer); });
+  track.addEventListener("mouseleave", resetTimer);
+
+  resetTimer();
+}
+
+// ══ IMAGES STATIQUES (about uniquement) — pilotées depuis Firestore ═══════
 // settings.aboutImages = [{id:"D14",w:500},{id:"D3",w:300},{id:"D28",w:300}]
-const DEFAULT_HERO_IMAGES  = [{id:"D12",w:400},{id:"D1",w:300},{id:"D13",w:300}];
 const DEFAULT_ABOUT_IMAGES = [{id:"D14",w:500},{id:"D3",w:300},{id:"D28",w:300}];
 
 function renderStaticImages(heroImages, aboutImages) {
-  const heroList  = (heroImages  && heroImages.length)  ? heroImages  : DEFAULT_HERO_IMAGES;
-  const aboutList = (aboutImages && aboutImages.length) ? aboutImages : DEFAULT_ABOUT_IMAGES;
-  heroList.forEach((cfg, i) => {
-    const design = DS.find((d) => d.id === cfg.id);
+  // heroImages ignoré — le hero est maintenant géré par initHeroCarousel()
+  var aboutList = (aboutImages && aboutImages.length) ? aboutImages : DEFAULT_ABOUT_IMAGES;
+  aboutList.forEach(function(cfg, i) {
+    var design = DS.find(function(d) { return d.id === cfg.id; });
     if (!design) return;
-    const imgEl = document.getElementById("hero-img-"+i+"-src");
-    const lblEl = document.getElementById("hero-img-"+i+"-lbl");
-    const wrap  = document.getElementById("hero-img-"+i);
-    if (imgEl) imgEl.src = cldImg(design.img, cfg.w || 300);
-    if (lblEl) lblEl.textContent = design.name;
-    if (wrap)  wrap.onclick = () => openDet(design.id);
-  });
-  aboutList.forEach((cfg, i) => {
-    const design = DS.find((d) => d.id === cfg.id);
-    if (!design) return;
-    const imgEl = document.getElementById("about-img-"+i+"-src");
+    var imgEl = document.getElementById("about-img-"+i+"-src");
     if (imgEl) imgEl.src = cldImg(design.img, cfg.w || 300);
   });
 }
@@ -800,12 +849,10 @@ function renderMarkdown(md, images) {
   html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`);
 
   // Liens — escapeHTML a déjà transformé les caractères, on cible la forme échappée
-  html = html.replace(/\[(.+?)\]\((.+?)\)/g, (_, text, url) => {
-    // Bloquer javascript:, data:, vbscript: et toute URL non http(s)
-    const safe = /^https?:\/\//i.test(url.trim());
-    if (!safe) return escapeHTML(text); // afficher le texte brut sans lien
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-  });
+  html = html.replace(
+    /\[(.+?)\]\((.+?)\)/g,
+    '<a href="$2" target="_blank" rel="noopener">$1</a>',
+  );
 
   // Images par URL directe (legacy)
   html = html.replace(
@@ -1047,12 +1094,6 @@ function syncMobileBar() {
   }
 }
 
-// Délégation — cartes catalogue et home (remplace onclick inline)
-document.addEventListener("click", function (e) {
-  var card = e.target.closest("[data-det-id]");
-  if (card) { e.stopPropagation(); openDet(card.dataset.detId); return; }
-});
-
 // Fermer le menu si clic en dehors
 document.addEventListener("click", function (e) {
   const ham = document.getElementById("nav-ham");
@@ -1152,15 +1193,17 @@ function card(d) {
   }
 
   const price = gm
-    ? Number(getModelPrice(gm)).toLocaleString("fr-FR") + " FCFA"
+    ? MDS_G1.includes(gm)
+      ? "3 500 FCFA"
+      : "5 000 FCFA"
     : "3 500 – 5 000 FCFA";
   const isOut = gm && getModelStock(d.id, gm) === 0;
 
-  return `<div class="pcard${isOut ? " is-out" : ""}" tabindex="0" role="button" data-det-id="${d.id}" aria-label="Voir le design ${d.name}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDet('${d.id}')}">
+  return `<div class="pcard${isOut ? " is-out" : ""}" tabindex="0" role="button" aria-label="Voir le design ${d.name}" onclick="openDet('${d.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDet('${d.id}')}">
     <div class="pc-img">
 <img src="${cldImg(d.img, 400)}" alt="${d.name}" loading="lazy" onerror="this.parentNode.style.background='var(--sand)'">
 <div class="pc-overlay">
-  <button class="pc-ov-btn" data-det-id="${d.id}">Voir le design</button>
+  <button class="pc-ov-btn" onclick="event.stopPropagation();openDet('${d.id}')">Voir le design</button>
 </div>
 ${availBadge}
     </div>
@@ -1263,13 +1306,6 @@ function onGlobalModelChange() {
   }
   filt();
 }
-
-// Debounce — évite de re-render le catalogue à chaque frappe (réseau lent)
-function _debounce(fn, delay) {
-  var t;
-  return function () { clearTimeout(t); t = setTimeout(fn, delay); };
-}
-var _filtDebounced = _debounce(function () { filt(); }, 200);
 
 function filt() {
   if (!DS || DS.length === 0) return;
@@ -1433,23 +1469,11 @@ function orderWA() {
     document.getElementById("lf-quartier").value || ""
   ).trim();
   if (!nom) {
-    document.getElementById("lf-nom")?.focus();
     toast("⚠️ Indique ton prénom pour qu'on te retrouve");
     return;
   }
   if (!tel) {
-    document.getElementById("lf-tel")?.focus();
     toast("⚠️ Indique ton numéro de téléphone");
-    return;
-  }
-  if (tel.replace(/\D/g, "").length < 8) {
-    document.getElementById("lf-tel")?.focus();
-    toast("⚠️ Numéro trop court — vérifie ton numéro");
-    return;
-  }
-  if (!quartier) {
-    document.getElementById("lf-quartier")?.focus();
-    toast("⚠️ Indique ton quartier pour la livraison");
     return;
   }
   _orderWALock = true;
@@ -1462,10 +1486,11 @@ function orderWA() {
   const safeQty = typeof dQty === "number" && dQty > 0 ? dQty : 1;
   const unitPrice = getModelPrice(model);
   const total = fp(unitPrice * safeQty);
-  const qtyStr = safeQty > 1 ? ` · x${safeQty} → ${total}` : ` → ${total}`;
-  let msg = `Bonjour ! Je voudrais commander :\n\n- *${curD.name}* · ${model}${qtyStr}\n\nJe m'appelle ${nom}`;
-  if (quartier) msg += `, je suis à ${quartier}`;
-  msg += `.\n📞 ${tel}\n\nMerci 🙏`;
+  let msg = `Bonjour CultureCase 👋\n\n🎨 Design : ${curD.name}\n📱 Modèle : ${model}\n🔢 Quantité : ${safeQty}\n💰 Total : ${total}`;
+  if (nom) msg += `\n\n👤 Nom : ${nom}`;
+  if (tel) msg += `\n📞 Téléphone : ${tel}`;
+  if (quartier) msg += `\n📍 Quartier : ${quartier}`;
+  msg += `\n\nMerci !`;
   window.open(
     "https://wa.me/22375992482?text=" + encodeURIComponent(msg),
     "_blank",
@@ -1478,24 +1503,15 @@ function orderQuick(id) {
   const d = DS.find((x) => x.id === id);
   if (!d) return;
   const gm = document.getElementById("global-model")?.value || "";
-  const nom = (localStorage.getItem("cc_nom") || "").trim();
-  const tel = (localStorage.getItem("cc_tel") || "").trim();
-
-  // Validation — si infos manquantes, ouvrir la fiche produit pour que le client les remplisse
-  if (!gm) {
-    toast("⚠️ Choisis d'abord ton modèle iPhone en haut de la page");
-    return;
-  }
-  const quartierQ = (localStorage.getItem("cc_quartier") || "").trim();
-  if (!nom || !tel || tel.replace(/\D/g, "").length < 8 || !quartierQ) {
-    openDet(id);
-    setTimeout(() => toast("⚠️ Remplis ton prénom, numéro et quartier avant de commander"), 400);
-    return;
-  }
-
-  const _price = fp(getModelPrice(gm));
-  let msg = `Bonjour ! Je voudrais commander :\n\n- *${d.name}* · ${gm} → ${_price}`;
-  msg += `\n\nJe m'appelle ${nom}, je suis à ${quartierQ}.\n📞 ${tel}\n\nMerci 🙏`;
+  const nom = localStorage.getItem("cc_nom") || "";
+  const tel = localStorage.getItem("cc_tel") || "";
+  const _price = gm
+    ? fp(getModelPrice(gm))
+    : "3 500 – 5 000 FCFA";
+  let msg = `Bonjour CultureCase 👋\n\nJe voudrais commander :\n🎨 Design : ${d.name}\n📱 Modèle : ${gm || "(à préciser)"}\n🔢 Quantité : 1\n💰 Prix unitaire : ${_price}`;
+  if (nom) msg += `\n\n👤 Nom : ${nom}`;
+  if (tel) msg += `\n📞 Téléphone : ${tel}`;
+  msg += `\n\nMerci !`;
   window.open(
     "https://wa.me/22375992482?text=" + encodeURIComponent(msg),
     "_blank",
@@ -1776,19 +1792,7 @@ function renderCartItems() {
 
     const qtyEl = document.createElement("div");
     qtyEl.className = "cart-item-qty";
-    const qtyMinus = document.createElement("button");
-    qtyMinus.textContent = "−";
-    qtyMinus.setAttribute("aria-label", "Diminuer la quantité");
-    (function(i){ qtyMinus.onclick = function(){ updateCartQty(i, -1); }; })(idx);
-    const qtySp = document.createElement("span");
-    qtySp.textContent = item.qty;
-    const qtyPlus = document.createElement("button");
-    qtyPlus.textContent = "+";
-    qtyPlus.setAttribute("aria-label", "Augmenter la quantité");
-    (function(i){ qtyPlus.onclick = function(){ updateCartQty(i, +1); }; })(idx);
-    qtyEl.appendChild(qtyMinus);
-    qtyEl.appendChild(qtySp);
-    qtyEl.appendChild(qtyPlus);
+    qtyEl.innerHTML = `<button onclick="updateCartQty(${idx},-1)">−</button><span>${item.qty}</span><button onclick="updateCartQty(${idx},+1)">+</button>`;
 
     bottom.appendChild(priceEl);
     bottom.appendChild(qtyEl);
@@ -1873,25 +1877,13 @@ function cartOrderWA() {
     document.getElementById("cart-quartier").value || ""
   ).trim();
 
-  // Validation avec messages ciblés
+  // Validation minimale
   if (!nom) {
-    document.getElementById("cart-nom").focus();
-    showCartToast("⚠️ Indique ton prénom");
+    showCartToast("⚠️ Indique ton prénom pour qu'on te retrouve");
     return;
   }
   if (!tel) {
-    document.getElementById("cart-tel").focus();
     showCartToast("⚠️ Indique ton numéro de téléphone");
-    return;
-  }
-  if (tel.replace(/\D/g, "").length < 8) {
-    document.getElementById("cart-tel").focus();
-    showCartToast("⚠️ Numéro trop court — vérifie ton numéro");
-    return;
-  }
-  if (!quartier) {
-    document.getElementById("cart-quartier").focus();
-    showCartToast("⚠️ Indique ton quartier pour la livraison");
     return;
   }
 
@@ -1902,38 +1894,29 @@ function cartOrderWA() {
     if (quartier) localStorage.setItem("cc_quartier", quartier);
   } catch (e) {}
 
-  // Message naturel — du point de vue du client
-  let msg = "Bonjour ! Je voudrais commander :\n\n";
-  CART.forEach((item) => {
-    const ligne = item.qty > 1
-      ? `- *${item.name}* · ${item.model} · x${item.qty} → ${fp(item.price * item.qty)}`
-      : `- *${item.name}* · ${item.model} → ${fp(item.price)}`;
-    msg += ligne + "\n";
+  let msg = "Bonjour CultureCase 👋\n\n🛒 *MA COMMANDE :*\n";
+  msg += "─────────────────\n";
+  CART.forEach((item, i) => {
+    msg += `\n${i + 1}. 🎨 *${item.name}*\n   📱 Modèle : ${item.model}\n   🔢 Quantité : ${item.qty}\n   💰 ${fp(item.price * item.qty)}\n`;
   });
-  if (CART.length > 1) msg += `\n*Total : ${fp(cartTotal())}*\n`;
-  msg += `\nJe m'appelle ${nom}`;
-  if (quartier) msg += `, je suis à ${quartier}`;
-  msg += `.\n📞 ${tel}\n\nMerci 🙏`;
+  msg += "─────────────────\n";
+  msg += `💰 *TOTAL : ${fp(cartTotal())}*`;
+  if (nom) msg += `\n\n👤 Nom : ${nom}`;
+  if (tel) msg += `\n📞 Téléphone : ${tel}`;
+  if (quartier) msg += `\n📍 Quartier : ${quartier}`;
+  msg += "\n\nMerci ! 🙏";
 
   // Ouvrir WhatsApp
-  var waOpened = window.open(
+  window.open(
     "https://wa.me/22375992482?text=" + encodeURIComponent(msg),
     "_blank",
   );
 
-  // Vider le panier après 1,5s — laisse le temps à WhatsApp de s'ouvrir.
-  // Si le popup est bloqué (waOpened === null), on ne vide pas et on prévient.
-  if (waOpened === null) {
-    showCartToast("⚠️ Popup bloqué — autorise les popups puis réessaie.");
-    if (btn) { btn.disabled = false; btn.textContent = "Commander via WhatsApp →"; }
-    return;
-  }
-  setTimeout(function () {
-    CART.length = 0;
-    saveCart();
-    updateCartBadge();
-    showOrderConfirmation(nom);
-  }, 1500);
+  // Vider le panier et afficher confirmation
+  CART.length = 0;
+  saveCart(); // effacer du localStorage aussi
+  updateCartBadge();
+  showOrderConfirmation(nom);
 }
 
 // Ajouter depuis la page détail au panier
@@ -2047,7 +2030,7 @@ function submitAvis() {
   var db = window.__db;
   var api = window.__firestoreAPI;
 
-  function _doSubmit() {
+  if (db && api && api.addDoc && api.collection) {
     api
       .addDoc(api.collection(db, "reviews"), payload)
       .then(function () {
@@ -2068,34 +2051,8 @@ function submitAvis() {
         err.textContent = "Erreur d'envoi — vérifiez votre connexion.";
         err.style.display = "block";
       });
-  }
-
-  if (db && api && api.addDoc && api.collection) {
-    var authObj = window.__auth;
-    if (authObj && authObj.currentUser) {
-      // Auth déjà prête → soumettre immédiatement
-      _doSubmit();
-    } else if (authObj) {
-      // Auth en cours (réseau lent) → attendre max 6s
-      var authWait = 0;
-      var authPoll = setInterval(function () {
-        authWait++;
-        if (authObj.currentUser) {
-          clearInterval(authPoll);
-          _doSubmit();
-        } else if (authWait > 30) {
-          clearInterval(authPoll);
-          if (btn) { btn.disabled = false; btn.textContent = "Publier mon avis →"; }
-          err.textContent = "Connexion trop lente — réessayez dans quelques secondes.";
-          err.style.display = "block";
-        }
-      }, 200);
-    } else {
-      _doSubmit(); // pas d'auth configurée (dev) → essai direct
-    }
   } else {
     // Firestore pas encore prêt (rare) — on réessaie dans 2s
-    if (btn) btn.textContent = "Connexion en cours…";
     setTimeout(submitAvis, 2000);
   }
 }

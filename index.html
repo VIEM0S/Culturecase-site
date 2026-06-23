@@ -186,7 +186,7 @@
           />
         </div>
         <div class="cart-field">
-          <label>QUARTIER / ZONE *</label>
+          <label>QUARTIER / ZONE</label>
           <input
             type="text"
             id="cart-quartier"
@@ -291,19 +291,9 @@
               </button>
             </div>
           </div>
-          <div class="hero-r" id="hero-imgs">
-            <div class="hi" style="grid-row: span 2" id="hero-img-0">
-              <img id="hero-img-0-src" src="" alt="Design CultureCase" />
-              <div class="hi-lbl" id="hero-img-0-lbl"></div>
-            </div>
-            <div class="hi" id="hero-img-1">
-              <img id="hero-img-1-src" src="" alt="Design CultureCase" />
-              <div class="hi-lbl" id="hero-img-1-lbl"></div>
-            </div>
-            <div class="hi" id="hero-img-2">
-              <img id="hero-img-2-src" src="" alt="Design CultureCase" />
-              <div class="hi-lbl" id="hero-img-2-lbl"></div>
-            </div>
+          <div class="hero-r" id="hero-carousel">
+            <div class="hc-track" id="hc-track"></div>
+            <div class="hc-dots" id="hc-dots"></div>
           </div>
         </div>
         <div class="hero-stats">
@@ -373,18 +363,17 @@
             <select
               class="cat-model-sel"
               id="global-model"
-              aria-label="Choisir votre modèle iPhone"
               onchange="onGlobalModelChange()"
             >
               <option value="">— Choisir mon modèle —</option>
-              <optgroup label="iPhone 12 / 13 · 3 500 FCFA" id="og-g1">
+              <optgroup label="iPhone 12 / 13 · 3 500 FCFA">
                 <option value="iPhone 12">iPhone 12</option>
                 <option value="iPhone 12 Pro Max">iPhone 12 Pro Max</option>
                 <option value="iPhone 13">iPhone 13</option>
                 <option value="iPhone 13 Pro">iPhone 13 Pro</option>
                 <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
               </optgroup>
-              <optgroup label="iPhone 14 et plus · 5 000 FCFA" id="og-g2">
+              <optgroup label="iPhone 14 et plus · 5 000 FCFA">
                 <option value="iPhone 14">iPhone 14</option>
                 <option value="iPhone 14 Plus">iPhone 14 Plus</option>
                 <option value="iPhone 14 Pro">iPhone 14 Pro</option>
@@ -417,7 +406,7 @@
             type="search"
             id="sinp"
             placeholder="Rechercher un design..."
-            oninput="_filtDebounced()"
+            oninput="filt()"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="off"
@@ -487,12 +476,12 @@
               <div class="pr-row">
                 <span class="pr-flag">🇲🇱</span
                 ><span class="pr-market">iPhone 13 Pro Max et en dessous</span
-                ><span class="pr-price" id="pr-price-g1">3 500 FCFA</span>
+                ><span class="pr-price">3 500 FCFA</span>
               </div>
               <div class="pr-row">
                 <span class="pr-flag">🇲🇱</span
                 ><span class="pr-market">iPhone 14 et au dessus</span
-                ><span class="pr-price" id="pr-price-g2">5 000 FCFA</span>
+                ><span class="pr-price">5 000 FCFA</span>
               </div>
             </div>
 
@@ -542,7 +531,7 @@
                   />
                 </div>
                 <div class="lf-g full">
-                  <label class="lf-lbl">Quartier / Zone de livraison *</label>
+                  <label class="lf-lbl">Quartier / Zone de livraison</label>
                   <input
                     class="lf-in"
                     type="text"
