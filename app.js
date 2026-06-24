@@ -785,7 +785,7 @@ function initHeroCarousel() {
       var gNext = (current + 2) % len;
       _activateSlide(ghost, ghostCurrent, gNext);
       ghostCurrent = gNext;
-    }, 2000);
+    }, 3000);
   }
 
   function nextRandom() {
@@ -796,7 +796,7 @@ function initHeroCarousel() {
 
   function resetTimer() {
     clearInterval(timer);
-    timer = setInterval(nextRandom, 4000);
+    timer = setInterval(nextRandom, 6000);
   }
 
   main.addEventListener("mouseenter", function() { clearInterval(timer); });
@@ -867,7 +867,7 @@ function initAboutCarousel() {
 
   function resetTimer() {
     clearInterval(timer);
-    timer = setInterval(next, 5000);
+    timer = setInterval(next, 7000);
   }
 
   main.addEventListener("mouseenter", function() { clearInterval(timer); });
