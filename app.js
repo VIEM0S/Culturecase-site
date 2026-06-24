@@ -741,47 +741,66 @@ function _shuffle(arr) {
   return a;
 }
 
-function initHeroCarousel() {
-  var track = document.getElementById("hc-track");
-  var dotsEl = document.getElementById("hc-dots");
-  if (!track || !dotsEl) return;
-
-  var slides = _shuffle(HERO_SLIDES);
-  var current = 0;
-  var timer = null;
-  var len = slides.length;
-
+function _buildSlides(container, slides, activeIdx) {
   slides.forEach(function(s, i) {
     var slide = document.createElement("div");
-    slide.className = "hc-slide" + (i === 0 ? " active" : "");
+    slide.className = "hc-slide" + (i === activeIdx ? " active" : "");
     var img = document.createElement("img");
     img.src = s.url;
     img.alt = s.alt;
-    img.loading = i === 0 ? "eager" : "lazy";
+    img.loading = i === activeIdx ? "eager" : "lazy";
     slide.appendChild(img);
-    track.appendChild(slide);
+    container.appendChild(slide);
   });
+}
+
+function _activateSlide(container, oldIdx, newIdx) {
+  var els = container.querySelectorAll(".hc-slide");
+  if (els[oldIdx]) els[oldIdx].classList.remove("active");
+  if (els[newIdx]) els[newIdx].classList.add("active");
+}
+
+function initHeroCarousel() {
+  var main  = document.getElementById("hc-track");
+  var ghost = document.getElementById("hc-ghost");
+  var dotsEl = document.getElementById("hc-dots");
+  if (!main || !ghost) return;
+
+  var slides = _shuffle(HERO_SLIDES);
+  var len = slides.length;
+  var current = 0;
+  // Fantôme démarre 2 slides plus loin pour créer le décalage
+  var ghostCurrent = 2 % len;
+  var timer = null;
+
+  _buildSlides(main,  slides, current);
+  _buildSlides(ghost, slides, ghostCurrent);
 
   function goTo(n) {
-    var els = track.querySelectorAll(".hc-slide");
-    els[current].classList.remove("active");
-    current = (n + len) % len;
-    els[current].classList.add("active");
+    var next = (n + len) % len;
+    _activateSlide(main, current, next);
+    current = next;
+    // Fantôme change 2 secondes après la principale
+    setTimeout(function() {
+      var gNext = (current + 2) % len;
+      _activateSlide(ghost, ghostCurrent, gNext);
+      ghostCurrent = gNext;
+    }, 2000);
   }
 
-  function next() {
-    var nextIdx;
-    do { nextIdx = Math.floor(Math.random() * len); } while (nextIdx === current && len > 1);
-    goTo(nextIdx);
+  function nextRandom() {
+    var n;
+    do { n = Math.floor(Math.random() * len); } while (n === current && len > 1);
+    goTo(n);
   }
 
   function resetTimer() {
     clearInterval(timer);
-    timer = setInterval(next, 4000);
+    timer = setInterval(nextRandom, 4000);
   }
 
-  track.addEventListener("mouseenter", function() { clearInterval(timer); });
-  track.addEventListener("mouseleave", resetTimer);
+  main.addEventListener("mouseenter", function() { clearInterval(timer); });
+  main.addEventListener("mouseleave", resetTimer);
 
   resetTimer();
 }
@@ -802,39 +821,46 @@ const ABOUT_SLIDES = [
   { url: "https://res.cloudinary.com/dknfqd2xp/image/upload/w_600,h_600,c_fill,g_auto,f_auto,q_auto/v1782187149/D_kxjaeq.jpg", alt: "CultureCase — deux coques sur sable" },
 ];
 
-function initAboutCarousel() {
-  var track = document.getElementById("ac-track");
-  var dotsEl = document.getElementById("ac-dots");
-  if (!track || !dotsEl) return;
-
-  var current = 0;
-  var timer = null;
-
-  ABOUT_SLIDES.forEach(function(s, i) {
+function _buildAboutSlides(container, slides, activeIdx) {
+  slides.forEach(function(s, i) {
     var slide = document.createElement("div");
-    slide.className = "ac-slide" + (i === 0 ? " active" : "");
+    slide.className = "ac-slide" + (i === activeIdx ? " active" : "");
     var img = document.createElement("img");
     img.src = s.url;
     img.alt = s.alt;
-    img.loading = i === 0 ? "eager" : "lazy";
+    img.loading = i === activeIdx ? "eager" : "lazy";
     slide.appendChild(img);
-    track.appendChild(slide);
-
-    var dot = document.createElement("button");
-    dot.className = "ac-dot" + (i === 0 ? " active" : "");
-    dot.setAttribute("aria-label", "Photo " + (i + 1));
-    dot.addEventListener("click", function() { goTo(i); resetTimer(); });
-    dotsEl.appendChild(dot);
+    container.appendChild(slide);
   });
+}
+
+function initAboutCarousel() {
+  var main  = document.getElementById("ac-track");
+  var ghost = document.getElementById("ac-ghost");
+  if (!main || !ghost) return;
+
+  var len = ABOUT_SLIDES.length;
+  var current = 0;
+  var ghostCurrent = 1 % len;
+  var timer = null;
+
+  _buildAboutSlides(main,  ABOUT_SLIDES, current);
+  _buildAboutSlides(ghost, ABOUT_SLIDES, ghostCurrent);
 
   function goTo(n) {
-    var slides = track.querySelectorAll(".ac-slide");
-    var dots   = dotsEl.querySelectorAll(".ac-dot");
-    slides[current].classList.remove("active");
-    dots[current].classList.remove("active");
-    current = (n + ABOUT_SLIDES.length) % ABOUT_SLIDES.length;
-    slides[current].classList.add("active");
-    dots[current].classList.add("active");
+    var next = (n + len) % len;
+    var mEls = main.querySelectorAll(".ac-slide");
+    if (mEls[current]) mEls[current].classList.remove("active");
+    if (mEls[next])    mEls[next].classList.add("active");
+    current = next;
+    // Fantôme change 2 secondes après
+    setTimeout(function() {
+      var gNext = (current + 1) % len;
+      var gEls = ghost.querySelectorAll(".ac-slide");
+      if (gEls[ghostCurrent]) gEls[ghostCurrent].classList.remove("active");
+      if (gEls[gNext])        gEls[gNext].classList.add("active");
+      ghostCurrent = gNext;
+    }, 2000);
   }
 
   function next() { goTo(current + 1); }
@@ -844,8 +870,8 @@ function initAboutCarousel() {
     timer = setInterval(next, 5000);
   }
 
-  track.addEventListener("mouseenter", function() { clearInterval(timer); });
-  track.addEventListener("mouseleave", resetTimer);
+  main.addEventListener("mouseenter", function() { clearInterval(timer); });
+  main.addEventListener("mouseleave", resetTimer);
 
   resetTimer();
 }
