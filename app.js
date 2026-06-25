@@ -785,7 +785,7 @@ function initHeroCarousel() {
       var gNext = (current + 2) % len;
       _activateSlide(ghost, ghostCurrent, gNext);
       ghostCurrent = gNext;
-    }, 3000);
+    }, 2500);
   }
 
   function nextRandom() {
@@ -796,7 +796,7 @@ function initHeroCarousel() {
 
   function resetTimer() {
     clearInterval(timer);
-    timer = setInterval(nextRandom, 6000);
+    timer = setInterval(nextRandom, 5000);
   }
 
   main.addEventListener("mouseenter", function() { clearInterval(timer); });
@@ -860,7 +860,7 @@ function initAboutCarousel() {
       if (gEls[ghostCurrent]) gEls[ghostCurrent].classList.remove("active");
       if (gEls[gNext])        gEls[gNext].classList.add("active");
       ghostCurrent = gNext;
-    }, 2000);
+    }, 2500);
   }
 
   function next() { goTo(current + 1); }
