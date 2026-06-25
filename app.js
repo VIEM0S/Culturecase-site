@@ -761,30 +761,31 @@ function _activateSlide(container, oldIdx, newIdx) {
 }
 
 function initHeroCarousel() {
-  var main  = document.getElementById("hc-track");
-  var ghost = document.getElementById("hc-ghost");
-  var dotsEl = document.getElementById("hc-dots");
-  if (!main || !ghost) return;
+  var main    = document.getElementById("hc-track");
+  var bgGhost = document.getElementById("hero-bg-ghost");
+  var dotsEl  = document.getElementById("hc-dots");
+  if (!main || !bgGhost) return;
 
   var slides = _shuffle(HERO_SLIDES);
   var len = slides.length;
   var current = 0;
-  // Fantôme démarre 2 slides plus loin pour créer le décalage
-  var ghostCurrent = 2 % len;
+  var bgCurrent = 2 % len;
   var timer = null;
 
-  _buildSlides(main,  slides, current);
-  _buildSlides(ghost, slides, ghostCurrent);
+  // Image principale dans hero-r
+  _buildSlides(main, slides, current);
+  // Ghost background plein hero — démarre 2 slides en avance
+  _buildSlides(bgGhost, slides, bgCurrent);
 
   function goTo(n) {
     var next = (n + len) % len;
     _activateSlide(main, current, next);
     current = next;
-    // Fantôme change 2 secondes après la principale
+    // Ghost background change 2.5s après la principale
     setTimeout(function() {
       var gNext = (current + 2) % len;
-      _activateSlide(ghost, ghostCurrent, gNext);
-      ghostCurrent = gNext;
+      _activateSlide(bgGhost, bgCurrent, gNext);
+      bgCurrent = gNext;
     }, 2500);
   }
 
