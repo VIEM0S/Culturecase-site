@@ -499,15 +499,14 @@ body {
 .hc-slide img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   filter: brightness(0.9) saturate(1.1);
-  transform: scale(0.82);
-  transition: transform 0.9s ease;
 }
-/* Exclure le ghost background du dezoom */
+/* Ghost background : cover pour remplir plein écran */
 #hero-bg-ghost .hc-slide img {
-  transform: none;
+  object-fit: cover;
+  filter: brightness(0.7) saturate(0.8);
 }
 
 .hc-dots { display: none !important; }
@@ -516,7 +515,9 @@ body {
 .hero-stats {
   display: flex;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(26, 9, 0, 0.92);
+  position: relative;
+  z-index: 3;
 }
 .hst {
   flex: 1;
