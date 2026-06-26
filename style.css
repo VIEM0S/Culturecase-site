@@ -502,6 +502,12 @@ body {
   object-fit: cover;
   display: block;
   filter: brightness(0.9) saturate(1.1);
+  transform: scale(0.82);
+  transition: transform 0.9s ease;
+}
+/* Exclure le ghost background du dezoom */
+#hero-bg-ghost .hc-slide img {
+  transform: none;
 }
 
 .hc-dots { display: none !important; }
