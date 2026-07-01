@@ -1160,7 +1160,7 @@ async function submitWebOrder(items, client) {
       tel: client.tel || "",
       quartier: client.quartier || "",
     },
-    delivery: true,
+    delivery: !!(client.quartier && client.quartier.trim()),
     items: items.map((it) => ({
       designId: it.designId,
       designName: it.name,
