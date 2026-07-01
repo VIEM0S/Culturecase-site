@@ -1125,6 +1125,56 @@ function toggleMobileMenu() {
   menu.classList.toggle("open");
 }
 
+// ── Envoi commande directe vers CultureCaseGS (Firestore) ────────────────────
+// Remplace l'ancien flux WhatsApp : la commande arrive directement dans
+// CultureCaseGS, collection "webOrders", en attente de validation par l'admin.
+// Le prix affiché ici est indicatif — le prix réel facturé est recalculé
+// côté admin à partir du catalogue CultureCaseGS au moment de la validation.
+async function submitWebOrder(items, client) {
+  // Attendre que Firestore soit prêt (auth anonyme + listeners démarrés),
+  // avec un délai max pour ne pas bloquer indéfiniment si hors-ligne.
+  const waitForFirestore = () =>
+    new Promise((resolve, reject) => {
+      const start = Date.now();
+      const check = () => {
+        if (window.__firestoreAPI && window.__firestoreAPI.addDoc && window.__db) {
+          resolve();
+        } else if (Date.now() - start > 8000) {
+          reject(new Error("Firestore indisponible"));
+        } else {
+          setTimeout(check, 150);
+        }
+      };
+      check();
+    });
+
+  await waitForFirestore();
+  const { collection, addDoc, serverTimestamp } = window.__firestoreAPI;
+
+  const payload = {
+    status: "pending",
+    createdAt: serverTimestamp(),
+    source: "site",
+    client: {
+      nom: client.nom || "",
+      tel: client.tel || "",
+      quartier: client.quartier || "",
+    },
+    delivery: true,
+    items: items.map((it) => ({
+      designId: it.designId,
+      designName: it.name,
+      model: it.model,
+      qty: it.qty,
+      unitPrice: it.price,
+      total: it.price * it.qty,
+    })),
+    total: items.reduce((s, it) => s + it.price * it.qty, 0),
+  };
+
+  await addDoc(collection(window.__db, "webOrders"), payload);
+}
+
 // ── Sticky mobile order bar ───────────────────────────────────────────────
 var CART = []; // [{ designId, name, img, model, qty, price }]
 
@@ -1539,7 +1589,7 @@ function dq(d) {
 var _orderWALock = false;
 function orderWA() {
   if (!curD) return;
-  if (_orderWALock) return; // évite l'ouverture de plusieurs onglets WhatsApp sur double-clic
+  if (_orderWALock) return; // évite le double-envoi sur double-clic
   const model = document.getElementById("d-mod").value;
   if (!model) {
     toast("⚠️ Choisis un modèle iPhone d'abord");
@@ -1559,7 +1609,6 @@ function orderWA() {
     return;
   }
   _orderWALock = true;
-  setTimeout(() => { _orderWALock = false; }, 1500);
   try {
     localStorage.setItem("cc_nom", nom);
     localStorage.setItem("cc_tel", tel);
@@ -1567,37 +1616,34 @@ function orderWA() {
   } catch (e) {}
   const safeQty = typeof dQty === "number" && dQty > 0 ? dQty : 1;
   const unitPrice = getModelPrice(model);
-  const total = fp(unitPrice * safeQty);
-  let msg = `Bonjour CultureCase 👋\n\n🎨 Design : ${curD.name}\n📱 Modèle : ${model}\n🔢 Quantité : ${safeQty}\n💰 Total : ${total}`;
-  if (nom) msg += `\n\n👤 Nom : ${nom}`;
-  if (tel) msg += `\n📞 Téléphone : ${tel}`;
-  if (quartier) msg += `\n📍 Quartier : ${quartier}`;
-  msg += `\n\nMerci !`;
-  window.open(
-    "https://wa.me/22375992482?text=" + encodeURIComponent(msg),
-    "_blank",
-  );
-  // Toast de confirmation
-  toast("✓ Message WhatsApp ouvert — on te confirme sous 30 min !");
+
+  submitWebOrder(
+    [{ designId: curD.id, name: curD.name, model, qty: safeQty, price: unitPrice }],
+    { nom, tel, quartier },
+  )
+    .then(() => {
+      toast("✓ Commande envoyée — on te confirme sous 30 min !");
+      _orderWALock = false;
+    })
+    .catch((e) => {
+      console.error("[CultureCase] Erreur envoi commande:", e);
+      toast("❌ Erreur d'envoi — réessaie ou contacte-nous sur WhatsApp");
+      _orderWALock = false;
+    });
 }
 
 function orderQuick(id) {
   const d = DS.find((x) => x.id === id);
   if (!d) return;
   const gm = document.getElementById("global-model")?.value || "";
-  const nom = localStorage.getItem("cc_nom") || "";
-  const tel = localStorage.getItem("cc_tel") || "";
-  const _price = gm
-    ? fp(getModelPrice(gm))
-    : "3 500 – 5 000 FCFA";
-  let msg = `Bonjour CultureCase 👋\n\nJe voudrais commander :\n🎨 Design : ${d.name}\n📱 Modèle : ${gm || "(à préciser)"}\n🔢 Quantité : 1\n💰 Prix unitaire : ${_price}`;
-  if (nom) msg += `\n\n👤 Nom : ${nom}`;
-  if (tel) msg += `\n📞 Téléphone : ${tel}`;
-  msg += `\n\nMerci !`;
-  window.open(
-    "https://wa.me/22375992482?text=" + encodeURIComponent(msg),
-    "_blank",
-  );
+  if (!gm) {
+    toast("⚠️ Choisis un modèle iPhone d'abord");
+    return;
+  }
+  // Commande rapide = ajout au panier + ouverture du panier pour
+  // renseigner les coordonnées (nécessaires pour valider une commande directe).
+  _doAddToCart(id, gm);
+  openCart();
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1912,11 +1958,11 @@ function showOrderConfirmation(nom) {
 <div style="width:64px;height:64px;background:rgba(37,211,102,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px">✓</div>
 <div>
   <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--ink);margin-bottom:.3rem">Commande envoyée !</div>
-  <div style="font-size:13px;color:var(--muted);line-height:1.6">Merci ${prenom} 🙏<br>Ton message WhatsApp a bien été ouvert.<br>On te confirme <strong style="color:var(--ink)">sous 30 min</strong>.</div>
+  <div style="font-size:13px;color:var(--muted);line-height:1.6">Merci ${prenom} 🙏<br>Ta commande a bien été reçue.<br>On te confirme <strong style="color:var(--ink)">sous 30 min</strong>.</div>
 </div>
 <div style="background:var(--sand);border-radius:var(--radius-lg);padding:1rem 1.25rem;width:100%;font-size:12px;color:var(--muted);line-height:1.8;text-align:left">
   <div style="font-weight:700;color:var(--ink);margin-bottom:.4rem;font-size:11px;letter-spacing:1px">ET APRÈS ?</div>
-  <div>📲 Envoie le message WhatsApp si ce n'est pas encore fait</div>
+  <div>✅ On vérifie ta commande de notre côté</div>
   <div>⏱ On te répond sous 30 min avec confirmation</div>
   <div>🛵 Livraison le jour même ou le lendemain</div>
 </div>
@@ -1951,8 +1997,10 @@ function _cartEscHandler(e) {
   if (e.key === "Escape") closeCart();
 }
 
+var _cartOrderLock = false;
 function cartOrderWA() {
   if (CART.length === 0) return;
+  if (_cartOrderLock) return;
   const nom = (document.getElementById("cart-nom").value || "").trim();
   const tel = (document.getElementById("cart-tel").value || "").trim();
   const quartier = (
@@ -1976,29 +2024,23 @@ function cartOrderWA() {
     if (quartier) localStorage.setItem("cc_quartier", quartier);
   } catch (e) {}
 
-  let msg = "Bonjour CultureCase 👋\n\n🛒 *MA COMMANDE :*\n";
-  msg += "─────────────────\n";
-  CART.forEach((item, i) => {
-    msg += `\n${i + 1}. 🎨 *${item.name}*\n   📱 Modèle : ${item.model}\n   🔢 Quantité : ${item.qty}\n   💰 ${fp(item.price * item.qty)}\n`;
-  });
-  msg += "─────────────────\n";
-  msg += `💰 *TOTAL : ${fp(cartTotal())}*`;
-  if (nom) msg += `\n\n👤 Nom : ${nom}`;
-  if (tel) msg += `\n📞 Téléphone : ${tel}`;
-  if (quartier) msg += `\n📍 Quartier : ${quartier}`;
-  msg += "\n\nMerci ! 🙏";
+  _cartOrderLock = true;
+  const itemsSnapshot = CART.map((i) => ({ ...i }));
 
-  // Ouvrir WhatsApp
-  window.open(
-    "https://wa.me/22375992482?text=" + encodeURIComponent(msg),
-    "_blank",
-  );
-
-  // Vider le panier et afficher confirmation
-  CART.length = 0;
-  saveCart(); // effacer du localStorage aussi
-  updateCartBadge();
-  showOrderConfirmation(nom);
+  submitWebOrder(itemsSnapshot, { nom, tel, quartier })
+    .then(() => {
+      // Vider le panier et afficher confirmation seulement après succès
+      CART.length = 0;
+      saveCart();
+      updateCartBadge();
+      showOrderConfirmation(nom);
+      _cartOrderLock = false;
+    })
+    .catch((e) => {
+      console.error("[CultureCase] Erreur envoi commande:", e);
+      showCartToast("❌ Erreur d'envoi — réessaie dans un instant");
+      _cartOrderLock = false;
+    });
 }
 
 // Ajouter depuis la page détail au panier

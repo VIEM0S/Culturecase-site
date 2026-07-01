@@ -362,4 +362,9 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+// Note : l'envoi des commandes directes (remplaçant l'ancien flux WhatsApp)
+// est géré dans app.js via submitWebOrder(), qui s'appuie sur
+// window.__firestoreAPI (addDoc/serverTimestamp exposés ci-dessus dans
+// startListeners()) — collection Firestore "webOrders", statut "pending".
+
 // Carrousels hero et about initialisés depuis app.js (après defer)
