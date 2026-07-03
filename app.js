@@ -571,7 +571,8 @@ let curD = null,
   dQty = 1,
   prevPg = "catalogue",
   activeTag = "all",
-  stockFilter = "all";
+  stockFilter = "all",
+  galleryIds = []; // liste des designs parcourus (contexte de navigation détail)
 
 function fp(n) {
   return Number(n).toLocaleString("fr-FR") + " FCFA";
@@ -1366,6 +1367,7 @@ function initHome() {
   if (!DS || DS.length === 0) return; // garde — laisse le skeleton visible tant que Firestore n'a pas répondu
   const grid = document.getElementById("home-grid");
   if (grid) grid.innerHTML = DS.slice(0, 8).map(card).join("");
+  galleryIds = DS.slice(0, 8).map((d) => d.id);
   // Stats dynamiques
   const statD = document.getElementById("stat-designs");
   const statM = document.getElementById("stat-models");
@@ -1481,16 +1483,21 @@ function filt() {
   document.getElementById("cat-grid").innerHTML = res.length
     ? res.map(card).join("")
     : `<p style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--muted)">Aucun résultat.</p>`;
+  galleryIds = res.map((d) => d.id);
 }
 
-function openDet(id) {
+function openDet(id, opts) {
+  opts = opts || {};
   prevPg =
     document.querySelector(".pg.on")?.id?.replace("pg-", "") ||
     "catalogue";
   curD = DS.find((d) => d.id === id);
   if (!curD) return;
   dQty = 1;
-  document.getElementById("d-img").src = cldImg(curD.img, 800);
+  const imgEl = document.getElementById("d-img");
+  imgEl.style.opacity = "0";
+  imgEl.src = cldImg(curD.img, 800);
+  requestAnimationFrame(() => { imgEl.style.opacity = "1"; });
   document.getElementById("d-name").textContent = curD.name;
   document.getElementById("d-story").textContent = curD.story;
   document.getElementById("d-qty").textContent = "1";
@@ -1526,12 +1533,58 @@ function openDet(id) {
   updatePrice();
   // Écrire le hash avant go() pour que go() ne l'écrase pas
   var detHash = "#/design/" + curD.id;
-  if (location.hash !== detHash) history.pushState(null, "", detHash);
+  if (opts.nav) {
+    if (location.hash !== detHash) history.replaceState(null, "", detHash);
+  } else if (location.hash !== detHash) {
+    history.pushState(null, "", detHash);
+  }
   // Schema Product dynamique pour Google rich results
   injectProductSchema(curD);
   go("detail", { silent: true });
   updatePageTitle(null, curD.name + " — CultureCase");
+  renderDetNav();
 }
+
+function detNavContext() {
+  var ids = galleryIds.length ? galleryIds : DS.map((d) => d.id);
+  var idx = ids.indexOf(curD.id);
+  if (idx === -1) {
+    // design ouvert hors contexte (lien direct) — fallback catalogue complet
+    ids = DS.map((d) => d.id);
+    idx = ids.indexOf(curD.id);
+  }
+  return { ids: ids, idx: idx };
+}
+
+function renderDetNav() {
+  var nav = document.getElementById("det-nav");
+  if (!nav || !curD) return;
+  var ctx = detNavContext();
+  if (ctx.ids.length <= 1) {
+    nav.style.display = "none";
+    return;
+  }
+  nav.style.display = "flex";
+  document.getElementById("det-nav-count").textContent =
+    "Design " + (ctx.idx + 1) + " / " + ctx.ids.length;
+}
+
+function navDet(delta) {
+  if (!curD) return;
+  var ctx = detNavContext();
+  if (ctx.ids.length <= 1) return;
+  var nextIdx = (ctx.idx + delta + ctx.ids.length) % ctx.ids.length;
+  openDet(ctx.ids[nextIdx], { nav: true });
+}
+
+function _detNavKeyHandler(e) {
+  if (!document.getElementById("pg-detail")?.classList.contains("on")) return;
+  var tag = (document.activeElement && document.activeElement.tagName) || "";
+  if (["INPUT", "SELECT", "TEXTAREA"].includes(tag)) return;
+  if (e.key === "ArrowLeft") navDet(-1);
+  if (e.key === "ArrowRight") navDet(1);
+}
+document.addEventListener("keydown", _detNavKeyHandler);
 
 function injectProductSchema(d) {
   // Supprimer l'éventuel schema précédent
