@@ -931,23 +931,32 @@ function renderMarkdown(md, images) {
   html = html.replace(/^[*-] (.+)$/gm, "<li>$1</li>");
   html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`);
 
+  // Sécurité : n'autoriser que des URLs http(s), relatives, ou mailto —
+  // bloque les schémas exécutables (javascript:, data:, vbscript:, etc.)
+  const _safeUrl = (u) => {
+    const url = String(u || "").trim();
+    if (/^(https?:\/\/|mailto:|\/)/i.test(url)) return url;
+    return "#";
+  };
+
+  // Images par URL directe (legacy) — DOIT être traité avant les liens, car
+  // ![alt](url) contient un [alt](url) que la regex de lien matcherait sinon.
+  html = html.replace(
+    /!\[(.+?)\]\((.+?)\)/g,
+    (m, alt, url) => `<img src="${_safeUrl(url)}" alt="${alt}" loading="lazy">`,
+  );
+
   // Liens — escapeHTML a déjà transformé les caractères, on cible la forme échappée
   html = html.replace(
     /\[(.+?)\]\((.+?)\)/g,
-    '<a href="$2" target="_blank" rel="noopener">$1</a>',
-  );
-
-  // Images par URL directe (legacy)
-  html = html.replace(
-    /!\[(.+?)\]\((.+?)\)/g,
-    '<img src="$2" alt="$1" loading="lazy">',
+    (m, txt, url) => `<a href="${_safeUrl(url)}" target="_blank" rel="noopener">${txt}</a>`,
   );
 
   // Repères de galerie {img:N} → résolus depuis le tableau images de l'article
   html = html.replace(/\{img:(\d+)\}/g, (m, n) => {
     const url = imgs[parseInt(n, 10) - 1];
     if (!url) return "";
-    const safeUrl = cldImg(url, 800);
+    const safeUrl = escapeHTML(cldImg(url, 800));
     return `<img src="${safeUrl}" alt="Image ${n}" loading="lazy">`;
   });
 
@@ -1116,7 +1125,12 @@ function openBlog(id) {
   go("blogdet");
   // Écrire l'ID dans l'URL pour que le lien soit partageable et survivre au rafraîchissement
   history.replaceState(null, "", "#/blog/" + encodeURIComponent(id));
-  updatePageTitle(null, b.title + " — Blog CultureCase");
+  updatePageTitle(
+    null,
+    b.title + " — Blog CultureCase",
+    b.excerpt || undefined,
+    "#/blog/" + encodeURIComponent(id),
+  );
 }
 
 function toggleMobileMenu() {
@@ -1292,8 +1306,37 @@ const PAGE_TITLES = {
   politique: "Politique commerciale — CultureCase",
   paiement: "Modes de paiement — CultureCase",
 };
-function updatePageTitle(p, override) {
-  document.title = override || PAGE_TITLES[p] || PAGE_TITLES.home;
+const PAGE_DESCRIPTIONS = {
+  home: "Coques iPhone aux designs culturels africains. Bogolan, N'Ko, Ciwara — patrimoine malien en impression HD. Livraison à Bamako.",
+  catalogue: "Découvrez tout le catalogue de coques iPhone CultureCase : designs Bogolan, N'Ko, Ciwara et bien d'autres motifs culturels maliens.",
+  about: "L'histoire et la mission de CultureCase : valoriser le patrimoine culturel malien à travers des coques iPhone de qualité.",
+  blog: "Articles CultureCase sur la culture malienne, nos designs et les coulisses de la marque.",
+  contact: "Contactez CultureCase pour toute question sur nos coques iPhone ou votre commande.",
+  faq: "Réponses aux questions fréquentes sur les commandes, la livraison et les designs CultureCase.",
+  livraison: "Modalités de livraison et de retour des commandes CultureCase à Bamako et au Mali.",
+  politique: "Politique commerciale de CultureCase : garanties, échanges et conditions de vente.",
+  paiement: "Modes de paiement acceptés par CultureCase pour vos commandes de coques iPhone.",
+};
+const SITE_BASE_URL = "https://viem0s.github.io/culturecase-site";
+
+function updatePageTitle(p, override, overrideDesc, overridePath) {
+  const title = override || PAGE_TITLES[p] || PAGE_TITLES.home;
+  const desc = overrideDesc || PAGE_DESCRIPTIONS[p] || PAGE_DESCRIPTIONS.home;
+  document.title = title;
+
+  const descEl = document.getElementById("meta-desc");
+  if (descEl) descEl.setAttribute("content", desc);
+  const ogTitleEl = document.getElementById("meta-og-title");
+  if (ogTitleEl) ogTitleEl.setAttribute("content", title);
+  const ogDescEl = document.getElementById("meta-og-desc");
+  if (ogDescEl) ogDescEl.setAttribute("content", desc);
+
+  const path = overridePath || (p === "home" ? "" : "#/" + (p || ""));
+  const url = SITE_BASE_URL + path;
+  const canonicalEl = document.getElementById("link-canonical");
+  if (canonicalEl) canonicalEl.setAttribute("href", url);
+  const ogUrlEl = document.getElementById("meta-og-url");
+  if (ogUrlEl) ogUrlEl.setAttribute("content", url);
 }
 
 function card(d) {
@@ -1326,9 +1369,7 @@ function card(d) {
   }
 
   const price = gm
-    ? MDS_G1.includes(gm)
-      ? "3 500 FCFA"
-      : "5 000 FCFA"
+    ? getPrice(gm)
     : "3 500 – 5 000 FCFA";
   const isOut = gm && getModelStock(d.id, gm) === 0;
 
@@ -1541,7 +1582,12 @@ function openDet(id, opts) {
   // Schema Product dynamique pour Google rich results
   injectProductSchema(curD);
   go("detail", { silent: true });
-  updatePageTitle(null, curD.name + " — CultureCase");
+  updatePageTitle(
+    null,
+    curD.name + " — CultureCase",
+    curD.story || undefined,
+    detHash,
+  );
   renderDetNav();
 }
 
