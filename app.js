@@ -1342,6 +1342,7 @@ const PAGE_TITLES = {
   livraison: "Livraison & Retours — CultureCase",
   politique: "Politique commerciale — CultureCase",
   paiement: "Modes de paiement — CultureCase",
+  404: "Page introuvable — CultureCase",
 };
 const PAGE_DESCRIPTIONS = {
   home: "Coques iPhone aux designs culturels africains. Bogolan, N'Ko, Ciwara — patrimoine malien en impression HD. Livraison à Bamako.",
@@ -1353,6 +1354,7 @@ const PAGE_DESCRIPTIONS = {
   livraison: "Modalités de livraison et de retour des commandes CultureCase à Bamako et au Mali.",
   politique: "Politique commerciale de CultureCase : garanties, échanges et conditions de vente.",
   paiement: "Modes de paiement acceptés par CultureCase pour vos commandes de coques iPhone.",
+  404: "Cette page n'existe pas ou plus. Retourne à l'accueil ou au catalogue CultureCase.",
 };
 const SITE_BASE_URL = "https://viem0s.github.io/Culturecase-site";
 
