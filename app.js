@@ -1122,7 +1122,7 @@ function openBlog(id) {
     const card = e.target.closest("[data-blog-id]");
     if (card) openBlog(card.dataset.blogId);
   };
-  go("blogdet");
+  go("blogdet", { crumbExtra: b.title });
   // Écrire l'ID dans l'URL pour que le lien soit partageable et survivre au rafraîchissement
   history.replaceState(null, "", "#/blog/" + encodeURIComponent(id));
   updatePageTitle(
@@ -1265,6 +1265,42 @@ function checkMobile() {
 window.addEventListener("resize", checkMobile);
 checkMobile();
 
+// Fil d'Ariane — libellés courts des pages statiques. "detail"/"blogdet"
+// (produit/article) n'ont pas d'entrée fixe ici : leur miette finale est
+// injectée dynamiquement via opts.crumbExtra (nom du produit / titre de
+// l'article), voir openDet()/openBlog().
+const BREADCRUMB_LABELS = {
+  catalogue: "Catalogue",
+  about: "À propos",
+  blog: "Blog",
+  contact: "Contact",
+  faq: "FAQ",
+  livraison: "Livraison & retours",
+  politique: "Politique commerciale",
+  paiement: "Modes de paiement",
+};
+function renderBreadcrumb(p, extra) {
+  const bar = document.getElementById("breadcrumb-bar");
+  if (!bar) return;
+  if (p === "home" || (!BREADCRUMB_LABELS[p] && p !== "detail" && p !== "blogdet")) {
+    bar.style.display = "none";
+    bar.innerHTML = "";
+    return;
+  }
+  const parts = [`<a href="#/" onclick="go('home');return false">Accueil</a>`];
+  if (p === "detail") {
+    parts.push(`<a href="#/catalogue" onclick="go('catalogue');return false">Catalogue</a>`);
+    if (extra) parts.push(`<span aria-current="page">${escapeHTML(extra)}</span>`);
+  } else if (p === "blogdet") {
+    parts.push(`<a href="#/blog" onclick="go('blog');return false">Blog</a>`);
+    if (extra) parts.push(`<span aria-current="page">${escapeHTML(extra)}</span>`);
+  } else {
+    parts.push(`<span aria-current="page">${BREADCRUMB_LABELS[p]}</span>`);
+  }
+  bar.style.display = "flex";
+  bar.innerHTML = parts.join('<span class="bc-sep" aria-hidden="true">›</span>');
+}
+
 function go(p, opts) {
   var target = document.getElementById("pg-" + p);
   if (!target) {
@@ -1288,6 +1324,7 @@ function go(p, opts) {
   if (p === "blog") renderBlog();
   syncMobileBar();
   updatePageTitle(p);
+  renderBreadcrumb(p, opts && opts.crumbExtra);
   // Écrire le hash sans déclencher un nouveau hashchange
   if (!opts || !opts.silent) {
     var newHash = (p === "home") ? "#/" : "#/" + p;
@@ -1317,7 +1354,7 @@ const PAGE_DESCRIPTIONS = {
   politique: "Politique commerciale de CultureCase : garanties, échanges et conditions de vente.",
   paiement: "Modes de paiement acceptés par CultureCase pour vos commandes de coques iPhone.",
 };
-const SITE_BASE_URL = "https://viem0s.github.io/culturecase-site";
+const SITE_BASE_URL = "https://viem0s.github.io/Culturecase-site";
 
 function updatePageTitle(p, override, overrideDesc, overridePath) {
   const title = override || PAGE_TITLES[p] || PAGE_TITLES.home;
@@ -1581,7 +1618,7 @@ function openDet(id, opts) {
   }
   // Schema Product dynamique pour Google rich results
   injectProductSchema(curD);
-  go("detail", { silent: true });
+  go("detail", { silent: true, crumbExtra: curD.name });
   updatePageTitle(
     null,
     curD.name + " — CultureCase",
@@ -1646,7 +1683,7 @@ function injectProductSchema(d) {
     ? "https://schema.org/OutOfStock"
     : "https://schema.org/InStock";
   var img = cldImg(d.img, 800);
-  var url = "https://viem0s.github.io/culturecase-site/#/design/" + d.id;
+  var url = SITE_BASE_URL + "/#/design/" + d.id;
   var schema = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -1721,7 +1758,7 @@ function orderWA() {
     { nom, tel, quartier },
   )
     .then(() => {
-      toast("✓ Commande envoyée — on te confirme sous 30 min !");
+      showQuickOrderConfirmation(nom);
       _orderWALock = false;
     })
     .catch((e) => {
@@ -2076,6 +2113,58 @@ function showOrderConfirmation(nom) {
   </button>
 </div>
     </div>`;
+}
+
+// Confirmation de commande rapide (fiche produit, hors panier) — même
+// contenu/copy que showOrderConfirmation, mais en overlay autonome puisque
+// ce chemin n'a pas de tiroir panier dans lequel s'afficher.
+function showQuickOrderConfirmation(nom) {
+  const old = document.getElementById("quick-order-confirm-overlay");
+  if (old) old.remove();
+
+  const prenom = escapeHTML(nom.split(" ")[0]);
+  const overlay = document.createElement("div");
+  overlay.id = "quick-order-confirm-overlay";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.style.cssText =
+    "position:fixed;inset:0;background:rgba(15,7,0,.55);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px;";
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:var(--radius-lg);max-width:360px;width:100%;padding:2rem 1.5rem;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1rem;box-shadow:0 24px 64px rgba(15,7,0,.35)">
+      <div style="width:64px;height:64px;background:rgba(37,211,102,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px">✓</div>
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--ink);margin-bottom:.3rem">Commande envoyée !</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">Merci ${prenom} 🙏<br>Ta commande a bien été reçue.<br>On te confirme <strong style="color:var(--ink)">sous 30 min</strong>.</div>
+      </div>
+      <div style="background:var(--sand);border-radius:var(--radius-lg);padding:1rem 1.25rem;width:100%;font-size:12px;color:var(--muted);line-height:1.8;text-align:left">
+        <div style="font-weight:700;color:var(--ink);margin-bottom:.4rem;font-size:11px;letter-spacing:1px">ET APRÈS ?</div>
+        <div>✅ On vérifie ta commande de notre côté</div>
+        <div>⏱ On te répond sous 30 min avec confirmation</div>
+        <div>🛵 Livraison le jour même ou le lendemain</div>
+      </div>
+      <div style="display:flex;gap:8px;width:100%;margin-top:.5rem">
+        <button onclick="closeQuickOrderConfirmation();go('catalogue')"
+          style="flex:1;padding:10px;background:var(--ember);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">
+          Continuer les achats
+        </button>
+        <button onclick="closeQuickOrderConfirmation()"
+          style="padding:10px 16px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:var(--radius);font-size:13px;cursor:pointer;font-family:inherit">
+          Fermer
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  document.body.style.overflow = "hidden";
+  document.addEventListener("keydown", _quickOrderConfirmEscHandler);
+}
+function closeQuickOrderConfirmation() {
+  const overlay = document.getElementById("quick-order-confirm-overlay");
+  if (overlay) overlay.remove();
+  document.body.style.overflow = "";
+  document.removeEventListener("keydown", _quickOrderConfirmEscHandler);
+}
+function _quickOrderConfirmEscHandler(e) {
+  if (e.key === "Escape") closeQuickOrderConfirmation();
 }
 
 function openCart() {
