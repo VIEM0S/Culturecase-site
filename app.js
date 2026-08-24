@@ -1313,6 +1313,11 @@ function renderSuivi() {
       </div>
     </div>
 
+    <button onclick="location.hash='#/mes-commandes'"
+      style="background:none;border:none;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer;font-family:inherit;padding:0;margin-bottom:1.25rem;display:block">
+      Voir toutes mes commandes →
+    </button>
+
     ${o.status === "rejected" && o.rejectReason ? `<div style="background:#fdecea;border-radius:var(--radius);padding:.85rem 1rem;font-size:13px;color:#c0392b;margin-bottom:1.25rem">Motif : ${escapeHTML(o.rejectReason)}</div>` : ""}
     ${o.status === "accepted" ? `<div style="background:var(--sand);border-radius:var(--radius);padding:.85rem 1rem;font-size:13px;color:var(--muted);margin-bottom:1.25rem">Ta commande est en préparation. Pour tout changement, contacte-nous sur WhatsApp.</div>` : ""}
     ${o.status === "cancelled" ? `<div style="background:var(--sand);border-radius:var(--radius);padding:.85rem 1rem;font-size:13px;color:var(--muted);margin-bottom:1.25rem">Cette commande a été annulée. Tu peux repasser commande à tout moment.</div>` : ""}
@@ -1399,6 +1404,98 @@ async function suiviCancelOrder() {
   } finally {
     _suiviBusy = false;
   }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// MES COMMANDES — historique local, sans recherche par téléphone
+// ══════════════════════════════════════════════════════════════════════════════
+// Chaque commande passée sur cet appareil laisse son ID dans localStorage
+// (cc_my_orders, voir submitWebOrder). Cette page relit chacun de ces IDs
+// via getDoc (même mécanisme public que le suivi individuel) pour donner
+// une vue d'ensemble — utile quand le client commande plusieurs fois de
+// suite sans passer par le panier (donc sans jamais voir tout regroupé).
+// Rien n'est stocké côté serveur pour permettre ça : uniquement ce que le
+// navigateur du client garde déjà. Si le cache est vidé ou l'appareil
+// change, cet historique disparaît — seuls les liens de suivi individuels
+// sauvegardés ailleurs (WhatsApp, notes...) continuent de fonctionner.
+
+async function openMesCommandes() {
+  const body = document.getElementById("mescommandes-body");
+  if (!body) return;
+
+  let list = [];
+  try {
+    const raw = localStorage.getItem("cc_my_orders");
+    list = raw ? JSON.parse(raw) : [];
+  } catch (e) {}
+
+  if (!Array.isArray(list) || list.length === 0) {
+    body.innerHTML = `
+      <div style="text-align:center;padding:3rem 1rem;color:var(--muted)">
+        <div style="font-size:48px;margin-bottom:1rem;opacity:.4">🛍️</div>
+        <p>Aucune commande trouvée sur cet appareil.<br>Passe une commande pour la voir apparaître ici.</p>
+      </div>`;
+    return;
+  }
+
+  body.innerHTML = `<div style="text-align:center;padding:3rem 0;color:var(--muted)">Chargement…</div>`;
+
+  try {
+    const api = await _waitForSuiviAPI();
+    const results = await Promise.all(list.map(async (entry) => {
+      try {
+        const snap = await api.getDoc(api.doc(window.__db, "webOrders", entry.id));
+        return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+      } catch (e) {
+        return null;
+      }
+    }));
+    const orders = results.filter(Boolean);
+    if (orders.length === 0) {
+      body.innerHTML = `
+        <div style="text-align:center;padding:3rem 1rem;color:var(--muted)">
+          <div style="font-size:48px;margin-bottom:1rem;opacity:.4">🔍</div>
+          <p>Aucune commande retrouvée.<br>Contacte-nous sur WhatsApp si besoin.</p>
+        </div>`;
+      return;
+    }
+    renderMesCommandes(orders);
+  } catch (e) {
+    console.error("[CultureCase] Erreur mes commandes:", e);
+    body.innerHTML = `
+      <div style="text-align:center;padding:3rem 1rem;color:var(--muted)">
+        <p>Impossible de charger tes commandes pour le moment.<br>Réessaie dans un instant.</p>
+      </div>`;
+  }
+}
+
+function renderMesCommandes(orders) {
+  const body = document.getElementById("mescommandes-body");
+  if (!body) return;
+
+  const cards = orders.map((o) => {
+    const st = SUIVI_STATUS[o.status] || SUIVI_STATUS.pending;
+    const items = o.items || [];
+    const total = items.reduce((s, it) => s + it.unitPrice * it.qty, 0);
+    const itemsLabel = items.map((it) => `${it.designName} ×${it.qty}`).join(", ");
+    const dateLabel = o.createdAt && typeof o.createdAt.toDate === "function"
+      ? o.createdAt.toDate().toLocaleDateString("fr-FR", { day: "numeric", month: "short" })
+      : "";
+    return `
+      <button onclick="location.hash='#/suivi/${o.id}'"
+        style="display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-lg);background:#fff;cursor:pointer;font-family:inherit;margin-bottom:.75rem">
+        <div style="width:38px;height:38px;border-radius:50%;background:${st.bg};display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">${st.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;color:var(--ink);font-size:14px">${st.label}</div>
+          <div style="font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHTML(itemsLabel)}${dateLabel ? " · " + dateLabel : ""}</div>
+        </div>
+        <div style="font-weight:700;color:var(--ink);font-size:13px;flex-shrink:0">${fp(total)}</div>
+      </button>`;
+  }).join("");
+
+  body.innerHTML = `
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--ink);margin-bottom:1.5rem">Mes commandes</div>
+    ${cards}`;
 }
 
 // ── Sticky mobile order bar ───────────────────────────────────────────────
@@ -1489,6 +1586,8 @@ const BREADCRUMB_LABELS = {
   livraison: "Livraison & retours",
   politique: "Politique commerciale",
   paiement: "Modes de paiement",
+  suivi: "Suivi de commande",
+  mescommandes: "Mes commandes",
 };
 function renderBreadcrumb(p, extra) {
   const bar = document.getElementById("breadcrumb-bar");
@@ -1554,6 +1653,7 @@ const PAGE_TITLES = {
   politique: "Politique commerciale — CultureCase",
   paiement: "Modes de paiement — CultureCase",
   suivi: "Suivi de commande — CultureCase",
+  mescommandes: "Mes commandes — CultureCase",
   404: "Page introuvable — CultureCase",
 };
 const PAGE_DESCRIPTIONS = {
@@ -1567,6 +1667,7 @@ const PAGE_DESCRIPTIONS = {
   politique: "Politique commerciale de CultureCase : garanties, échanges et conditions de vente.",
   paiement: "Modes de paiement acceptés par CultureCase pour vos commandes de coques iPhone.",
   suivi: "Suis ta commande CultureCase en temps réel : statut, articles, et possibilité d'annuler ou modifier tant qu'elle est en attente.",
+  mescommandes: "Retrouve toutes tes commandes CultureCase passées depuis cet appareil.",
   404: "Cette page n'existe pas ou plus. Retourne à l'accueil ou au catalogue CultureCase.",
 };
 const SITE_BASE_URL = "https://viem0s.github.io/Culturecase-site";
@@ -2680,6 +2781,13 @@ function routeFromHash() {
     var orderId = decodeURIComponent(suiviMatch[1]);
     go("suivi", { silent: true });
     openSuivi(orderId);
+    return;
+  }
+  // #/mes-commandes — historique des commandes passées depuis cet appareil
+  // (localStorage cc_my_orders), aucune recherche par téléphone côté serveur.
+  if (hash === "#/mes-commandes") {
+    go("mescommandes", { silent: true });
+    openMesCommandes();
     return;
   }
   // #/catalogue, #/blog, #/about, #/contact, etc.
