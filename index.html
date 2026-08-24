@@ -169,7 +169,17 @@
       </div>
       <div class="cart-items" id="cart-items"></div>
       <div class="cart-footer" id="cart-footer" style="display: none">
-        <p class="cart-infos-title">INFOS DE LIVRAISON</p>
+        <p class="cart-infos-title">INFOS DE COMMANDE</p>
+        <div class="dc-toggle" role="radiogroup" aria-label="Mode de récupération">
+          <label class="dc-opt">
+            <input type="radio" name="cart-mode" value="livraison" checked onchange="toggleCartQuartier()" />
+            <span>🛵 Livraison</span>
+          </label>
+          <label class="dc-opt">
+            <input type="radio" name="cart-mode" value="retrait" onchange="toggleCartQuartier()" />
+            <span>🏠 Je viens chercher</span>
+          </label>
+        </div>
         <div class="cart-field">
           <label>PRÉNOM & NOM</label>
           <input
@@ -188,7 +198,7 @@
             autocomplete="tel"
           />
         </div>
-        <div class="cart-field">
+        <div class="cart-field" id="cart-quartier-wrap">
           <label>QUARTIER / ZONE</label>
           <input
             type="text"
@@ -521,10 +531,17 @@
             <div class="livraison-form">
               <div class="lf-title">
                 <i class="ti ti-truck-delivery" aria-hidden="true"></i>Infos de
-                livraison
-                <span style="color: rgba(154, 120, 72, 0.5); font-weight: 400"
-                  >(optionnel mais recommandé)</span
-                >
+                commande
+              </div>
+              <div class="dc-toggle" role="radiogroup" aria-label="Mode de récupération">
+                <label class="dc-opt">
+                  <input type="radio" name="lf-mode" value="livraison" checked onchange="toggleLfQuartier()" />
+                  <span>🛵 Livraison</span>
+                </label>
+                <label class="dc-opt">
+                  <input type="radio" name="lf-mode" value="retrait" onchange="toggleLfQuartier()" />
+                  <span>🏠 Je viens chercher</span>
+                </label>
               </div>
               <div class="lf-grid">
                 <div class="lf-g">
@@ -545,7 +562,7 @@
                     placeholder="+223..."
                   />
                 </div>
-                <div class="lf-g full">
+                <div class="lf-g full" id="lf-quartier-wrap">
                   <label class="lf-lbl">Quartier / Zone de livraison</label>
                   <input
                     class="lf-in"

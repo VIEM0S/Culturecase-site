@@ -1175,7 +1175,10 @@ async function submitWebOrder(items, client) {
       tel: client.tel || "",
       quartier: client.quartier || "",
     },
-    delivery: !!(client.quartier && client.quartier.trim()),
+    // Choix explicite (toggle "Livraison"/"Je viens chercher"), plus fiable
+    // qu'une déduction à partir du champ quartier (rempli ou vide) — un champ
+    // pré-rempli d'une commande précédente pouvait donner un statut faux.
+    delivery: client.delivery === true,
     items: items.map((it) => ({
       designId: it.designId,
       designName: it.name,
@@ -1610,6 +1613,7 @@ function openDet(id, opts) {
     if (sn) document.getElementById("lf-nom").value = sn;
     if (st) document.getElementById("lf-tel").value = st;
   } catch (e) {}
+  toggleLfQuartier();
   updatePrice();
   // Écrire le hash avant go() pour que go() ne l'écrase pas
   var detHash = "#/design/" + curD.id;
@@ -1724,6 +1728,13 @@ function dq(d) {
   updatePrice();
 }
 
+// Affiche/masque le champ quartier selon le mode choisi (fiche produit).
+function toggleLfQuartier() {
+  const isDelivery = (document.querySelector('input[name="lf-mode"]:checked')?.value || "livraison") === "livraison";
+  const wrap = document.getElementById("lf-quartier-wrap");
+  if (wrap) wrap.style.display = isDelivery ? "" : "none";
+}
+
 var _orderWALock = false;
 function orderWA() {
   if (!curD) return;
@@ -1735,6 +1746,7 @@ function orderWA() {
   }
   const nom = (document.getElementById("lf-nom").value || "").trim();
   const tel = (document.getElementById("lf-tel").value || "").trim();
+  const isDelivery = (document.querySelector('input[name="lf-mode"]:checked')?.value || "livraison") === "livraison";
   const quartier = (
     document.getElementById("lf-quartier").value || ""
   ).trim();
@@ -1746,18 +1758,22 @@ function orderWA() {
     toast("⚠️ Indique ton numéro de téléphone");
     return;
   }
+  if (isDelivery && !quartier) {
+    toast("⚠️ Indique ton quartier pour la livraison");
+    return;
+  }
   _orderWALock = true;
   try {
     localStorage.setItem("cc_nom", nom);
     localStorage.setItem("cc_tel", tel);
-    if (quartier) localStorage.setItem("cc_quartier", quartier);
+    if (isDelivery && quartier) localStorage.setItem("cc_quartier", quartier);
   } catch (e) {}
   const safeQty = typeof dQty === "number" && dQty > 0 ? dQty : 1;
   const unitPrice = getModelPrice(model);
 
   submitWebOrder(
     [{ designId: curD.id, name: curD.name, model, qty: safeQty, price: unitPrice }],
-    { nom, tel, quartier },
+    { nom, tel, quartier: isDelivery ? quartier : "", delivery: isDelivery },
   )
     .then(() => {
       showQuickOrderConfirmation(nom);
@@ -2171,6 +2187,7 @@ function _quickOrderConfirmEscHandler(e) {
 
 function openCart() {
   renderCartItems();
+  toggleCartQuartier();
   document.getElementById("cart-overlay").classList.add("open");
   document.getElementById("cart-drawer").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -2187,12 +2204,20 @@ function _cartEscHandler(e) {
   if (e.key === "Escape") closeCart();
 }
 
+// Affiche/masque le champ quartier selon le mode choisi (panier).
+function toggleCartQuartier() {
+  const isDelivery = (document.querySelector('input[name="cart-mode"]:checked')?.value || "livraison") === "livraison";
+  const wrap = document.getElementById("cart-quartier-wrap");
+  if (wrap) wrap.style.display = isDelivery ? "" : "none";
+}
+
 var _cartOrderLock = false;
 function cartOrderWA() {
   if (CART.length === 0) return;
   if (_cartOrderLock) return;
   const nom = (document.getElementById("cart-nom").value || "").trim();
   const tel = (document.getElementById("cart-tel").value || "").trim();
+  const isDelivery = (document.querySelector('input[name="cart-mode"]:checked')?.value || "livraison") === "livraison";
   const quartier = (
     document.getElementById("cart-quartier").value || ""
   ).trim();
@@ -2206,18 +2231,22 @@ function cartOrderWA() {
     showCartToast("⚠️ Indique ton numéro de téléphone");
     return;
   }
+  if (isDelivery && !quartier) {
+    showCartToast("⚠️ Indique ton quartier pour la livraison");
+    return;
+  }
 
   // Mémoriser infos client
   try {
     localStorage.setItem("cc_nom", nom);
     localStorage.setItem("cc_tel", tel);
-    if (quartier) localStorage.setItem("cc_quartier", quartier);
+    if (isDelivery && quartier) localStorage.setItem("cc_quartier", quartier);
   } catch (e) {}
 
   _cartOrderLock = true;
   const itemsSnapshot = CART.map((i) => ({ ...i }));
 
-  submitWebOrder(itemsSnapshot, { nom, tel, quartier })
+  submitWebOrder(itemsSnapshot, { nom, tel, quartier: isDelivery ? quartier : "", delivery: isDelivery })
     .then(() => {
       // Vider le panier et afficher confirmation seulement après succès
       CART.length = 0;

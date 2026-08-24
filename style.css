@@ -1108,6 +1108,47 @@ body {
   box-shadow: 0 0 0 3px rgba(217, 78, 21, 0.1);
 }
 
+/* Choix explicite livraison / retrait — remplace l'ancienne déduction
+   silencieuse à partir du champ quartier (rempli ou vide), qui pouvait
+   se tromper avec la valeur pré-remplie d'une commande précédente. */
+.dc-toggle {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.dc-opt {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 9px 8px;
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  box-shadow: var(--shadow-card);
+}
+.dc-opt input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.dc-opt:has(input:checked) {
+  border-color: var(--ember);
+  background: rgba(217, 78, 21, 0.08);
+  color: var(--ink);
+}
+.dc-opt:has(input:focus-visible) {
+  outline: 2px solid var(--ember);
+  outline-offset: 1px;
+}
+
 /* ─── ABOUT ──────────────────────────────────────────────── */
 .ab-hero {
   background: var(--dusk2);
