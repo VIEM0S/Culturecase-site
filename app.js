@@ -1122,7 +1122,7 @@ function openBlog(id) {
     const card = e.target.closest("[data-blog-id]");
     if (card) openBlog(card.dataset.blogId);
   };
-  go("blogdet");
+  go("blogdet", { crumbExtra: b.title });
   // Écrire l'ID dans l'URL pour que le lien soit partageable et survivre au rafraîchissement
   history.replaceState(null, "", "#/blog/" + encodeURIComponent(id));
   updatePageTitle(
@@ -1175,7 +1175,10 @@ async function submitWebOrder(items, client) {
       tel: client.tel || "",
       quartier: client.quartier || "",
     },
-    delivery: !!(client.quartier && client.quartier.trim()),
+    // Choix explicite (toggle "Livraison"/"Je viens chercher"), plus fiable
+    // qu'une déduction à partir du champ quartier (rempli ou vide) — un champ
+    // pré-rempli d'une commande précédente pouvait donner un statut faux.
+    delivery: client.delivery === true,
     items: items.map((it) => ({
       designId: it.designId,
       designName: it.name,
@@ -1473,6 +1476,42 @@ function checkMobile() {
 window.addEventListener("resize", checkMobile);
 checkMobile();
 
+// Fil d'Ariane — libellés courts des pages statiques. "detail"/"blogdet"
+// (produit/article) n'ont pas d'entrée fixe ici : leur miette finale est
+// injectée dynamiquement via opts.crumbExtra (nom du produit / titre de
+// l'article), voir openDet()/openBlog().
+const BREADCRUMB_LABELS = {
+  catalogue: "Catalogue",
+  about: "À propos",
+  blog: "Blog",
+  contact: "Contact",
+  faq: "FAQ",
+  livraison: "Livraison & retours",
+  politique: "Politique commerciale",
+  paiement: "Modes de paiement",
+};
+function renderBreadcrumb(p, extra) {
+  const bar = document.getElementById("breadcrumb-bar");
+  if (!bar) return;
+  if (p === "home" || (!BREADCRUMB_LABELS[p] && p !== "detail" && p !== "blogdet")) {
+    bar.style.display = "none";
+    bar.innerHTML = "";
+    return;
+  }
+  const parts = [`<a href="#/" onclick="go('home');return false">Accueil</a>`];
+  if (p === "detail") {
+    parts.push(`<a href="#/catalogue" onclick="go('catalogue');return false">Catalogue</a>`);
+    if (extra) parts.push(`<span aria-current="page">${escapeHTML(extra)}</span>`);
+  } else if (p === "blogdet") {
+    parts.push(`<a href="#/blog" onclick="go('blog');return false">Blog</a>`);
+    if (extra) parts.push(`<span aria-current="page">${escapeHTML(extra)}</span>`);
+  } else {
+    parts.push(`<span aria-current="page">${BREADCRUMB_LABELS[p]}</span>`);
+  }
+  bar.style.display = "flex";
+  bar.innerHTML = parts.join('<span class="bc-sep" aria-hidden="true">›</span>');
+}
+
 function go(p, opts) {
   var target = document.getElementById("pg-" + p);
   if (!target) {
@@ -1496,6 +1535,7 @@ function go(p, opts) {
   if (p === "blog") renderBlog();
   syncMobileBar();
   updatePageTitle(p);
+  renderBreadcrumb(p, opts && opts.crumbExtra);
   // Écrire le hash sans déclencher un nouveau hashchange
   if (!opts || !opts.silent) {
     var newHash = (p === "home") ? "#/" : "#/" + p;
@@ -1514,6 +1554,7 @@ const PAGE_TITLES = {
   politique: "Politique commerciale — CultureCase",
   paiement: "Modes de paiement — CultureCase",
   suivi: "Suivi de commande — CultureCase",
+  404: "Page introuvable — CultureCase",
 };
 const PAGE_DESCRIPTIONS = {
   home: "Coques iPhone aux designs culturels africains. Bogolan, N'Ko, Ciwara — patrimoine malien en impression HD. Livraison à Bamako.",
@@ -1526,8 +1567,9 @@ const PAGE_DESCRIPTIONS = {
   politique: "Politique commerciale de CultureCase : garanties, échanges et conditions de vente.",
   paiement: "Modes de paiement acceptés par CultureCase pour vos commandes de coques iPhone.",
   suivi: "Suis ta commande CultureCase en temps réel : statut, articles, et possibilité d'annuler ou modifier tant qu'elle est en attente.",
+  404: "Cette page n'existe pas ou plus. Retourne à l'accueil ou au catalogue CultureCase.",
 };
-const SITE_BASE_URL = "https://viem0s.github.io/culturecase-site";
+const SITE_BASE_URL = "https://viem0s.github.io/Culturecase-site";
 
 function updatePageTitle(p, override, overrideDesc, overridePath) {
   const title = override || PAGE_TITLES[p] || PAGE_TITLES.home;
@@ -1781,6 +1823,7 @@ function openDet(id, opts) {
     if (sn) document.getElementById("lf-nom").value = sn;
     if (st) document.getElementById("lf-tel").value = st;
   } catch (e) {}
+  toggleLfQuartier();
   updatePrice();
   // Écrire le hash avant go() pour que go() ne l'écrase pas
   var detHash = "#/design/" + curD.id;
@@ -1791,7 +1834,7 @@ function openDet(id, opts) {
   }
   // Schema Product dynamique pour Google rich results
   injectProductSchema(curD);
-  go("detail", { silent: true });
+  go("detail", { silent: true, crumbExtra: curD.name });
   updatePageTitle(
     null,
     curD.name + " — CultureCase",
@@ -1856,7 +1899,7 @@ function injectProductSchema(d) {
     ? "https://schema.org/OutOfStock"
     : "https://schema.org/InStock";
   var img = cldImg(d.img, 800);
-  var url = "https://viem0s.github.io/culturecase-site/#/design/" + d.id;
+  var url = SITE_BASE_URL + "/#/design/" + d.id;
   var schema = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -1895,6 +1938,13 @@ function dq(d) {
   updatePrice();
 }
 
+// Affiche/masque le champ quartier selon le mode choisi (fiche produit).
+function toggleLfQuartier() {
+  const isDelivery = (document.querySelector('input[name="lf-mode"]:checked')?.value || "livraison") === "livraison";
+  const wrap = document.getElementById("lf-quartier-wrap");
+  if (wrap) wrap.style.display = isDelivery ? "" : "none";
+}
+
 var _orderWALock = false;
 function orderWA() {
   if (!curD) return;
@@ -1906,6 +1956,7 @@ function orderWA() {
   }
   const nom = (document.getElementById("lf-nom").value || "").trim();
   const tel = (document.getElementById("lf-tel").value || "").trim();
+  const isDelivery = (document.querySelector('input[name="lf-mode"]:checked')?.value || "livraison") === "livraison";
   const quartier = (
     document.getElementById("lf-quartier").value || ""
   ).trim();
@@ -1917,23 +1968,26 @@ function orderWA() {
     toast("⚠️ Indique ton numéro de téléphone");
     return;
   }
+  if (isDelivery && !quartier) {
+    toast("⚠️ Indique ton quartier pour la livraison");
+    return;
+  }
   _orderWALock = true;
   try {
     localStorage.setItem("cc_nom", nom);
     localStorage.setItem("cc_tel", tel);
-    if (quartier) localStorage.setItem("cc_quartier", quartier);
+    if (isDelivery && quartier) localStorage.setItem("cc_quartier", quartier);
   } catch (e) {}
   const safeQty = typeof dQty === "number" && dQty > 0 ? dQty : 1;
   const unitPrice = getModelPrice(model);
 
   submitWebOrder(
     [{ designId: curD.id, name: curD.name, model, qty: safeQty, price: unitPrice }],
-    { nom, tel, quartier },
+    { nom, tel, quartier: isDelivery ? quartier : "", delivery: isDelivery },
   )
     .then((orderId) => {
-      toast("✓ Commande envoyée — on te confirme sous 30 min !");
+      showQuickOrderConfirmation(nom, orderId);
       _orderWALock = false;
-      location.hash = "#/suivi/" + orderId;
     })
     .catch((e) => {
       console.error("[CultureCase] Erreur envoi commande:", e);
@@ -2294,8 +2348,66 @@ ${orderId ? `
     </div>`;
 }
 
+// Confirmation de commande rapide (fiche produit, hors panier) — même
+// contenu/copy que showOrderConfirmation, mais en overlay autonome puisque
+// ce chemin n'a pas de tiroir panier dans lequel s'afficher.
+function showQuickOrderConfirmation(nom, orderId) {
+  const old = document.getElementById("quick-order-confirm-overlay");
+  if (old) old.remove();
+
+  const prenom = escapeHTML(nom.split(" ")[0]);
+  const overlay = document.createElement("div");
+  overlay.id = "quick-order-confirm-overlay";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.style.cssText =
+    "position:fixed;inset:0;background:rgba(15,7,0,.55);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px;";
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:var(--radius-lg);max-width:360px;width:100%;padding:2rem 1.5rem;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1rem;box-shadow:0 24px 64px rgba(15,7,0,.35)">
+      <div style="width:64px;height:64px;background:rgba(37,211,102,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px">✓</div>
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--ink);margin-bottom:.3rem">Commande envoyée !</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">Merci ${prenom} 🙏<br>Ta commande a bien été reçue.<br>On te confirme <strong style="color:var(--ink)">sous 30 min</strong>.</div>
+      </div>
+      <div style="background:var(--sand);border-radius:var(--radius-lg);padding:1rem 1.25rem;width:100%;font-size:12px;color:var(--muted);line-height:1.8;text-align:left">
+        <div style="font-weight:700;color:var(--ink);margin-bottom:.4rem;font-size:11px;letter-spacing:1px">ET APRÈS ?</div>
+        <div>✅ On vérifie ta commande de notre côté</div>
+        <div>⏱ On te répond sous 30 min avec confirmation</div>
+        <div>🛵 Livraison le jour même ou le lendemain</div>
+      </div>
+      ${orderId ? `
+      <button onclick="closeQuickOrderConfirmation();location.hash='#/suivi/${orderId}'"
+        style="width:100%;padding:10px;background:transparent;border:1px solid var(--ember);color:var(--ember);border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">
+        🔎 Suivre ma commande
+      </button>` : ""}
+      <div style="display:flex;gap:8px;width:100%">
+        <button onclick="closeQuickOrderConfirmation();go('catalogue')"
+          style="flex:1;padding:10px;background:var(--ember);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">
+          Continuer les achats
+        </button>
+        <button onclick="closeQuickOrderConfirmation()"
+          style="padding:10px 16px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:var(--radius);font-size:13px;cursor:pointer;font-family:inherit">
+          Fermer
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  document.body.style.overflow = "hidden";
+  document.addEventListener("keydown", _quickOrderConfirmEscHandler);
+}
+function closeQuickOrderConfirmation() {
+  const overlay = document.getElementById("quick-order-confirm-overlay");
+  if (overlay) overlay.remove();
+  document.body.style.overflow = "";
+  document.removeEventListener("keydown", _quickOrderConfirmEscHandler);
+}
+function _quickOrderConfirmEscHandler(e) {
+  if (e.key === "Escape") closeQuickOrderConfirmation();
+}
+
 function openCart() {
   renderCartItems();
+  toggleCartQuartier();
   document.getElementById("cart-overlay").classList.add("open");
   document.getElementById("cart-drawer").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -2312,12 +2424,20 @@ function _cartEscHandler(e) {
   if (e.key === "Escape") closeCart();
 }
 
+// Affiche/masque le champ quartier selon le mode choisi (panier).
+function toggleCartQuartier() {
+  const isDelivery = (document.querySelector('input[name="cart-mode"]:checked')?.value || "livraison") === "livraison";
+  const wrap = document.getElementById("cart-quartier-wrap");
+  if (wrap) wrap.style.display = isDelivery ? "" : "none";
+}
+
 var _cartOrderLock = false;
 function cartOrderWA() {
   if (CART.length === 0) return;
   if (_cartOrderLock) return;
   const nom = (document.getElementById("cart-nom").value || "").trim();
   const tel = (document.getElementById("cart-tel").value || "").trim();
+  const isDelivery = (document.querySelector('input[name="cart-mode"]:checked')?.value || "livraison") === "livraison";
   const quartier = (
     document.getElementById("cart-quartier").value || ""
   ).trim();
@@ -2331,18 +2451,22 @@ function cartOrderWA() {
     showCartToast("⚠️ Indique ton numéro de téléphone");
     return;
   }
+  if (isDelivery && !quartier) {
+    showCartToast("⚠️ Indique ton quartier pour la livraison");
+    return;
+  }
 
   // Mémoriser infos client
   try {
     localStorage.setItem("cc_nom", nom);
     localStorage.setItem("cc_tel", tel);
-    if (quartier) localStorage.setItem("cc_quartier", quartier);
+    if (isDelivery && quartier) localStorage.setItem("cc_quartier", quartier);
   } catch (e) {}
 
   _cartOrderLock = true;
   const itemsSnapshot = CART.map((i) => ({ ...i }));
 
-  submitWebOrder(itemsSnapshot, { nom, tel, quartier })
+  submitWebOrder(itemsSnapshot, { nom, tel, quartier: isDelivery ? quartier : "", delivery: isDelivery })
     .then((orderId) => {
       // Vider le panier et afficher confirmation seulement après succès
       CART.length = 0;
