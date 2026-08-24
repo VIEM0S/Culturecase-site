@@ -1187,7 +1187,215 @@ async function submitWebOrder(items, client) {
     total: items.reduce((s, it) => s + it.price * it.qty, 0),
   };
 
-  await addDoc(collection(window.__db, "webOrders"), payload);
+  const docRef = await addDoc(collection(window.__db, "webOrders"), payload);
+
+  // Mémoriser l'ID pour que le client retrouve sa commande même sans le lien
+  // (ex. lien perdu, nouvel onglet) — jeton de suivi = l'ID du document.
+  try {
+    const raw = localStorage.getItem("cc_my_orders");
+    const list = raw ? JSON.parse(raw) : [];
+    list.unshift({ id: docRef.id, date: Date.now() });
+    localStorage.setItem("cc_my_orders", JSON.stringify(list.slice(0, 15)));
+  } catch (e) {}
+
+  return docRef.id;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SUIVI DE COMMANDE — via le jeton de suivi (ID du document webOrders)
+// ══════════════════════════════════════════════════════════════════════════════
+// Sécurité : les règles Firestore autorisent la lecture d'UN document précis
+// (get) à quiconque connaît son ID, mais interdisent tout listing — sans le
+// lien exact reçu après commande, une commande est invisible. Tant que le
+// statut est "pending", le client peut modifier les quantités/articles ou
+// annuler ; une fois traitée par l'admin (accepted/rejected), plus aucune
+// action côté client — direction WhatsApp pour tout changement.
+
+const SUIVI_STATUS = {
+  pending:   { label: "En attente de confirmation", icon: "⏳", bg: "rgba(199,146,58,.14)" },
+  accepted:  { label: "Confirmée — en préparation",  icon: "✅", bg: "rgba(47,168,79,.14)" },
+  rejected:  { label: "Non retenue",                 icon: "❌", bg: "rgba(192,57,43,.14)" },
+  cancelled: { label: "Annulée",                     icon: "↩️", bg: "rgba(154,120,72,.14)" },
+};
+const _suiviBtnBase =
+  "padding:11px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;" +
+  "cursor:pointer;font-family:inherit;flex:1";
+const _suiviBtnPrimary = _suiviBtnBase + ";background:var(--ember);color:#fff;border:none";
+const _suiviBtnOutline = _suiviBtnBase + ";background:transparent;border:1px solid var(--border);color:var(--ink)";
+const _suiviBtnDanger  = _suiviBtnBase + ";background:transparent;border:1px solid #c0392b;color:#c0392b";
+const _suiviQtyBtn =
+  "width:26px;height:26px;border-radius:50%;border:1px solid var(--border);" +
+  "background:#fff;cursor:pointer;font-size:14px;line-height:1;color:var(--ink)";
+
+let _suiviOrder = null;      // commande actuellement affichée { id, ...data }
+let _suiviEditItems = null;  // copie modifiable des items pendant l'édition
+let _suiviBusy = false;
+
+function _waitForSuiviAPI() {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const check = () => {
+      const api = window.__firestoreAPI;
+      if (api && api.doc && api.getDoc && api.updateDoc) resolve(api);
+      else if (Date.now() - start > 8000) reject(new Error("Firestore indisponible"));
+      else setTimeout(check, 150);
+    };
+    check();
+  });
+}
+
+async function openSuivi(id) {
+  const body = document.getElementById("suivi-body");
+  if (!body) return;
+  _suiviOrder = null;
+  _suiviEditItems = null;
+  body.innerHTML = `<div style="text-align:center;padding:3rem 0;color:var(--muted)">Chargement…</div>`;
+
+  try {
+    const api = await _waitForSuiviAPI();
+    const snap = await api.getDoc(api.doc(window.__db, "webOrders", id));
+    if (!snap.exists()) {
+      body.innerHTML = _suiviNotFoundHTML();
+      return;
+    }
+    _suiviOrder = { id: snap.id, ...snap.data() };
+    renderSuivi();
+  } catch (e) {
+    console.error("[CultureCase] Erreur suivi commande:", e);
+    body.innerHTML = _suiviNotFoundHTML();
+  }
+}
+
+function _suiviNotFoundHTML() {
+  return `
+    <div style="text-align:center;padding:3rem 1rem;color:var(--muted)">
+      <div style="font-size:48px;margin-bottom:1rem;opacity:.4">🔍</div>
+      <p>Commande introuvable.<br>Vérifie le lien reçu après ta commande, ou contacte-nous sur WhatsApp.</p>
+    </div>`;
+}
+
+function renderSuivi() {
+  const body = document.getElementById("suivi-body");
+  if (!body || !_suiviOrder) return;
+  const o = _suiviOrder;
+  const st = SUIVI_STATUS[o.status] || SUIVI_STATUS.pending;
+  const editing = !!_suiviEditItems;
+  const items = editing ? _suiviEditItems : (o.items || []);
+  const total = items.reduce((s, it) => s + it.unitPrice * it.qty, 0);
+  const canAct = o.status === "pending";
+
+  const itemsHTML = items.map((it, idx) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.75rem 0;${idx > 0 ? "border-top:1px solid var(--border)" : ""}">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;color:var(--ink);font-size:14px">${escapeHTML(it.designName)} — ${escapeHTML(it.model)}</div>
+        <div style="font-size:12px;color:var(--muted)">${fp(it.unitPrice)} / unité</div>
+      </div>
+      ${editing ? `
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          <button onclick="suiviQty(${idx},-1)" style="${_suiviQtyBtn}">−</button>
+          <span style="min-width:18px;text-align:center;font-weight:600">${it.qty}</span>
+          <button onclick="suiviQty(${idx},1)" style="${_suiviQtyBtn}">+</button>
+          <button onclick="suiviRemoveItem(${idx})" title="Retirer" style="background:none;border:none;color:#c0392b;cursor:pointer;font-size:16px;margin-left:2px">✕</button>
+        </div>
+      ` : `<div style="font-weight:700;color:var(--ink);flex-shrink:0">×${it.qty}</div>`}
+    </div>
+  `).join("");
+
+  body.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem">
+      <div style="width:44px;height:44px;border-radius:50%;background:${st.bg};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${st.icon}</div>
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--ink);line-height:1.1">${st.label}</div>
+        <div style="font-size:12px;color:var(--muted)">Commande #${o.id.slice(0, 6).toUpperCase()}</div>
+      </div>
+    </div>
+
+    ${o.status === "rejected" && o.rejectReason ? `<div style="background:#fdecea;border-radius:var(--radius);padding:.85rem 1rem;font-size:13px;color:#c0392b;margin-bottom:1.25rem">Motif : ${escapeHTML(o.rejectReason)}</div>` : ""}
+    ${o.status === "accepted" ? `<div style="background:var(--sand);border-radius:var(--radius);padding:.85rem 1rem;font-size:13px;color:var(--muted);margin-bottom:1.25rem">Ta commande est en préparation. Pour tout changement, contacte-nous sur WhatsApp.</div>` : ""}
+    ${o.status === "cancelled" ? `<div style="background:var(--sand);border-radius:var(--radius);padding:.85rem 1rem;font-size:13px;color:var(--muted);margin-bottom:1.25rem">Cette commande a été annulée. Tu peux repasser commande à tout moment.</div>` : ""}
+
+    <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:0 1.1rem;margin-bottom:1.25rem">
+      ${itemsHTML}
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:1.5rem">
+      <span>Total</span><span>${fp(total)}</span>
+    </div>
+
+    ${!canAct ? "" : editing ? `
+      <div style="display:flex;gap:8px">
+        <button onclick="suiviSaveEdit()" style="${_suiviBtnPrimary}">Enregistrer les modifications</button>
+        <button onclick="suiviCancelEdit()" style="${_suiviBtnOutline}">Annuler</button>
+      </div>
+    ` : `
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="suiviStartEdit()" style="${_suiviBtnOutline}">✏️ Modifier</button>
+        <button onclick="suiviCancelOrder()" style="${_suiviBtnDanger}">Annuler la commande</button>
+      </div>
+    `}
+  `;
+}
+
+function suiviStartEdit() {
+  if (!_suiviOrder) return;
+  _suiviEditItems = (_suiviOrder.items || []).map((it) => ({ ...it }));
+  renderSuivi();
+}
+function suiviCancelEdit() {
+  _suiviEditItems = null;
+  renderSuivi();
+}
+function suiviQty(idx, delta) {
+  if (!_suiviEditItems || !_suiviEditItems[idx]) return;
+  _suiviEditItems[idx].qty = Math.max(1, _suiviEditItems[idx].qty + delta);
+  renderSuivi();
+}
+function suiviRemoveItem(idx) {
+  if (!_suiviEditItems) return;
+  _suiviEditItems.splice(idx, 1);
+  renderSuivi();
+}
+
+async function suiviSaveEdit() {
+  if (_suiviBusy || !_suiviOrder || !_suiviEditItems) return;
+  if (_suiviEditItems.length === 0) {
+    toast("⚠️ Ajoute au moins un article, ou annule la commande");
+    return;
+  }
+  _suiviBusy = true;
+  try {
+    const api = await _waitForSuiviAPI();
+    const items = _suiviEditItems.map((it) => ({ ...it, total: it.unitPrice * it.qty }));
+    const total = items.reduce((s, it) => s + it.total, 0);
+    await api.updateDoc(api.doc(window.__db, "webOrders", _suiviOrder.id), { items, total });
+    _suiviOrder = { ..._suiviOrder, items, total };
+    _suiviEditItems = null;
+    toast("✓ Commande mise à jour");
+    renderSuivi();
+  } catch (e) {
+    console.error("[CultureCase] Erreur modification commande:", e);
+    toast("❌ Erreur — réessaie dans un instant");
+  } finally {
+    _suiviBusy = false;
+  }
+}
+
+async function suiviCancelOrder() {
+  if (_suiviBusy || !_suiviOrder) return;
+  if (!confirm("Annuler définitivement cette commande ?")) return;
+  _suiviBusy = true;
+  try {
+    const api = await _waitForSuiviAPI();
+    await api.updateDoc(api.doc(window.__db, "webOrders", _suiviOrder.id), { status: "cancelled" });
+    _suiviOrder = { ..._suiviOrder, status: "cancelled" };
+    _suiviEditItems = null;
+    toast("↩️ Commande annulée");
+    renderSuivi();
+  } catch (e) {
+    console.error("[CultureCase] Erreur annulation commande:", e);
+    toast("❌ Erreur — réessaie dans un instant");
+  } finally {
+    _suiviBusy = false;
+  }
 }
 
 // ── Sticky mobile order bar ───────────────────────────────────────────────
@@ -1305,6 +1513,7 @@ const PAGE_TITLES = {
   livraison: "Livraison & Retours — CultureCase",
   politique: "Politique commerciale — CultureCase",
   paiement: "Modes de paiement — CultureCase",
+  suivi: "Suivi de commande — CultureCase",
 };
 const PAGE_DESCRIPTIONS = {
   home: "Coques iPhone aux designs culturels africains. Bogolan, N'Ko, Ciwara — patrimoine malien en impression HD. Livraison à Bamako.",
@@ -1316,6 +1525,7 @@ const PAGE_DESCRIPTIONS = {
   livraison: "Modalités de livraison et de retour des commandes CultureCase à Bamako et au Mali.",
   politique: "Politique commerciale de CultureCase : garanties, échanges et conditions de vente.",
   paiement: "Modes de paiement acceptés par CultureCase pour vos commandes de coques iPhone.",
+  suivi: "Suis ta commande CultureCase en temps réel : statut, articles, et possibilité d'annuler ou modifier tant qu'elle est en attente.",
 };
 const SITE_BASE_URL = "https://viem0s.github.io/culturecase-site";
 
@@ -1720,9 +1930,10 @@ function orderWA() {
     [{ designId: curD.id, name: curD.name, model, qty: safeQty, price: unitPrice }],
     { nom, tel, quartier },
   )
-    .then(() => {
+    .then((orderId) => {
       toast("✓ Commande envoyée — on te confirme sous 30 min !");
       _orderWALock = false;
+      location.hash = "#/suivi/" + orderId;
     })
     .catch((e) => {
       console.error("[CultureCase] Erreur envoi commande:", e);
@@ -2045,7 +2256,7 @@ function renderCartItems() {
   }
 }
 
-function showOrderConfirmation(nom) {
+function showOrderConfirmation(nom, orderId) {
   const items = document.getElementById("cart-items");
   const footer = document.getElementById("cart-footer");
   if (!items) return;
@@ -2065,7 +2276,12 @@ function showOrderConfirmation(nom) {
   <div>⏱ On te répond sous 30 min avec confirmation</div>
   <div>🛵 Livraison le jour même ou le lendemain</div>
 </div>
-<div style="display:flex;gap:8px;width:100%;margin-top:.5rem">
+${orderId ? `
+<button onclick="closeCart();location.hash='#/suivi/${orderId}'"
+  style="width:100%;padding:10px;background:transparent;border:1px solid var(--ember);color:var(--ember);border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">
+  🔎 Suivre ma commande
+</button>` : ""}
+<div style="display:flex;gap:8px;width:100%">
   <button onclick="closeCart();go('catalogue')"
     style="flex:1;padding:10px;background:var(--ember);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">
     Continuer les achats
@@ -2127,12 +2343,12 @@ function cartOrderWA() {
   const itemsSnapshot = CART.map((i) => ({ ...i }));
 
   submitWebOrder(itemsSnapshot, { nom, tel, quartier })
-    .then(() => {
+    .then((orderId) => {
       // Vider le panier et afficher confirmation seulement après succès
       CART.length = 0;
       saveCart();
       updateCartBadge();
-      showOrderConfirmation(nom);
+      showOrderConfirmation(nom, orderId);
       _cartOrderLock = false;
     })
     .catch((e) => {
@@ -2332,6 +2548,14 @@ function routeFromHash() {
         if (bAttempts > 25) { clearInterval(bRetry); go("blog"); }
       }, 200);
     }
+    return;
+  }
+  // #/suivi/<orderId> — lien de suivi envoyé au client après sa commande
+  var suiviMatch = hash.match(/^#\/suivi\/(.+)$/);
+  if (suiviMatch) {
+    var orderId = decodeURIComponent(suiviMatch[1]);
+    go("suivi", { silent: true });
+    openSuivi(orderId);
     return;
   }
   // #/catalogue, #/blog, #/about, #/contact, etc.

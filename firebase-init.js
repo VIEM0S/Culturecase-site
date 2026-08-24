@@ -2,6 +2,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebas
 import {
   getFirestore,
   doc,
+  getDoc,
+  updateDoc,
   onSnapshot,
   collection,
   query,
@@ -45,7 +47,7 @@ let mainCache = null,
 
 // ══ FIREBASE → UI ════════════════════════════════════════════════════════════
 // Exposer les APIs Firestore pour le blog
-window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot };
+window.__firestoreAPI = { collection, query, where, orderBy, onSnapshot, doc, getDoc, updateDoc };
 
 window.__applyFirebaseData = function (data) {
   try {
@@ -298,6 +300,9 @@ function startListeners() {
     onSnapshot,
     addDoc,
     serverTimestamp,
+    doc,
+    getDoc,
+    updateDoc,
   };
   // Un seul appel — window.__blogListening empêche le double listener Firestore
   if (typeof listenBlog === "function") {
